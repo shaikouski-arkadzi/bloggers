@@ -15,72 +15,58 @@ export const createBlog = (
 
   const messages: FieldError[] = [];
 
-  if (!name?.trim()) {
+  if (name === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "name",
     });
-  }
-
-  if (name?.trim().length > 15) {
+  } else if (typeof name !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "name",
+    });
+  } else if (name.trim().length > 15) {
     messages.push({
       message: "Максимальная длина 15 символов",
       field: "name",
     });
   }
 
-  if (typeof name !== "string") {
-    messages.push({
-      message: "Поле должно быть типом string",
-      field: "name",
-    });
-  }
-
-  if (!description?.trim()) {
+  if (description === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "description",
     });
-  }
-
-  if (description?.trim().length > 500) {
+  } else if (typeof description !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "description",
+    });
+  } else if (description.trim().length > 500) {
     messages.push({
       message: "Максимальная длина 500 символов",
       field: "description",
     });
   }
 
-  if (typeof description !== "string") {
-    messages.push({
-      message: "Поле должно быть типом string",
-      field: "description",
-    });
-  }
-
-  if (!websiteUrl?.trim()) {
+  if (websiteUrl === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "websiteUrl",
     });
-  }
-
-  if (websiteUrl?.trim().length > 100) {
+  } else if (typeof websiteUrl !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "websiteUrl",
+    });
+  } else if (websiteUrl.trim().length > 100) {
     messages.push({
       message: "Максимальная длина 100 символов",
       field: "websiteUrl",
     });
-  }
-
-  if (!WEBSITE_URL_PATTERN.test(websiteUrl)) {
+  } else if (!WEBSITE_URL_PATTERN.test(websiteUrl)) {
     messages.push({
       message: "Некорректный url",
-      field: "websiteUrl",
-    });
-  }
-  
-  if (typeof websiteUrl !== "string") {
-    messages.push({
-      message: "Поле должно быть типом string",
       field: "websiteUrl",
     });
   }
