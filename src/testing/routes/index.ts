@@ -4,6 +4,6 @@ import { clearDB } from "../controllers/clearDB.controller";
 
 const router = Router();
 
-router.post(TESTING_ROUTES.ALL_DATA, clearDB);
+router.delete(TESTING_ROUTES.ALL_DATA, clearDB);
 
 export default router;

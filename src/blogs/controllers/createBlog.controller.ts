@@ -29,6 +29,13 @@ export const createBlog = (
     });
   }
 
+  if (typeof name !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "name",
+    });
+  }
+
   if (!description?.trim()) {
     messages.push({
       message: "Поле обязательное",
@@ -39,6 +46,13 @@ export const createBlog = (
   if (description?.trim().length > 500) {
     messages.push({
       message: "Максимальная длина 500 символов",
+      field: "description",
+    });
+  }
+
+  if (typeof description !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
       field: "description",
     });
   }
@@ -60,6 +74,13 @@ export const createBlog = (
   if (!WEBSITE_URL_PATTERN.test(websiteUrl)) {
     messages.push({
       message: "Некорректный url",
+      field: "websiteUrl",
+    });
+  }
+  
+  if (typeof websiteUrl !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
       field: "websiteUrl",
     });
   }

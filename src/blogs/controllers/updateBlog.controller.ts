@@ -14,9 +14,9 @@ export const updateBlog = (
 
   console.log(name, description, websiteUrl, id);
 
-  const videoIndex = db.blogs.findIndex((b) => b.id === id);
+  const blogIndex = db.blogs.findIndex((b) => b.id === id);
 
-  if (videoIndex === -1) {
+  if (blogIndex === -1) {
     return res.sendStatus(404);
   }
 
@@ -36,6 +36,13 @@ export const updateBlog = (
     });
   }
 
+  if (typeof name !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "name",
+    });
+  }
+
   if (!description?.trim()) {
     messages.push({
       message: "Поле обязательное",
@@ -46,6 +53,13 @@ export const updateBlog = (
   if (description?.trim().length > 500) {
     messages.push({
       message: "Максимальная длина 500 символов",
+      field: "description",
+    });
+  }
+
+  if (typeof description !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
       field: "description",
     });
   }
@@ -70,6 +84,13 @@ export const updateBlog = (
       field: "websiteUrl",
     });
   }
+  
+  if (typeof websiteUrl !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "websiteUrl",
+    });
+  }
 
   if (messages.length) {
     return res.status(400).json({
@@ -77,8 +98,8 @@ export const updateBlog = (
     });
   }
 
-  db.blogs[videoIndex] = {
-    ...db.blogs[videoIndex],
+  db.blogs[blogIndex] = {
+    ...db.blogs[blogIndex],
     name,
     description,
     websiteUrl,
