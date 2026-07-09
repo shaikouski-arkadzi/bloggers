@@ -14,86 +14,68 @@ export const createPost = (
 
   const messages: FieldError[] = [];
 
-  if (!title?.trim()) {
+  if (title === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "title",
     });
-  }
-
-  if (title?.trim().length > 30) {
-    messages.push({
-      message: "Максимальная длина 15 символов",
-      field: "title",
-    });
-  }
-
-  if (typeof title !== "string") {
+  } else if (typeof title !== "string") {
     messages.push({
       message: "Поле должно быть типом string",
       field: "title",
     });
+  } else if (title.trim().length > 30) {
+    messages.push({
+      message: "Максимальная длина 30 символов",
+      field: "title",
+    });
   }
 
-  if (!shortDescription?.trim()) {
+  if (shortDescription === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "shortDescription",
     });
-  }
-
-  if (shortDescription?.trim().length > 100) {
+  } else if (typeof shortDescription !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "shortDescription",
+    });
+  } else if (shortDescription.trim().length > 100) {
     messages.push({
       message: "Максимальная длина 100 символов",
       field: "shortDescription",
     });
   }
 
-  if (typeof shortDescription !== "string") {
-    messages.push({
-      message: "Поле должно быть типом string",
-      field: "shortDescription",
-    });
-  }
-
-  if (!content?.trim()) {
+  if (content === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "content",
     });
-  }
-
-  if (content?.trim().length > 1000) {
+  } else if (typeof content !== "string") {
+    messages.push({
+      message: "Поле должно быть типом string",
+      field: "content",
+    });
+  } else if (content.trim().length > 1000) {
     messages.push({
       message: "Максимальная длина 1000 символов",
       field: "content",
     });
   }
 
-  if (typeof content !== "string") {
-    messages.push({
-      message: "Поле должно быть типом string",
-      field: "content",
-    });
-  }
-
-  if (!blogId?.trim()) {
+  if (blogId === undefined) {
     messages.push({
       message: "Поле обязательное",
       field: "blogId",
     });
-  }
-
-  if (typeof blogId !== "string") {
+  } else if (typeof blogId !== "string") {
     messages.push({
       message: "Поле должно быть типом string",
       field: "blogId",
     });
-  }
-
-  const blog = db.blogs.find((b) => b.id === blogId);
-
-  if (!blog) {
+  } else if (!db.blogs.find((b) => b.id === blogId)) {
     messages.push({
       message: "Не найдено блога с таким идентификатором",
       field: "blogId",
@@ -112,7 +94,7 @@ export const createPost = (
     shortDescription,
     content,
     blogId,
-    blogName: blog!.name
+    blogName: db.blogs.find((b) => b.id === blogId)!.name
   };
 
   db.posts.push(newPost);
