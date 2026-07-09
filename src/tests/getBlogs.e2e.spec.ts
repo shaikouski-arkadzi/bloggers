@@ -1,7 +1,7 @@
 import request from "supertest";
 import express from "express";
-import router from "../routes";
-import { db } from "../../db";
+import router from "../blogs/routes";
+import { db } from "../db";
 
 const app = express();
 
