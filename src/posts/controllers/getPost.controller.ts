@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
 import { Post } from "../types";
-import { db } from "../../db";
+import { postRepository } from "../repositories";
 
 export const getPost = (
   req: Request<{ id: string }>,
   res: Response<Post | null>,
 ) => {
   const { id } = req.params;
-  const result = db.posts.find((post) => post.id === id);
-  if (result) {
-    res.status(200).json(result);
+  const post = postRepository.findById(id);
+  if (post) {
+    res.status(200).json(post);
   } else {
     res.sendStatus(404);
   }

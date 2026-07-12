@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { db } from "../../db";
+import { postRepository } from "../repositories";
 
 export const deletePost = (
   req: Request<{ id: string }>,
@@ -7,13 +7,11 @@ export const deletePost = (
 ) => {
   const { id } = req.params;
 
-  const index = db.posts.findIndex((post) => post.id === id);
+  const result = postRepository.delete(id);
 
-  if (index === -1) {
+  if (!result) {
     return res.sendStatus(404);
   }
-
-  db.posts.splice(index, 1);
 
   return res.sendStatus(204);
 };

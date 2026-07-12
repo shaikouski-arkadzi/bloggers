@@ -1,23 +1,19 @@
 import { Request, Response } from "express";
-import {  PostInputDto } from "../types";
+import { PostInputDto } from "../types";
 import { APIErrorResult, FieldError } from "../../common/types";
-import { db } from "../../db";
+import { postRepository } from "../repositories";
+import { blogRepository } from "../../blogs/repositories";
 
 export const updatePost = (
   req: Request<{ id: string }, {}, PostInputDto>,
   res: Response<APIErrorResult | null>,
 ) => {
-  const { title,shortDescription,content,blogId } = req.body;
+  const post = req.body;
+  const { title, shortDescription, content, blogId } = post;
 
   const { id } = req.params;
 
-  console.log(title,shortDescription,content,blogId, id);
-
-  const postIndex = db.posts.findIndex((p) => p.id === id);
-
-  if (postIndex === -1) {
-    return res.sendStatus(404);
-  }
+  console.log(title, shortDescription, content, blogId, id);
 
   const messages: FieldError[] = [];
 
@@ -82,7 +78,7 @@ export const updatePost = (
       message: "Поле должно быть типом string",
       field: "blogId",
     });
-  } else if (!db.blogs.find((b) => b.id === blogId)) {
+  } else if (!blogRepository.findById(blogId)) {
     messages.push({
       message: "Не найдено блога с таким идентификатором",
       field: "blogId",
@@ -95,15 +91,11 @@ export const updatePost = (
     });
   }
 
-  db.posts[postIndex] = {
-    ...db.posts[postIndex],
-    title,
-    shortDescription,
-    content,
-    blogId
-  };
+  const result = postRepository.update(id, post);
 
-  console.log(db.posts);
+  if (!result) {
+    return res.sendStatus(404);
+  }
 
   res.sendStatus(204);
 };

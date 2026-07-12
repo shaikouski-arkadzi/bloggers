@@ -1,16 +1,17 @@
-import { randomUUID } from "node:crypto";
 import { Request, Response } from "express";
 import { Post, PostInputDto } from "../types";
 import { APIErrorResult, FieldError } from "../../common/types";
-import { db } from "../../db";
+import { postRepository } from "../repositories";
+import { blogRepository } from "../../blogs/repositories";
 
 export const createPost = (
   req: Request<{}, {}, PostInputDto>,
   res: Response<Post | APIErrorResult>,
 ) => {
-  const { title,shortDescription,content,blogId } = req.body;
+  const post = req.body;
+  const { title, shortDescription, content, blogId } = post;
 
-  console.log(title,shortDescription,content,blogId);
+  console.log(title, shortDescription, content, blogId);
 
   const messages: FieldError[] = [];
 
@@ -75,7 +76,7 @@ export const createPost = (
       message: "Поле должно быть типом string",
       field: "blogId",
     });
-  } else if (!db.blogs.find((b) => b.id === blogId)) {
+  } else if (!blogRepository.findById(blogId)) {
     messages.push({
       message: "Не найдено блога с таким идентификатором",
       field: "blogId",
@@ -88,18 +89,7 @@ export const createPost = (
     });
   }
 
-  const newPost = {
-    id: randomUUID(),
-    title,
-    shortDescription,
-    content,
-    blogId,
-    blogName: db.blogs.find((b) => b.id === blogId)!.name
-  };
-
-  db.posts.push(newPost);
-
-  console.log(db.blogs);
+  const newPost = postRepository.create(post);
 
   res.status(201).json(newPost);
 };
