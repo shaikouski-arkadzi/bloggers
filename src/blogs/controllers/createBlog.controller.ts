@@ -1,15 +1,15 @@
-import { randomUUID } from "node:crypto";
 import { Request, Response } from "express";
 import { Blog, BlogInputDto } from "../types";
 import { APIErrorResult, FieldError } from "../../common/types";
 import { WEBSITE_URL_PATTERN } from "../../common/constants";
-import { db } from "../../db";
+import { blogRepository } from "../repositories";
 
 export const createBlog = (
   req: Request<{}, {}, BlogInputDto>,
   res: Response<Blog | APIErrorResult>,
 ) => {
-  const { name, description, websiteUrl } = req.body;
+  const blog = req.body;
+  const { name, description, websiteUrl } = blog;
 
   console.log(name, description, websiteUrl);
 
@@ -77,16 +77,7 @@ export const createBlog = (
     });
   }
 
-  const newBlog = {
-    id: randomUUID(),
-    name,
-    description,
-    websiteUrl,
-  };
-
-  db.blogs.push(newBlog);
-
-  console.log(db.blogs);
+  const newBlog = blogRepository.create(blog);
 
   res.status(201).json(newBlog);
 };

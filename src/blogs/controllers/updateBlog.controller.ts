@@ -2,21 +2,21 @@ import { Request, Response } from "express";
 import { BlogInputDto } from "../types";
 import { APIErrorResult, FieldError } from "../../common/types";
 import { WEBSITE_URL_PATTERN } from "../../common/constants";
-import { db } from "../../db";
+import { blogRepository } from "../repositories";
 
 export const updateBlog = (
   req: Request<{ id: string }, {}, BlogInputDto>,
   res: Response<APIErrorResult | null>,
 ) => {
-  const { name, description, websiteUrl } = req.body;
+  const blogData = req.body;
+  const { name, description, websiteUrl } = blogData;
 
   const { id } = req.params;
 
   console.log(name, description, websiteUrl, id);
+  const result = blogRepository.update(id, blogData);
 
-  const blogIndex = db.blogs.findIndex((b) => b.id === id);
-
-  if (blogIndex === -1) {
+  if (!result) {
     return res.sendStatus(404);
   }
 
@@ -84,14 +84,7 @@ export const updateBlog = (
     });
   }
 
-  db.blogs[blogIndex] = {
-    ...db.blogs[blogIndex],
-    name,
-    description,
-    websiteUrl,
-  };
-
-  console.log(db.blogs);
-
-  res.sendStatus(204);
+  if (result) {
+    res.sendStatus(204);
+  }
 };

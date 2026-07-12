@@ -1,19 +1,16 @@
 import { Request, Response } from "express";
-import { db } from "../../db";
+import { blogRepository } from "../repositories";
 
 export const deleteBlog = (
   req: Request<{ id: string }>,
   res: Response<null>,
 ) => {
   const { id } = req.params;
+  const result = blogRepository.delete(id);
 
-  const index = db.blogs.findIndex((blog) => blog.id === id);
-
-  if (index === -1) {
+  if (!result) {
     return res.sendStatus(404);
   }
-
-  db.blogs.splice(index, 1);
 
   return res.sendStatus(204);
 };
