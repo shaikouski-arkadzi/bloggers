@@ -1,4 +1,4 @@
-import request, {Response} from "supertest";
+import request, { Response } from "supertest";
 
 import express from "express";
 import { db } from "../db";
@@ -19,13 +19,14 @@ let createPostResponse: Response;
 
 describe("POST /posts", () => {
   beforeAll(async () => {
-    db.blogs.length = 0
-    db.posts.length = 0
+    db.blogs.length = 0;
+    db.posts.length = 0;
 
     const blogBody = {
       name: "string",
       description: "string",
-      websiteUrl: "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik"
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
     createBlogResponse = await request(app)
@@ -37,8 +38,8 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     createPostResponse = await request(app)
       .post(POSTS_PATH)
@@ -53,8 +54,8 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
@@ -69,34 +70,31 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: "testNew"
-    }
-    
-    await request(app)
-      .put(`${POSTS_PATH}/testtest`)
-      .send(postBody)
-      .expect(404);
+      blogId: "testNew",
+    };
+
+    await request(app).get(`${POSTS_PATH}/testtest`).send(postBody).expect(404);
   });
 
   it("should return 400 if title is missing", async () => {
     const postBody = {
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
-      .send(postBody)
+      .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "title",
-        }
+        },
       ],
     });
   });
@@ -106,14 +104,14 @@ describe("POST /posts", () => {
       title: 1,
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -127,12 +125,12 @@ describe("POST /posts", () => {
 
   it("should return 400 if title longer than 30 chars", async () => {
     const postBody = {
-      title: 'a'.repeat(31),
+      title: "a".repeat(31),
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
-    
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody)
@@ -142,7 +140,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 30 символов",
-          field: "title"
+          field: "title",
         },
       ],
     });
@@ -152,21 +150,21 @@ describe("POST /posts", () => {
     const postBody = {
       title: "stringNew",
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "shortDescription",
-        }
+        },
       ],
     });
   });
@@ -176,14 +174,14 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: 1,
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -198,11 +196,11 @@ describe("POST /posts", () => {
   it("should return 400 if shortDescription longer than 100 chars", async () => {
     const postBody = {
       title: "stringNew",
-      shortDescription: 'a'.repeat(101),
+      shortDescription: "a".repeat(101),
       content: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
-    
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody)
@@ -212,7 +210,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 100 символов",
-          field: "shortDescription"
+          field: "shortDescription",
         },
       ],
     });
@@ -222,21 +220,21 @@ describe("POST /posts", () => {
     const postBody = {
       title: "stringNew",
       shortDescription: "stringNew",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "content",
-        }
+        },
       ],
     });
   });
@@ -246,14 +244,14 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: "stringNew",
       content: 1,
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -269,10 +267,10 @@ describe("POST /posts", () => {
     const postBody = {
       title: "stringNew",
       shortDescription: "stringNew",
-      content: 'a'.repeat(1001),
-      blogId: createBlogResponse.body.id
-    }
-    
+      content: "a".repeat(1001),
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody)
@@ -282,7 +280,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 1000 символов",
-          field: "content"
+          field: "content",
         },
       ],
     });
@@ -292,21 +290,21 @@ describe("POST /posts", () => {
     const postBody = {
       title: "stringNew",
       shortDescription: "stringNew",
-      content: "stringNew"
-    }
+      content: "stringNew",
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "blogId",
-        }
+        },
       ],
     });
   });
@@ -316,14 +314,14 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: 1
-    }
+      blogId: 1,
+    };
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -340,9 +338,9 @@ describe("POST /posts", () => {
       title: "stringNew",
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: "testNew"
-    }
-    
+      blogId: "testNew",
+    };
+
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
       .send(postBody)
