@@ -18,7 +18,7 @@ export const resultValidationMiddleware = (
     .array({ onlyFirstError: true });
 
   if (errors.length > 0) {
-    res.status(400).json({ errorMessages: errors });
+    res.status(400).json({ errorsMessages: errors });
     return;
   }
 
