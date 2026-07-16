@@ -7,14 +7,39 @@ import {
   updatePost,
 } from "../controllers";
 import { POSTS_ROUTES } from "../constants";
-import { idValidation } from "../../common/validation";
+import {
+  idValidation,
+  resultValidationMiddleware,
+} from "../../common/validation";
+import { postInputDtoValidation } from "../validation";
 
 const router = Router();
 
-router.post(POSTS_ROUTES.ROOT, createPost);
+router.post(
+  POSTS_ROUTES.ROOT,
+  postInputDtoValidation,
+  resultValidationMiddleware,
+  createPost,
+);
 router.get(POSTS_ROUTES.ROOT, getPosts);
-router.get(POSTS_ROUTES.BY_ID, idValidation, getPost);
-router.put(POSTS_ROUTES.BY_ID, idValidation, updatePost);
-router.delete(POSTS_ROUTES.BY_ID, idValidation, deletePost);
+router.get(
+  POSTS_ROUTES.BY_ID,
+  idValidation,
+  resultValidationMiddleware,
+  getPost,
+);
+router.put(
+  POSTS_ROUTES.BY_ID,
+  idValidation,
+  postInputDtoValidation,
+  resultValidationMiddleware,
+  updatePost,
+);
+router.delete(
+  POSTS_ROUTES.BY_ID,
+  idValidation,
+  resultValidationMiddleware,
+  deletePost,
+);
 
 export default router;
