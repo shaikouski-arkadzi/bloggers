@@ -6,11 +6,11 @@ const config: Config = {
 
   roots: ["<rootDir>/src"],
 
-  testMatch: [
-    "**/tests/**/*.e2e.spec.ts",
-  ],
+  testMatch: ["**/tests/**/*.e2e.spec.ts"],
 
   moduleFileExtensions: ["ts", "js", "json"],
+
+  setupFiles: ["<rootDir>/jest.setup.ts"],
 
   clearMocks: true,
   verbose: true,
