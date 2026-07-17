@@ -12,11 +12,13 @@ import {
   resultValidationMiddleware,
 } from "../../common/validation";
 import { postInputDtoValidation } from "../validation";
+import { superAdminGuardMiddleware } from "../../auth/middleware";
 
 const router = Router();
 
 router.post(
   POSTS_ROUTES.ROOT,
+  superAdminGuardMiddleware,
   postInputDtoValidation,
   resultValidationMiddleware,
   createPost,
@@ -30,6 +32,7 @@ router.get(
 );
 router.put(
   POSTS_ROUTES.BY_ID,
+  superAdminGuardMiddleware,
   idValidation,
   postInputDtoValidation,
   resultValidationMiddleware,
@@ -37,6 +40,7 @@ router.put(
 );
 router.delete(
   POSTS_ROUTES.BY_ID,
+  superAdminGuardMiddleware,
   idValidation,
   resultValidationMiddleware,
   deletePost,
