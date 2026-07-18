@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../../settings/config";
 
 export const superAdminGuardMiddleware = (
   req: Request,
@@ -22,6 +23,11 @@ export const superAdminGuardMiddleware = (
 
   const credentials = Buffer.from(token, "base64").toString("utf-8");
   const [username, password] = credentials.split(":");
+
+  if (username !== ADMIN_LOGIN || password !== ADMIN_PASSWORD) {
+    res.sendStatus(401);
+    return;
+  }
 
   next();
 };
