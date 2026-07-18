@@ -9,9 +9,7 @@ export const deletePost = (
 
   const result = postRepository.delete(id);
 
-  if (!result) {
-    return res.sendStatus(404);
+  if (result) {
+    return res.sendStatus(204);
   }
-
-  return res.sendStatus(204);
 };

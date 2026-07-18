@@ -10,7 +10,5 @@ export const getPost = (
   const post = postRepository.findById(id);
   if (post) {
     res.status(200).json(post);
-  } else {
-    res.sendStatus(404);
   }
 };

@@ -12,9 +12,5 @@ export const updatePost = (
 
   const result = postRepository.update(id, post);
 
-  if (!result) {
-    return res.sendStatus(404);
-  }
-
-  res.sendStatus(204);
+  if (result) res.sendStatus(204);
 };

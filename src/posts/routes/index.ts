@@ -11,7 +11,7 @@ import {
   idValidation,
   resultValidationMiddleware,
 } from "../../common/validation";
-import { postInputDtoValidation } from "../validation";
+import { PostExistsMiddleware, postInputDtoValidation } from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
 
 const router = Router();
@@ -27,6 +27,7 @@ router.get(POSTS_ROUTES.ROOT, getPosts);
 router.get(
   POSTS_ROUTES.BY_ID,
   idValidation,
+  PostExistsMiddleware,
   resultValidationMiddleware,
   getPost,
 );
@@ -34,6 +35,7 @@ router.put(
   POSTS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
+  PostExistsMiddleware,
   postInputDtoValidation,
   resultValidationMiddleware,
   updatePost,
@@ -42,6 +44,7 @@ router.delete(
   POSTS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
+  PostExistsMiddleware,
   resultValidationMiddleware,
   deletePost,
 );
