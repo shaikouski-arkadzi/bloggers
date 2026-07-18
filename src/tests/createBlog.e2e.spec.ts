@@ -2,6 +2,10 @@ import request from "supertest";
 import express from "express";
 import router from "../blogs/routes";
 import { db } from "../db";
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+
+let ADMIN_LOGIN_PASSWORD: string;
+let ADMIN_TOKEN: string;
 
 const app = express();
 
@@ -12,6 +16,9 @@ describe("POST /blogs", () => {
   beforeAll(() => {
     db.blogs.length = 0;
     db.posts.length = 0;
+
+    ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
+    ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
   });
 
   it("should create blog with valid data", async () => {
@@ -22,7 +29,11 @@ describe("POST /blogs", () => {
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const response = await request(app).post("/blogs").send(body).expect(201);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body)
+      .expect(201);
 
     expect(response.body).toEqual({
       id: expect.stringMatching(
@@ -44,7 +55,10 @@ describe("POST /blogs", () => {
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -66,7 +80,10 @@ describe("POST /blogs", () => {
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -83,6 +100,7 @@ describe("POST /blogs", () => {
   it("should return 400 if name longer than 15 chars", async () => {
     const response = await request(app)
       .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send({
         name: "a".repeat(16),
         description: "string",
@@ -108,7 +126,10 @@ describe("POST /blogs", () => {
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -130,7 +151,10 @@ describe("POST /blogs", () => {
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -147,6 +171,7 @@ describe("POST /blogs", () => {
   it("should return 400 if description longer than 500 chars", async () => {
     const response = await request(app)
       .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send({
         name: "string",
         description: "a".repeat(501),
@@ -171,7 +196,10 @@ describe("POST /blogs", () => {
       description: "string",
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -192,7 +220,10 @@ describe("POST /blogs", () => {
       websiteUrl: 1,
     };
 
-    const response = await request(app).post("/blogs").send(body);
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -209,6 +240,7 @@ describe("POST /blogs", () => {
   it("should return 400 if websiteUrl longer than 500 chars", async () => {
     const response = await request(app)
       .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send({
         name: "string",
         description: "string",
@@ -229,6 +261,7 @@ describe("POST /blogs", () => {
   it("should return 400 if websiteUrl has invalid format", async () => {
     const response = await request(app)
       .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send({
         name: "string",
         description: "string",

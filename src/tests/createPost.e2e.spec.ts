@@ -1,10 +1,14 @@
-import request, {Response} from "supertest";
+import request, { Response } from "supertest";
 import express from "express";
 import { db } from "../db";
 import blogsRoutes from "../blogs/routes";
 import postsRoutes from "../posts/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+
+let ADMIN_LOGIN_PASSWORD: string;
+let ADMIN_TOKEN: string;
 
 const app = express();
 
@@ -17,17 +21,22 @@ let createBlogResponse: Response;
 
 describe("POST /posts", () => {
   beforeAll(async () => {
-    db.blogs.length = 0
-    db.posts.length = 0
+    db.blogs.length = 0;
+    db.posts.length = 0;
+
+    ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
+    ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
 
     const blogBody = {
       name: "string",
       description: "string",
-      websiteUrl: "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik"
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
     createBlogResponse = await request(app)
       .post(BLOGS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(blogBody)
       .expect(201);
   });
@@ -37,21 +46,26 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const createPostResponse = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(201);
 
     expect(createPostResponse.body).toEqual({
-      id: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+      id: expect.stringMatching(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      ),
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
-      blogName: "string"
+      blogId: expect.stringMatching(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+      ),
+      blogName: "string",
     });
 
     expect(db.posts.length).toBe(1);
@@ -61,21 +75,22 @@ describe("POST /posts", () => {
     const postBody = {
       shortDescription: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "title",
-        }
+        },
       ],
     });
   });
@@ -85,14 +100,15 @@ describe("POST /posts", () => {
       title: 1,
       shortDescription: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -106,14 +122,15 @@ describe("POST /posts", () => {
 
   it("should return 400 if title longer than 30 chars", async () => {
     const postBody = {
-      title: 'a'.repeat(31),
+      title: "a".repeat(31),
       shortDescription: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
-    
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -121,7 +138,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 30 символов",
-          field: "title"
+          field: "title",
         },
       ],
     });
@@ -131,21 +148,22 @@ describe("POST /posts", () => {
     const postBody = {
       title: "string",
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "shortDescription",
-        }
+        },
       ],
     });
   });
@@ -155,14 +173,15 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: 1,
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -177,13 +196,14 @@ describe("POST /posts", () => {
   it("should return 400 if shortDescription longer than 100 chars", async () => {
     const postBody = {
       title: "string",
-      shortDescription: 'a'.repeat(101),
+      shortDescription: "a".repeat(101),
       content: "string",
-      blogId: createBlogResponse.body.id
-    }
-    
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -191,7 +211,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 100 символов",
-          field: "shortDescription"
+          field: "shortDescription",
         },
       ],
     });
@@ -201,21 +221,22 @@ describe("POST /posts", () => {
     const postBody = {
       title: "string",
       shortDescription: "string",
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "content",
-        }
+        },
       ],
     });
   });
@@ -225,14 +246,15 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: 1,
-      blogId: createBlogResponse.body.id
-    }
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -248,12 +270,13 @@ describe("POST /posts", () => {
     const postBody = {
       title: "string",
       shortDescription: "string",
-      content: 'a'.repeat(1001),
-      blogId: createBlogResponse.body.id
-    }
-    
+      content: "a".repeat(1001),
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -261,7 +284,7 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Максимальная длина 1000 символов",
-          field: "content"
+          field: "content",
         },
       ],
     });
@@ -271,21 +294,22 @@ describe("POST /posts", () => {
     const postBody = {
       title: "string",
       shortDescription: "string",
-      content: "string"
-    }
+      content: "string",
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
         {
           message: "Поле обязательное",
           field: "blogId",
-        }
+        },
       ],
     });
   });
@@ -295,14 +319,15 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: 1
-    }
+      blogId: 1,
+    };
 
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
-    expect(response.statusCode).toEqual(400)
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -319,11 +344,12 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: "test"
-    }
-    
+      blogId: "test",
+    };
+
     const response = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 

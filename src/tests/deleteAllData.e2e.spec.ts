@@ -7,6 +7,10 @@ import testingRoutes from "../testing/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { TESTING_PATH, TESTING_ROUTES } from "../testing/constants";
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+
+let ADMIN_LOGIN_PASSWORD: string;
+let ADMIN_TOKEN: string;
 
 const app = express();
 
@@ -20,6 +24,9 @@ describe("DELETE /testing/all-data", () => {
   beforeAll(() => {
     db.blogs.length = 0;
     db.posts.length = 0;
+
+    ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
+    ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
   });
 
   it("should delete all data", async () => {
@@ -32,6 +39,7 @@ describe("DELETE /testing/all-data", () => {
 
     const createBlogResponse = await request(app)
       .post(BLOGS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body)
       .expect(201);
 
@@ -42,7 +50,11 @@ describe("DELETE /testing/all-data", () => {
       blogId: createBlogResponse.body.id,
     };
 
-    await request(app).post(POSTS_PATH).send(postBody).expect(201);
+    await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(201);
 
     await request(app)
       .delete(`${TESTING_PATH}${TESTING_ROUTES.ALL_DATA}`)

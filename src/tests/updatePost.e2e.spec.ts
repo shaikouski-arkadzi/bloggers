@@ -6,6 +6,10 @@ import blogsRoutes from "../blogs/routes";
 import postsRoutes from "../posts/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
+import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+
+let ADMIN_LOGIN_PASSWORD: string;
+let ADMIN_TOKEN: string;
 
 const app = express();
 
@@ -17,10 +21,13 @@ app.use(POSTS_PATH, postsRoutes);
 let createBlogResponse: Response;
 let createPostResponse: Response;
 
-describe("POST /posts", () => {
+describe("PUT /posts", () => {
   beforeAll(async () => {
     db.blogs.length = 0;
     db.posts.length = 0;
+
+    ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
+    ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
 
     const blogBody = {
       name: "string",
@@ -31,6 +38,7 @@ describe("POST /posts", () => {
 
     createBlogResponse = await request(app)
       .post(BLOGS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(blogBody)
       .expect(201);
 
@@ -43,6 +51,7 @@ describe("POST /posts", () => {
 
     createPostResponse = await request(app)
       .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(201);
 
@@ -59,6 +68,7 @@ describe("POST /posts", () => {
 
     await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(204);
 
@@ -73,7 +83,11 @@ describe("POST /posts", () => {
       blogId: "testNew",
     };
 
-    await request(app).get(`${POSTS_PATH}/testtest`).send(postBody).expect(404);
+    await request(app)
+      .get(`${POSTS_PATH}/testtest`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(404);
   });
 
   it("should return 400 if title is missing", async () => {
@@ -85,6 +99,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -109,6 +124,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -133,6 +149,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -155,6 +172,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -179,6 +197,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -203,6 +222,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -225,6 +245,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -249,6 +270,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -273,6 +295,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
@@ -295,6 +318,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -319,6 +343,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody);
 
     expect(response.statusCode).toEqual(400);
@@ -343,6 +368,7 @@ describe("POST /posts", () => {
 
     const response = await request(app)
       .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(400);
 
