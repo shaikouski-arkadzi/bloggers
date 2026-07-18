@@ -12,9 +12,7 @@ export const updateBlog = (
 
   const result = blogRepository.update(id, blogData);
 
-  if (!result) {
-    return res.sendStatus(404);
-  } else {
+  if (result) {
     res.sendStatus(204);
   }
 };

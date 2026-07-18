@@ -8,9 +8,7 @@ export const deleteBlog = (
   const { id } = req.params;
   const result = blogRepository.delete(id);
 
-  if (!result) {
-    return res.sendStatus(404);
+  if (result) {
+    return res.sendStatus(204);
   }
-
-  return res.sendStatus(204);
 };

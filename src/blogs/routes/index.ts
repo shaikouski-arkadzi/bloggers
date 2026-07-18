@@ -11,7 +11,7 @@ import {
   idValidation,
   resultValidationMiddleware,
 } from "../../common/validation";
-import { blogInputDtoValidation } from "../validation";
+import { blogExistsMiddleware, blogInputDtoValidation } from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
 
 const router = Router();
@@ -24,11 +24,18 @@ router.post(
   createBlog,
 );
 router.get(BLOGS_ROUTES.ROOT, getBlogs);
-router.get(BLOGS_ROUTES.BY_ID, idValidation, getBlog);
+router.get(
+  BLOGS_ROUTES.BY_ID,
+  idValidation,
+  blogExistsMiddleware,
+  resultValidationMiddleware,
+  getBlog,
+);
 router.put(
   BLOGS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
+  blogExistsMiddleware,
   blogInputDtoValidation,
   resultValidationMiddleware,
   updateBlog,
@@ -37,6 +44,7 @@ router.delete(
   BLOGS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
+  blogExistsMiddleware,
   resultValidationMiddleware,
   deleteBlog,
 );

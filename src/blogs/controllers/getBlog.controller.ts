@@ -12,7 +12,5 @@ export const getBlog = (
 
   if (result) {
     res.status(200).json(result);
-  } else {
-    res.sendStatus(404);
   }
 };
