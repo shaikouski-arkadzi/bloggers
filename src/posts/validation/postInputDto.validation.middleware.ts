@@ -1,40 +1,39 @@
 import { body } from "express-validator";
-import { WEBSITE_URL_PATTERN } from "../../common/constants";
 import { blogRepository } from "../../blogs/repositories";
 
 export const titleValidation = body("title")
-  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
   .withMessage("Поле должно быть типом string")
+  .trim()
   .isLength({ max: 30 })
   .withMessage("Максимальная длина 30 символов");
 
 export const shortDescriptionValidation = body("shortDescription")
-  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
   .withMessage("Поле должно быть типом string")
+  .trim()
   .isLength({ max: 100 })
   .withMessage("Максимальная длина 100 символов");
 
 export const contentValidation = body("content")
-  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
   .withMessage("Поле должно быть типом string")
+  .trim()
   .isLength({ max: 1000 })
   .withMessage("Максимальная длина 1000 символов");
 
 export const blogIdValidation = body("blogId")
-  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
   .withMessage("Поле должно быть типом string")
+  .trim()
   .custom((blogId) => {
     const blog = blogRepository.findById(blogId);
 
