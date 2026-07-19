@@ -237,7 +237,7 @@ describe("POST /blogs", () => {
     });
   });
 
-  it("should return 400 if websiteUrl longer than 500 chars", async () => {
+  it("should return 400 if websiteUrl longer than 100 chars", async () => {
     const response = await request(app)
       .post("/blogs")
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)

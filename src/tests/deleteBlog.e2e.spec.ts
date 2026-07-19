@@ -42,6 +42,9 @@ describe("DELETE /blogs/:id", () => {
   });
 
   it("should return 404 if blog does not exist", async () => {
-    await request(app).get("/blogs/test").expect(404);
+    await request(app)
+      .delete("/blogs/test")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .expect(404);
   });
 });

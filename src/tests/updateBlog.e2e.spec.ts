@@ -7,21 +7,21 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
+let idCreatedBlog: string;
+
 const app = express();
 
 app.use(express.json());
 app.use("/blogs", router);
 
 describe("PUT /blogs/:id", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     db.blogs.length = 0;
     db.posts.length = 0;
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
-  });
 
-  it("should update blog with valid data", async () => {
     const bodyCreate = {
       name: "string",
       description: "string",
@@ -35,15 +35,22 @@ describe("PUT /blogs/:id", () => {
       .send(bodyCreate)
       .expect(201);
 
+    console.log("before");
+    console.log(responseCreate.body.id);
+
+    idCreatedBlog = responseCreate.body.id;
+  });
+
+  it("should update blog with valid data", async () => {
     const bodyUpdate = {
-      name: "stringstring",
-      description: "string",
+      name: "stringNew",
+      description: "stringNew",
       websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
     };
 
     await request(app)
-      .put(`/blogs/${responseCreate.body.id}`)
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(bodyUpdate)
       .expect(204);
@@ -68,13 +75,13 @@ describe("PUT /blogs/:id", () => {
 
   it("should return 400 if name is missing", async () => {
     const body = {
-      description: "string",
+      description: "stringNew",
       websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -93,13 +100,13 @@ describe("PUT /blogs/:id", () => {
   it("should return 400 if name is not string", async () => {
     const body = {
       name: 1,
-      description: "string",
+      description: "stringNew",
       websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -116,16 +123,19 @@ describe("PUT /blogs/:id", () => {
   });
 
   it("should return 400 if name longer than 15 chars", async () => {
+    const body = {
+      name: "a".repeat(16),
+      description: "stringNew",
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
+    };
+
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send({
-        name: "a".repeat(16),
-        description: "string",
-        websiteUrl:
-          "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
-      })
-      .expect(400);
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -139,13 +149,13 @@ describe("PUT /blogs/:id", () => {
 
   it("should return 400 if description is missing", async () => {
     const body = {
-      name: "string",
+      name: "stringNew",
       websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -163,14 +173,14 @@ describe("PUT /blogs/:id", () => {
 
   it("should return 400 if description is not string", async () => {
     const body = {
-      name: "string",
+      name: "stringNEW",
       description: 1,
       websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -187,16 +197,19 @@ describe("PUT /blogs/:id", () => {
   });
 
   it("should return 400 if description longer than 500 chars", async () => {
+    const body = {
+      name: "strnigNew",
+      description: "a".repeat(501),
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
+    };
+
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send({
-        name: "string",
-        description: "a".repeat(501),
-        websiteUrl:
-          "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
-      })
-      .expect(400);
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -210,12 +223,12 @@ describe("PUT /blogs/:id", () => {
 
   it("should return 400 if websiteUrl is missing", async () => {
     const body = {
-      name: "string",
-      description: "string",
+      name: "stringNEW",
+      description: "stringNEW",
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -233,13 +246,13 @@ describe("PUT /blogs/:id", () => {
 
   it("should return 400 if websiteUrl is not string", async () => {
     const body = {
-      name: "string",
-      description: "string",
+      name: "stringNew",
+      description: "stringNew",
       websiteUrl: 1,
     };
 
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body);
 
@@ -255,16 +268,19 @@ describe("PUT /blogs/:id", () => {
     });
   });
 
-  it("should return 400 if websiteUrl longer than 500 chars", async () => {
+  it("should return 400 if websiteUrl longer than 100 chars", async () => {
+    const body = {
+      name: "strnigNew",
+      description: "strnigNew",
+      websiteUrl: "a".repeat(101),
+    };
+
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send({
-        name: "string",
-        description: "string",
-        websiteUrl: "a".repeat(101),
-      })
-      .expect(400);
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [
@@ -277,15 +293,18 @@ describe("PUT /blogs/:id", () => {
   });
 
   it("should return 400 if websiteUrl has invalid format", async () => {
+    const body = {
+      name: "strnigNew",
+      description: "strnigNew",
+      websiteUrl: "http://example.com",
+    };
+
     const response = await request(app)
-      .post("/blogs")
+      .put(`/blogs/${idCreatedBlog}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send({
-        name: "string",
-        description: "string",
-        websiteUrl: "http://example.com",
-      })
-      .expect(400);
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
       errorsMessages: [

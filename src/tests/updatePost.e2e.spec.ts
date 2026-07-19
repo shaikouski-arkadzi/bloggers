@@ -84,7 +84,7 @@ describe("PUT /posts", () => {
     };
 
     await request(app)
-      .get(`${POSTS_PATH}/testtest`)
+      .put(`${POSTS_PATH}/testtest`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(404);
