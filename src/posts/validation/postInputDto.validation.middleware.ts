@@ -7,6 +7,8 @@ export const titleValidation = body("title")
   .isString()
   .withMessage("Поле должно быть типом string")
   .trim()
+  .notEmpty()
+  .withMessage("Поле не должно быть пустым")
   .isLength({ max: 30 })
   .withMessage("Максимальная длина 30 символов");
 
@@ -16,6 +18,8 @@ export const shortDescriptionValidation = body("shortDescription")
   .isString()
   .withMessage("Поле должно быть типом string")
   .trim()
+  .notEmpty()
+  .withMessage("Поле не должно быть пустым")
   .isLength({ max: 100 })
   .withMessage("Максимальная длина 100 символов");
 
@@ -25,6 +29,8 @@ export const contentValidation = body("content")
   .isString()
   .withMessage("Поле должно быть типом string")
   .trim()
+  .notEmpty()
+  .withMessage("Поле не должно быть пустым")
   .isLength({ max: 1000 })
   .withMessage("Максимальная длина 1000 символов");
 
@@ -34,6 +40,8 @@ export const blogIdValidation = body("blogId")
   .isString()
   .withMessage("Поле должно быть типом string")
   .trim()
+  .notEmpty()
+  .withMessage("Поле не должно быть пустым")
   .custom((blogId) => {
     const blog = blogRepository.findById(blogId);
 
