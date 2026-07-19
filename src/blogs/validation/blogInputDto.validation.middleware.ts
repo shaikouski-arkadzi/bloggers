@@ -2,6 +2,7 @@ import { body } from "express-validator";
 import { WEBSITE_URL_PATTERN } from "../../common/constants";
 
 export const nameValidation = body("name")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
@@ -10,6 +11,7 @@ export const nameValidation = body("name")
   .withMessage("Максимальная длина 15 символов");
 
 export const descriptionValidation = body("description")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
@@ -18,6 +20,7 @@ export const descriptionValidation = body("description")
   .withMessage("Максимальная длина 500 символов");
 
 export const websiteUrlValidation = body("websiteUrl")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()

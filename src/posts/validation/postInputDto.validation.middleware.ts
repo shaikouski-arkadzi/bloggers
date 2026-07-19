@@ -3,6 +3,7 @@ import { WEBSITE_URL_PATTERN } from "../../common/constants";
 import { blogRepository } from "../../blogs/repositories";
 
 export const titleValidation = body("title")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
@@ -11,6 +12,7 @@ export const titleValidation = body("title")
   .withMessage("Максимальная длина 30 символов");
 
 export const shortDescriptionValidation = body("shortDescription")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
@@ -19,6 +21,7 @@ export const shortDescriptionValidation = body("shortDescription")
   .withMessage("Максимальная длина 100 символов");
 
 export const contentValidation = body("content")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
@@ -27,6 +30,7 @@ export const contentValidation = body("content")
   .withMessage("Максимальная длина 1000 символов");
 
 export const blogIdValidation = body("blogId")
+  .trim()
   .exists()
   .withMessage("Поле обязательное")
   .isString()
