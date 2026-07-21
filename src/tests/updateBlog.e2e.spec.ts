@@ -122,6 +122,31 @@ describe("PUT /blogs/:id", () => {
     });
   });
 
+  it("should return 400 if name is empty", async () => {
+    const body = {
+      name: " ",
+      description: "stringNew",
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
+    };
+
+    const response = await request(app)
+      .put(`/blogs/${idCreatedBlog}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "name",
+        },
+      ],
+    });
+  });
+
   it("should return 400 if name longer than 15 chars", async () => {
     const body = {
       name: "a".repeat(16),
@@ -165,6 +190,31 @@ describe("PUT /blogs/:id", () => {
       errorsMessages: [
         {
           message: "Поле обязательное",
+          field: "description",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if description is empty", async () => {
+    const body = {
+      name: "stringNew",
+      description: " ",
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYNEW",
+    };
+
+    const response = await request(app)
+      .put(`/blogs/${idCreatedBlog}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
           field: "description",
         },
       ],
@@ -238,6 +288,30 @@ describe("PUT /blogs/:id", () => {
       errorsMessages: [
         {
           message: "Поле обязательное",
+          field: "websiteUrl",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if websiteUrl is empty", async () => {
+    const body = {
+      name: "stringNew",
+      description: "stringNew",
+      websiteUrl: " ",
+    };
+
+    const response = await request(app)
+      .put(`/blogs/${idCreatedBlog}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
           field: "websiteUrl",
         },
       ],

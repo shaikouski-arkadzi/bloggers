@@ -72,6 +72,31 @@ describe("POST /blogs", () => {
     });
   });
 
+  it("should return 400 if name is empty", async () => {
+    const body = {
+      name: " ",
+      description: "string",
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+    };
+
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "name",
+        },
+      ],
+    });
+  });
+
   it("should return 400 if name is not string", async () => {
     const body = {
       name: 1,
@@ -143,6 +168,31 @@ describe("POST /blogs", () => {
     });
   });
 
+  it("should return 400 if description is empty", async () => {
+    const body = {
+      name: "string",
+      description: " ",
+      websiteUrl:
+        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+    };
+
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "description",
+        },
+      ],
+    });
+  });
+
   it("should return 400 if description is not string", async () => {
     const body = {
       name: "string",
@@ -207,6 +257,30 @@ describe("POST /blogs", () => {
       errorsMessages: [
         {
           message: "Поле обязательное",
+          field: "websiteUrl",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if websiteUrl is empty", async () => {
+    const body = {
+      name: "string",
+      description: "string",
+      websiteUrl: " ",
+    };
+
+    const response = await request(app)
+      .post("/blogs")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
           field: "websiteUrl",
         },
       ],

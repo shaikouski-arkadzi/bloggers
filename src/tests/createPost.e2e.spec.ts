@@ -95,6 +95,31 @@ describe("POST /posts", () => {
     });
   });
 
+  it("should return 400 if title is empty", async () => {
+    const postBody = {
+      title: " ",
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "title",
+        },
+      ],
+    });
+  });
+
   it("should return 400 if title is not string", async () => {
     const postBody = {
       title: 1,
@@ -168,6 +193,31 @@ describe("POST /posts", () => {
     });
   });
 
+  it("should return 400 if shortDescription is empty", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: " ",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "shortDescription",
+        },
+      ],
+    });
+  });
+
   it("should return 400 if shortDescription is not string", async () => {
     const postBody = {
       title: "string",
@@ -235,6 +285,31 @@ describe("POST /posts", () => {
       errorsMessages: [
         {
           message: "Поле обязательное",
+          field: "content",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if content is empty", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: " ",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
           field: "content",
         },
       ],
