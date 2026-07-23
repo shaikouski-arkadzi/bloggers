@@ -1,56 +1,60 @@
 import { randomUUID } from "node:crypto";
+import { postsCollection } from "../../db";
 import { Post, PostInputDto } from "../types";
-import { db } from "../../db";
+import { blogRepository } from "../../blogs/repositories";
 
 export const postRepository = {
-  findAll(): Post[] {
-    return db.posts;
+  async findAll(): Promise<Post[]> {
+    return await postsCollection.find({}).toArray();
   },
 
-  findById(id: string): Post | undefined {
-    return db.posts.find((post) => post.id === id);
+  async findById(id: string): Promise<Post | null> {
+    return await postsCollection.findOne({ id });
   },
 
-  create(post: PostInputDto): Post {
-    const newPost = {
+  async create(post: PostInputDto): Promise<Post> {
+    const blog = await blogRepository.findById(post.blogId);
+
+    if (!blog) throw new Error("Не найдено блога с таким id");
+
+    const newPost: Post = {
       id: randomUUID(),
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
       blogId: post.blogId,
-      blogName: db.blogs.find((b) => b.id === post.blogId)!.name,
+      blogName: blog.name,
     };
 
-    db.posts.push(newPost);
-
-    console.log(db.posts);
+    await postsCollection.insertOne(newPost);
 
     return newPost;
   },
 
-  update(id: string, post: PostInputDto): boolean {
-    const postIndex = db.posts.findIndex((p) => p.id === id);
+  async update(id: string, post: PostInputDto): Promise<boolean> {
+    const blog = await blogRepository.findById(post.blogId);
 
-    if (postIndex === -1) {
-      return false;
-    }
+    if (!blog) throw new Error("Не найдено блога с таким id");
 
-    db.posts[postIndex] = {
-      ...db.posts[postIndex],
-      ...post,
-    };
+    const result = await postsCollection.updateOne(
+      { id },
+      {
+        $set: {
+          title: post.title,
+          shortDescription: post.shortDescription,
+          content: post.content,
+          blogId: post.blogId,
+          blogName: blog.name,
+        },
+      },
+    );
 
-    return true;
+    return result.matchedCount === 1;
   },
 
-  delete(id: string): boolean {
-    const index = db.posts.findIndex((post) => post.id === id);
+  async delete(id: string): Promise<boolean> {
+    const result = await postsCollection.deleteOne({ id });
 
-    if (index === -1) {
-      return false;
-    }
-
-    db.posts.splice(index, 1);
-    return true;
+    return result.deletedCount === 1;
   },
 };

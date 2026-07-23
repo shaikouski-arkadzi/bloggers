@@ -1,54 +1,47 @@
 import { randomUUID } from "node:crypto";
+import { blogsCollection } from "../../db";
 import { Blog } from "../types";
-import { db } from "../../db";
 
 export const blogRepository = {
-  findAll(): Blog[] {
-    return db.blogs;
+  async findAll(): Promise<Blog[]> {
+    return await blogsCollection.find({}).toArray();
   },
 
-  findById(id: string): Blog | undefined {
-    return db.blogs.find((blog) => blog.id === id);
+  async findById(id: string): Promise<Blog | null> {
+    return await blogsCollection.findOne({ id });
   },
 
-  create(blog: Omit<Blog, "id">): Blog {
-    const newBlog = {
+  async create(blog: Omit<Blog, "id">): Promise<Blog> {
+    const newBlog: Blog = {
       id: randomUUID(),
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
     };
 
-    db.blogs.push(newBlog);
-
-    console.log(db.blogs);
+    await blogsCollection.insertOne(newBlog);
 
     return newBlog;
   },
 
-  update(id: string, blog: Omit<Blog, "id">): boolean {
-    const blogIndex = db.blogs.findIndex((b) => b.id === id);
+  async update(id: string, blog: Omit<Blog, "id">): Promise<boolean> {
+    const result = await blogsCollection.updateOne(
+      { id },
+      {
+        $set: {
+          name: blog.name,
+          description: blog.description,
+          websiteUrl: blog.websiteUrl,
+        },
+      },
+    );
 
-    if (blogIndex === -1) {
-      return false;
-    }
-
-    db.blogs[blogIndex] = {
-      ...db.blogs[blogIndex],
-      ...blog,
-    };
-
-    return true;
+    return result.matchedCount === 1;
   },
 
-  delete(id: string): boolean {
-    const index = db.blogs.findIndex((blog) => blog.id === id);
+  async delete(id: string): Promise<boolean> {
+    const result = await blogsCollection.deleteOne({ id });
 
-    if (index === -1) {
-      return false;
-    }
-
-    db.blogs.splice(index, 1);
-    return true;
+    return result.deletedCount === 1;
   },
 };
