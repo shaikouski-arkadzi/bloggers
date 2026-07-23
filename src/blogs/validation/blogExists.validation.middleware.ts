@@ -1,18 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import { db } from "../../db";
+import { blogRepository } from "../repositories";
 
-export const blogExistsMiddleware = (
+export const blogExistsMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { id } = req.params;
-  const blogIndex = db.blogs.findIndex((b) => b.id === id);
+  if (typeof id === "string") {
+    const blog = await blogRepository.findById(id);
 
-  if (blogIndex === -1) {
-    res.sendStatus(404);
-    return;
+    if (!blog) {
+      res.sendStatus(404);
+      return;
+    }
+
+    next();
   }
-
-  next();
 };
