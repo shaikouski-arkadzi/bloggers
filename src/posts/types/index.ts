@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export interface PostInputDto {
   title: string;
   shortDescription: string;
@@ -5,11 +7,12 @@ export interface PostInputDto {
   blogId: string;
 }
 
-export interface Post {
+export interface PostDb extends PostInputDto {
+  _id: ObjectId;
+  blogName: string;
+}
+
+export interface Post extends PostInputDto {
   id: string;
-  title: string;
-  shortDescription: string;
-  content: string;
-  blogId: string;
   blogName: string;
 }
