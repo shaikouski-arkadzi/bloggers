@@ -1,15 +1,24 @@
-import { randomUUID } from "node:crypto";
 import { postsCollection } from "../../db";
-import { Post, PostInputDto } from "../types";
+import { Post, PostDb, PostInputDto } from "../types";
 import { blogRepository } from "../../blogs/repositories";
+import { mapPostDbToPost } from "../utils";
+import { ObjectId } from "mongodb";
 
 export const postRepository = {
   async findAll(): Promise<Post[]> {
-    return await postsCollection.find({}).toArray();
+    const result = await postsCollection.find({}).toArray();
+
+    return result.map(mapPostDbToPost);
   },
 
   async findById(id: string): Promise<Post | null> {
-    return await postsCollection.findOne({ id });
+    const result = await postsCollection.findOne({ _id: new ObjectId(id) });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapPostDbToPost(result);
   },
 
   async create(post: PostInputDto): Promise<Post> {
@@ -17,18 +26,18 @@ export const postRepository = {
 
     if (!blog) throw new Error("Не найдено блога с таким id");
 
-    const newPost: Post = {
-      id: randomUUID(),
+    const newPost: PostDb = {
+      _id: new ObjectId(),
       title: post.title,
-      shortDescription: post.shortDescription,
       content: post.content,
+      shortDescription: post.content,
       blogId: post.blogId,
       blogName: blog.name,
     };
 
     await postsCollection.insertOne(newPost);
 
-    return newPost;
+    return mapPostDbToPost(newPost);
   },
 
   async update(id: string, post: PostInputDto): Promise<boolean> {
@@ -37,7 +46,7 @@ export const postRepository = {
     if (!blog) throw new Error("Не найдено блога с таким id");
 
     const result = await postsCollection.updateOne(
-      { id },
+      { _id: new ObjectId(id) },
       {
         $set: {
           title: post.title,
@@ -53,7 +62,7 @@ export const postRepository = {
   },
 
   async delete(id: string): Promise<boolean> {
-    const result = await postsCollection.deleteOne({ id });
+    const result = await postsCollection.deleteOne({ _id: new ObjectId(id) });
 
     return result.deletedCount === 1;
   },

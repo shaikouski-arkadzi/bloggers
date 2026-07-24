@@ -1,19 +1,28 @@
-import { randomUUID } from "node:crypto";
+import { ObjectId } from "mongodb";
 import { blogsCollection } from "../../db";
-import { Blog } from "../types";
+import { Blog, BlogDb, BlogInputDto } from "../types";
+import { mapBlogDbToBlog } from "../utils";
 
 export const blogRepository = {
   async findAll(): Promise<Blog[]> {
-    return await blogsCollection.find({}).toArray();
+    const result = await blogsCollection.find({}).toArray();
+
+    return result.map(mapBlogDbToBlog);
   },
 
   async findById(id: string): Promise<Blog | null> {
-    return await blogsCollection.findOne({ id });
+    const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapBlogDbToBlog(result);
   },
 
-  async create(blog: Omit<Blog, "id">): Promise<Blog> {
-    const newBlog: Blog = {
-      id: randomUUID(),
+  async create(blog: BlogInputDto): Promise<Blog> {
+    const newBlog: BlogDb = {
+      _id: new ObjectId(),
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
@@ -21,12 +30,12 @@ export const blogRepository = {
 
     await blogsCollection.insertOne(newBlog);
 
-    return newBlog;
+    return mapBlogDbToBlog(newBlog);
   },
 
-  async update(id: string, blog: Omit<Blog, "id">): Promise<boolean> {
+  async update(id: string, blog: BlogInputDto): Promise<boolean> {
     const result = await blogsCollection.updateOne(
-      { id },
+      { _id: new ObjectId(id) },
       {
         $set: {
           name: blog.name,
@@ -40,7 +49,7 @@ export const blogRepository = {
   },
 
   async delete(id: string): Promise<boolean> {
-    const result = await blogsCollection.deleteOne({ id });
+    const result = await blogsCollection.deleteOne({ _id: new ObjectId(id) });
 
     return result.deletedCount === 1;
   },
