@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { db } from "../../db";
+import { blogsCollection, postsCollection } from "../../db";
 
-export const clearDB = (_: Request, res: Response<null>) => {
-  db.blogs.length = 0;
-  db.posts.length = 0;
+export const clearDB = async (_req: Request, res: Response<null>) => {
+  await blogsCollection.deleteMany({});
+  await postsCollection.deleteMany({});
   res.sendStatus(204);
 };
