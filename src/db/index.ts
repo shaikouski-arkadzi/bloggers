@@ -28,3 +28,13 @@ export async function connectToDb(): Promise<boolean> {
     return false;
   }
 }
+
+export async function disconnectFromDb(): Promise<void> {
+  try {
+    await client.close();
+
+    console.log("Disconnected from MongoDB");
+  } catch (e) {
+    console.error("Failed to disconnect from MongoDB", e);
+  }
+}
