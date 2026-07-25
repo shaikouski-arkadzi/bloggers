@@ -37,13 +37,19 @@ export const contentValidation = body("content")
 export const blogIdValidation = body("blogId")
   .exists()
   .withMessage("Поле обязательное")
+  .bail()
   .isString()
   .withMessage("Поле должно быть типом string")
+  .bail()
   .trim()
   .notEmpty()
+  .bail()
   .withMessage("Поле не должно быть пустым")
-  .custom((blogId) => {
-    const blog = blogRepository.findById(blogId);
+  .isLength({ min: 24, max: 24 })
+  .withMessage("Некорректый id")
+  .bail()
+  .custom(async (blogId) => {
+    const blog = await blogRepository.findById(blogId);
 
     if (!blog) {
       throw new Error("Не найдено блога с таким идентификатором");
