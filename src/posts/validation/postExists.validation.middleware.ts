@@ -7,6 +7,12 @@ export const postExistsMiddleware = async (
   next: NextFunction,
 ) => {
   const { id } = req.params;
+
+  if (id.length !== 24) {
+    res.sendStatus(404);
+    return;
+  }
+
   if (typeof id === "string") {
     const post = await postRepository.findById(id);
 
