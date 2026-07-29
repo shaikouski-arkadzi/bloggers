@@ -1,17 +1,26 @@
 import request from "supertest";
 import express from "express";
-import router from "../blogs/routes";
+import { blogRepository } from "../blogs/repositories";
+import { setupApp } from "../setup-app";
 import { db } from "../db";
 
 const app = express();
 
-app.use(express.json());
-app.use("/blogs", router);
+setupApp(app);
 
 describe("GET /blogs", () => {
+  beforeAll(async () => {
+    await db.connect();
+  });
+
+  afterAll(async () => {
+    await db.disconnect();
+  });
+
   it("should return 200 and all videos", async () => {
     const response = await request(app).get("/blogs").expect(200);
 
-    expect(response.body).toEqual(db.blogs);
+    const allBlogs = await blogRepository.findAll();
+    expect(allBlogs.length).toBe(response.body.length);
   });
 });

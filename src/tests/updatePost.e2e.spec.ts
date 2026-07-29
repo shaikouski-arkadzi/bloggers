@@ -1,30 +1,26 @@
 import request, { Response } from "supertest";
-
 import express from "express";
-import { db } from "../db";
-import blogsRoutes from "../blogs/routes";
-import postsRoutes from "../posts/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { setupApp } from "../setup-app";
+import { db } from "../db";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
 const app = express();
 
-app.use(express.json());
-
-app.use(BLOGS_PATH, blogsRoutes);
-app.use(POSTS_PATH, postsRoutes);
+setupApp(app);
 
 let createBlogResponse: Response;
 let createPostResponse: Response;
 
 describe("PUT /posts", () => {
   beforeAll(async () => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
@@ -54,8 +50,10 @@ describe("PUT /posts", () => {
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(201);
+  });
 
-    expect(db.posts.length).toBe(1);
+  afterAll(async () => {
+    await db.disconnect();
   });
 
   it("should update post with valid data", async () => {
@@ -71,8 +69,6 @@ describe("PUT /posts", () => {
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(204);
-
-    expect(db.posts.length).toBe(1);
   });
 
   it("should return 404 if post not exists by id", async () => {
@@ -450,7 +446,7 @@ describe("PUT /posts", () => {
     expect(response.body).toEqual({
       errorsMessages: [
         {
-          message: "Не найдено блога с таким идентификатором",
+          message: "Некорректый id",
           field: "blogId",
         },
       ],

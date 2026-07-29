@@ -1,24 +1,29 @@
 import request from "supertest";
 import express from "express";
-import router from "../blogs/routes";
-import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { blogRepository } from "../blogs/repositories";
+import { setupApp } from "../setup-app";
+import { db } from "../db";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
 const app = express();
 
-app.use(express.json());
-app.use("/blogs", router);
+setupApp(app);
 
 describe("POST /blogs", () => {
-  beforeAll(() => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+  beforeAll(async () => {
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
+  });
+
+  afterAll(async () => {
+    await db.disconnect();
   });
 
   it("should create blog with valid data", async () => {
@@ -36,16 +41,15 @@ describe("POST /blogs", () => {
       .expect(201);
 
     expect(response.body).toEqual({
-      id: expect.stringMatching(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      ),
+      id: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
       name: "string",
       description: "string",
       websiteUrl:
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     });
 
-    expect(db.blogs.length).toBe(1);
+    const allBlogs = await blogRepository.findAll();
+    expect(allBlogs.length).toBe(1);
   });
 
   it("should return 400 if name is missing", async () => {

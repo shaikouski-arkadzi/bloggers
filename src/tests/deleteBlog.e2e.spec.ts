@@ -1,24 +1,28 @@
 import request from "supertest";
 import express from "express";
-import router from "../blogs/routes";
-import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { setupApp } from "../setup-app";
+import { db } from "../db";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
 const app = express();
 
-app.use(express.json());
-app.use("/blogs", router);
+setupApp(app);
 
 describe("DELETE /blogs/:id", () => {
-  beforeAll(() => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+  beforeAll(async () => {
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
+  });
+
+  afterAll(async () => {
+    await db.disconnect();
   });
 
   it("should delete blog by id", async () => {

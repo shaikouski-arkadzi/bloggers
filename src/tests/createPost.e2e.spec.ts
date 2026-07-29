@@ -1,28 +1,26 @@
 import request, { Response } from "supertest";
 import express from "express";
-import { db } from "../db";
-import blogsRoutes from "../blogs/routes";
-import postsRoutes from "../posts/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { postRepository } from "../posts/repositories";
+import { db } from "../db";
+import { setupApp } from "../setup-app";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
 const app = express();
 
-app.use(express.json());
-
-app.use(BLOGS_PATH, blogsRoutes);
-app.use(POSTS_PATH, postsRoutes);
+setupApp(app);
 
 let createBlogResponse: Response;
 
 describe("POST /posts", () => {
   beforeAll(async () => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
@@ -41,6 +39,10 @@ describe("POST /posts", () => {
       .expect(201);
   });
 
+  afterAll(async () => {
+    await db.disconnect();
+  });
+
   it("should create post with valid data", async () => {
     const postBody = {
       title: "string",
@@ -56,19 +58,16 @@ describe("POST /posts", () => {
       .expect(201);
 
     expect(createPostResponse.body).toEqual({
-      id: expect.stringMatching(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      ),
+      id: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: expect.stringMatching(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-      ),
+      blogId: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
       blogName: "string",
     });
 
-    expect(db.posts.length).toBe(1);
+    const allPosts = await postRepository.findAll();
+    expect(allPosts.length).toBe(1);
   });
 
   it("should return 400 if title is missing", async () => {
@@ -419,7 +418,7 @@ describe("POST /posts", () => {
       title: "string",
       shortDescription: "string",
       content: "string",
-      blogId: "test",
+      blogId: "6a63bff16de99509911f914c",
     };
 
     const response = await request(app)

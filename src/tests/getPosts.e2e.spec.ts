@@ -1,27 +1,31 @@
 import request from "supertest";
 import express from "express";
-import { db } from "../db";
-import blogsRoutes from "../blogs/routes";
-import postsRoutes from "../posts/routes";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { postRepository } from "../posts/repositories";
+import { setupApp } from "../setup-app";
+import { db } from "../db";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
 
 const app = express();
 
-app.use(express.json());
-app.use(BLOGS_PATH, blogsRoutes);
-app.use(POSTS_PATH, postsRoutes);
+setupApp(app);
 
-describe("GET /posts/:id", () => {
-  beforeAll(() => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+describe("GET /posts", () => {
+  beforeAll(async () => {
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
+
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
+  });
+
+  afterAll(async () => {
+    await db.disconnect();
   });
 
   it("should get all posts", async () => {
@@ -53,21 +57,16 @@ describe("GET /posts/:id", () => {
 
     const getPostsResponse = await request(app).get(POSTS_PATH).expect(200);
 
-    expect(db.posts.length).toBe(getPostsResponse.body.length);
-
-    expect(db.posts.length).toBe(1);
+    const allPosts = await postRepository.findAll();
+    expect(allPosts.length).toBe(getPostsResponse.body.length);
 
     expect(getPostsResponse.body).toEqual([
       {
-        id: expect.stringMatching(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-        ),
+        id: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
         title: "string",
         shortDescription: "string",
         content: "string",
-        blogId: expect.stringMatching(
-          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-        ),
+        blogId: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
         blogName: "string",
       },
     ]);

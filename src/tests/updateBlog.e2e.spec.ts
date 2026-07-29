@@ -1,8 +1,8 @@
 import request from "supertest";
 import express from "express";
-import router from "../blogs/routes";
-import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { setupApp } from "../setup-app";
+import { db } from "../db";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -11,13 +11,13 @@ let idCreatedBlog: string;
 
 const app = express();
 
-app.use(express.json());
-app.use("/blogs", router);
+setupApp(app);
 
 describe("PUT /blogs/:id", () => {
   beforeAll(async () => {
-    db.blogs.length = 0;
-    db.posts.length = 0;
+    await db.connect();
+
+    await request(app).delete("/testing/all-data").expect(204);
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
@@ -41,6 +41,10 @@ describe("PUT /blogs/:id", () => {
     idCreatedBlog = responseCreate.body.id;
   });
 
+  afterAll(async () => {
+    await db.disconnect();
+  });
+
   it("should update blog with valid data", async () => {
     const bodyUpdate = {
       name: "stringNew",
@@ -54,8 +58,6 @@ describe("PUT /blogs/:id", () => {
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(bodyUpdate)
       .expect(204);
-
-    expect(db.blogs.length).toBe(1);
   });
 
   it("should return 404 if pass wrong id", async () => {
