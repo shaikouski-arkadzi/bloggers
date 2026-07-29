@@ -1,6 +1,6 @@
 import express from "express";
 import { setupApp } from "./setup-app";
-import { connectToDb } from "./db";
+import { db } from "./db";
 
 // создание приложения
 const app = express();
@@ -10,7 +10,7 @@ setupApp(app);
 const PORT = process.env.PORT || 5001;
 
 const start = async () => {
-  const isConnected = await connectToDb();
+  const isConnected = await db.connect();
 
   if (!isConnected) {
     console.error("Application can't start");
