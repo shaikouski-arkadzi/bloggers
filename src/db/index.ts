@@ -1,40 +1,39 @@
-import { MongoClient } from "mongodb";
+import { Db, MongoClient } from "mongodb";
 import { MONGO_URI } from "../settings/config";
 import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
 
 if (!MONGO_URI) console.error("Not found mongo uri");
 
-const client = new MongoClient(MONGO_URI!);
+export const db = {
+  client: {} as MongoClient,
 
-export const database = client.db();
+  getDbName(): Db {
+    return this.client.db();
+  },
 
-export const blogsCollection = database.collection<BlogDb>("blogs");
+  async connect(url: string = MONGO_URI!): Promise<boolean> {
+    try {
+      this.client = new MongoClient(url);
+      await this.client.connect();
+      console.log("Connected successfully to mongo server");
+      return true;
+    } catch (e: unknown) {
+      console.error("Can't connect to mongo server", e);
+      await this.client.close();
+      return false;
+    }
+  },
 
-export const postsCollection = database.collection<PostDb>("posts");
+  async disconnect() {
+    await this.client.close();
+    console.log("Connection successful closed");
+  },
 
-export async function connectToDb(): Promise<boolean> {
-  try {
-    await client.connect();
-
-    console.log("Connected to MongoDB");
-
-    return true;
-  } catch (e) {
-    console.error("Failed to connect to MongoDB", e);
-
-    await client.close();
-
-    return false;
-  }
-}
-
-export async function disconnectFromDb(): Promise<void> {
-  try {
-    await client.close();
-
-    console.log("Disconnected from MongoDB");
-  } catch (e) {
-    console.error("Failed to disconnect from MongoDB", e);
-  }
-}
+  getCollections() {
+    return {
+      blogsCollection: this.getDbName().collection<BlogDb>("blogs"),
+      postsCollection: this.getDbName().collection<PostDb>("posts"),
+    };
+  },
+};
