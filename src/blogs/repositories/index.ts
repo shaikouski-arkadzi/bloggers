@@ -1,17 +1,19 @@
 import { ObjectId } from "mongodb";
-import { blogsCollection } from "../../db";
+import { db } from "../../db";
 import { Blog, BlogDb, BlogInputDto } from "../types";
 import { mapBlogDbToBlog } from "../utils";
 
 export const blogRepository = {
   async findAll(): Promise<Blog[]> {
-    const result = await blogsCollection.find({}).toArray();
+    const result = await db.getCollections().blogsCollection.find({}).toArray();
 
     return result.map(mapBlogDbToBlog);
   },
 
   async findById(id: string): Promise<Blog | null> {
-    const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
+    const result = await db
+      .getCollections()
+      .blogsCollection.findOne({ _id: new ObjectId(id) });
 
     if (!result) {
       return null;
@@ -28,13 +30,13 @@ export const blogRepository = {
       websiteUrl: blog.websiteUrl,
     };
 
-    await blogsCollection.insertOne(newBlog);
+    await db.getCollections().blogsCollection.insertOne(newBlog);
 
     return mapBlogDbToBlog(newBlog);
   },
 
   async update(id: string, blog: BlogInputDto): Promise<boolean> {
-    const result = await blogsCollection.updateOne(
+    const result = await db.getCollections().blogsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: {
@@ -49,7 +51,9 @@ export const blogRepository = {
   },
 
   async delete(id: string): Promise<boolean> {
-    const result = await blogsCollection.deleteOne({ _id: new ObjectId(id) });
+    const result = await db
+      .getCollections()
+      .blogsCollection.deleteOne({ _id: new ObjectId(id) });
 
     return result.deletedCount === 1;
   },
