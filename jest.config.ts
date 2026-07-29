@@ -10,7 +10,7 @@ const config: Config = {
 
   moduleFileExtensions: ["ts", "js", "json"],
 
-  setupFiles: ["<rootDir>/jest.setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 
   clearMocks: true,
   verbose: true,
