@@ -65,6 +65,8 @@ export const postRepository = {
       ...post,
     };
 
+    console.log("newPost:", JSON.stringify(newPost, null, 2));
+
     if (!blog) throw new Error("Не найдено блога с таким id");
 
     const result = await db.getCollections().postsCollection.updateOne(
