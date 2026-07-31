@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import {
   createPost,
   deletePost,
@@ -33,6 +33,12 @@ router.get(
 );
 router.put(
   POSTS_ROUTES.BY_ID,
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log("METHOD:", req.method);
+    console.log("URL:", req.originalUrl);
+    console.log("BODY:", JSON.stringify(req.body, null, 2));
+    next();
+  },
   superAdminGuardMiddleware,
   idValidation,
   postExistsMiddleware,
