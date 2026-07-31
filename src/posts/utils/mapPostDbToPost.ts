@@ -7,4 +7,5 @@ export const mapPostDbToPost = (postDb: PostDb): Post => ({
   shortDescription: postDb.content,
   blogId: postDb.blogId,
   blogName: postDb.blogName,
+  createdAt: postDb.createdAt,
 });

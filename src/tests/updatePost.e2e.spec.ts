@@ -17,7 +17,7 @@ setupApp(app);
 let createBlogResponse: Response;
 let createPostResponse: Response;
 
-describe("PUT /posts", () => {
+describe("PUT /posts:id", () => {
   beforeAll(async () => {
     await db.connect();
 

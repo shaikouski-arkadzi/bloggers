@@ -9,9 +9,11 @@ export interface BlogInputDto {
 export interface BlogDb extends BlogInputDto {
   _id: ObjectId;
   isMembership: boolean;
+  createdAt: string;
 }
 
 export interface Blog extends BlogInputDto {
   id: string;
   isMembership: boolean;
+  createdAt: string;
 }

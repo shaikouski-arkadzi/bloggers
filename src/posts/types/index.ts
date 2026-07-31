@@ -10,9 +10,11 @@ export interface PostInputDto {
 export interface PostDb extends PostInputDto {
   _id: ObjectId;
   blogName: string;
+  createdAt: string;
 }
 
 export interface Post extends PostInputDto {
   id: string;
   blogName: string;
+  createdAt: string;
 }

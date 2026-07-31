@@ -47,6 +47,9 @@ describe("POST /blogs", () => {
       websiteUrl:
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
       isMembership: false,
+      createdAt: expect.stringMatching(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      ),
     });
 
     const allBlogs = await blogRepository.findAll();

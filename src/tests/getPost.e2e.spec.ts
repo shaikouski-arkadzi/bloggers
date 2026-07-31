@@ -65,6 +65,9 @@ describe("GET /posts/:id", () => {
       content: "string",
       blogId: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
       blogName: "string",
+      createdAt: expect.stringMatching(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      ),
     });
   });
 
