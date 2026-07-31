@@ -5,6 +5,7 @@ import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import { ObjectId } from "mongodb";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -429,7 +430,7 @@ describe("PUT /posts", () => {
     });
   });
 
-  it("should return 400 if blog not exists by id", async () => {
+  it("should return 400 if blog with uncorrect id", async () => {
     const postBody = {
       title: "stringNew",
       shortDescription: "stringNew",
@@ -447,6 +448,30 @@ describe("PUT /posts", () => {
       errorsMessages: [
         {
           message: "Некорректый id",
+          field: "blogId",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if blog by id not exists", async () => {
+    const postBody = {
+      title: "stringNew",
+      shortDescription: "stringNew",
+      content: "stringNew",
+      blogId: new ObjectId(),
+    };
+
+    const response = await request(app)
+      .put(`${POSTS_PATH}/${createPostResponse.body.id}`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Не найдено блога с таким идентификатором",
           field: "blogId",
         },
       ],
