@@ -5,4 +5,5 @@ export const mapBlogDbToBlog = (blogDb: BlogDb): Blog => ({
   name: blogDb.name,
   description: blogDb.description,
   websiteUrl: blogDb.websiteUrl,
+  isMembership: blogDb.isMembership,
 });

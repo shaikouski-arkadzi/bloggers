@@ -46,6 +46,7 @@ describe("POST /blogs", () => {
       description: "string",
       websiteUrl:
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+      isMembership: false,
     });
 
     const allBlogs = await blogRepository.findAll();

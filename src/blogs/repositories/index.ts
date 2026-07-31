@@ -28,6 +28,7 @@ export const blogRepository = {
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
+      isMembership: false,
     };
 
     await db.getCollections().blogsCollection.insertOne(newBlog);

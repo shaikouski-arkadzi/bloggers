@@ -8,8 +8,10 @@ export interface BlogInputDto {
 
 export interface BlogDb extends BlogInputDto {
   _id: ObjectId;
+  isMembership: boolean;
 }
 
 export interface Blog extends BlogInputDto {
   id: string;
+  isMembership: boolean;
 }
