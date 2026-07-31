@@ -46,18 +46,31 @@ export const postRepository = {
   async update(id: string, post: PostInputDto): Promise<boolean> {
     const blog = await blogRepository.findById(post.blogId);
 
+    const postById = await postRepository.findById(id);
+
+    if (!postById) {
+      return false;
+    }
+
+    // @ts-ignore
+    const newPost = {
+      // @ts-ignore
+      title: postById.title,
+      // @ts-ignore
+      shortDescription: postById.shortDescription,
+      // @ts-ignore
+      content: postById.content,
+      // @ts-ignore
+      blogId: postById.blogId,
+      ...post,
+    };
+
     if (!blog) throw new Error("Не найдено блога с таким id");
 
     const result = await db.getCollections().postsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
-        $set: {
-          title: post.title,
-          shortDescription: post.shortDescription,
-          content: post.content,
-          blogId: post.blogId,
-          blogName: blog.name,
-        },
+        $set: newPost,
       },
     );
 
