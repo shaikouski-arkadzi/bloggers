@@ -43,13 +43,60 @@ describe("GET /blogs", () => {
     await db.disconnect();
   });
 
-  it("should return 200 and all videos", async () => {
+  it("should return 200 and all videos with default params queries", async () => {
     const response = await request(app).get("/blogs").expect(200);
 
     expect(response.body).toEqual({
       pagesCount: 0,
-      page: 0,
-      pageSize: 0,
+      page: 1,
+      pageSize: 10,
+      totalCount: 0,
+      items: [responseCreateData],
+    });
+
+    const allBlogs = await blogRepository.findAll();
+    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 200 and all videos with setting pageNumber and default pageSize in params queries", async () => {
+    const response = await request(app).get("/blogs?pageNumber=2").expect(200);
+
+    expect(response.body).toEqual({
+      pagesCount: 0,
+      page: 2,
+      pageSize: 10,
+      totalCount: 0,
+      items: [responseCreateData],
+    });
+
+    const allBlogs = await blogRepository.findAll();
+    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 200 and all videos with setting pageSize and default pageNumber in params queries", async () => {
+    const response = await request(app).get("/blogs?pageSize=11").expect(200);
+
+    expect(response.body).toEqual({
+      pagesCount: 0,
+      page: 1,
+      pageSize: 11,
+      totalCount: 0,
+      items: [responseCreateData],
+    });
+
+    const allBlogs = await blogRepository.findAll();
+    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 200 and all videos with setting pageNumber and pageSize params queries", async () => {
+    const response = await request(app)
+      .get("/blogs?pageNumber=2&pageSize=11")
+      .expect(200);
+
+    expect(response.body).toEqual({
+      pagesCount: 0,
+      page: 2,
+      pageSize: 11,
       totalCount: 0,
       items: [responseCreateData],
     });
