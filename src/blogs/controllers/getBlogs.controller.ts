@@ -14,13 +14,15 @@ export const getBlogs = async (
   const page = Number(req.query.pageNumber) || 1;
   const pageSize = Number(req.query.pageSize) || 10;
 
+  const allBlogsCount = await blogRepository.count();
+
   const result = await blogRepository.findAll();
 
   const returnData: PaginatorBlog = {
     pagesCount: 0,
     page,
     pageSize,
-    totalCount: 0,
+    totalCount: allBlogsCount,
     items: result,
   };
 

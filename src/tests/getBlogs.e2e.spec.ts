@@ -12,6 +12,7 @@ setupApp(app);
 
 describe("GET /blogs", () => {
   let responseCreateData: Blog;
+  let blogsCount: number;
 
   beforeAll(async () => {
     await db.connect();
@@ -37,6 +38,8 @@ describe("GET /blogs", () => {
       .expect(201);
 
     responseCreateData = responseCreate.body;
+
+    blogsCount = await blogRepository.count();
   });
 
   afterAll(async () => {
@@ -50,7 +53,7 @@ describe("GET /blogs", () => {
       pagesCount: 0,
       page: 1,
       pageSize: 10,
-      totalCount: 0,
+      totalCount: blogsCount,
       items: [responseCreateData],
     });
 
@@ -65,7 +68,7 @@ describe("GET /blogs", () => {
       pagesCount: 0,
       page: 2,
       pageSize: 10,
-      totalCount: 0,
+      totalCount: blogsCount,
       items: [responseCreateData],
     });
 
@@ -80,7 +83,7 @@ describe("GET /blogs", () => {
       pagesCount: 0,
       page: 1,
       pageSize: 11,
-      totalCount: 0,
+      totalCount: blogsCount,
       items: [responseCreateData],
     });
 
@@ -97,7 +100,7 @@ describe("GET /blogs", () => {
       pagesCount: 0,
       page: 2,
       pageSize: 11,
-      totalCount: 0,
+      totalCount: blogsCount,
       items: [responseCreateData],
     });
 
