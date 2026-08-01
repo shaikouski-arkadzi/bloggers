@@ -2,13 +2,24 @@ import { Request, Response } from "express";
 import { PaginatorBlog } from "../types";
 import { blogRepository } from "../repositories";
 
-export const getBlogs = async (_req: Request, res: Response<PaginatorBlog>) => {
+interface BlogsQuery {
+  pageNumber?: string;
+  pageSize?: string;
+}
+
+export const getBlogs = async (
+  req: Request<{}, {}, {}, BlogsQuery>,
+  res: Response<PaginatorBlog>,
+) => {
+  const page = Number(req.query.pageNumber) || 1;
+  const pageSize = Number(req.query.pageSize) || 10;
+
   const result = await blogRepository.findAll();
 
   const returnData: PaginatorBlog = {
     pagesCount: 0,
-    page: 0,
-    pageSize: 0,
+    page,
+    pageSize,
     totalCount: 0,
     items: result,
   };
