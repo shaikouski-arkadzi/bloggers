@@ -59,4 +59,10 @@ export const blogRepository = {
 
     return result.deletedCount === 1;
   },
+
+  async count(): Promise<number> {
+    const result = await db.getCollections().blogsCollection.countDocuments({});
+
+    return result;
+  },
 };
