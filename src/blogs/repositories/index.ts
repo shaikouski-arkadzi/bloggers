@@ -4,8 +4,13 @@ import { Blog, BlogDb, BlogInputDto } from "../types";
 import { mapBlogDbToBlog } from "../utils";
 
 export const blogRepository = {
-  async findAll(): Promise<Blog[]> {
-    const result = await db.getCollections().blogsCollection.find({}).toArray();
+  async find(page: number = 1, pageSize: number = 10): Promise<Blog[]> {
+    const result = await db
+      .getCollections()
+      .blogsCollection.find({})
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
 
     return result.map(mapBlogDbToBlog);
   },

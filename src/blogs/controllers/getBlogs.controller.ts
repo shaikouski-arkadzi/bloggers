@@ -18,7 +18,7 @@ export const getBlogs = async (
 
   const pagesCount = Math.ceil(allBlogsCount / pageSize);
 
-  const result = await blogRepository.findAll();
+  const result = await blogRepository.find(page, pageSize);
 
   const returnData: PaginatorBlog = {
     pagesCount,
