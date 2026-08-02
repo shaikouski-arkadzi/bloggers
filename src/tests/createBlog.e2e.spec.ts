@@ -52,7 +52,7 @@ describe("POST /blogs", () => {
       ),
     });
 
-    const allBlogs = await blogRepository.findAll();
+    const allBlogs = await blogRepository.find();
     expect(allBlogs.length).toBe(1);
   });
 
