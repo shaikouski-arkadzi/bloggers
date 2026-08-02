@@ -49,10 +49,14 @@ describe("GET /blogs", () => {
   it("should return 200 and all videos with default params queries", async () => {
     const response = await request(app).get("/blogs").expect(200);
 
+    const page = 1;
+    const pageSize = 10;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
+
     expect(response.body).toEqual({
-      pagesCount: 0,
-      page: 1,
-      pageSize: 10,
+      pagesCount,
+      page,
+      pageSize,
       totalCount: blogsCount,
       items: [responseCreateData],
     });
@@ -62,10 +66,17 @@ describe("GET /blogs", () => {
   });
 
   it("should return 200 and all videos with setting pageNumber and default pageSize in params queries", async () => {
-    const response = await request(app).get("/blogs?pageNumber=2").expect(200);
+    const page = 2;
+
+    const response = await request(app)
+      .get(`/blogs?pageNumber=${page}`)
+      .expect(200);
+
+    const pageSize = 10;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
 
     expect(response.body).toEqual({
-      pagesCount: 0,
+      pagesCount,
       page: 2,
       pageSize: 10,
       totalCount: blogsCount,
@@ -77,12 +88,18 @@ describe("GET /blogs", () => {
   });
 
   it("should return 200 and all videos with setting pageSize and default pageNumber in params queries", async () => {
-    const response = await request(app).get("/blogs?pageSize=11").expect(200);
+    const pageSize = 11;
+    const response = await request(app)
+      .get(`/blogs?pageSize=${pageSize}`)
+      .expect(200);
+
+    const page = 1;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
 
     expect(response.body).toEqual({
-      pagesCount: 0,
-      page: 1,
-      pageSize: 11,
+      pagesCount,
+      page,
+      pageSize,
       totalCount: blogsCount,
       items: [responseCreateData],
     });
@@ -92,14 +109,19 @@ describe("GET /blogs", () => {
   });
 
   it("should return 200 and all videos with setting pageNumber and pageSize params queries", async () => {
+    const page = 2;
+    const pageSize = 11;
+
     const response = await request(app)
-      .get("/blogs?pageNumber=2&pageSize=11")
+      .get(`/blogs?pageNumber=${page}&pageSize=${pageSize}`)
       .expect(200);
 
+    const pagesCount = Math.ceil(blogsCount / pageSize);
+
     expect(response.body).toEqual({
-      pagesCount: 0,
-      page: 2,
-      pageSize: 11,
+      pagesCount,
+      page,
+      pageSize,
       totalCount: blogsCount,
       items: [responseCreateData],
     });
