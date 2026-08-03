@@ -25,3 +25,5 @@ export interface PaginatorBlog {
   totalCount: number;
   items: Blog[];
 }
+
+export type SortBy = keyof Blog;
