@@ -1,13 +1,22 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { Blog, BlogDb, BlogInputDto } from "../types";
+import { Blog, BlogDb, BlogInputDto, SortBy } from "../types";
 import { mapBlogDbToBlog } from "../utils";
+import { SortDirection } from "../../common/types";
 
 export const blogRepository = {
-  async find(page: number = 1, pageSize: number = 10): Promise<Blog[]> {
+  async find(
+    page: number = 1,
+    pageSize: number = 10,
+    sortBy: SortBy,
+    sortDirection: SortDirection,
+  ): Promise<Blog[]> {
     const result = await db
       .getCollections()
       .blogsCollection.find({})
+      .sort({
+        [sortBy]: sortDirection === "asc" ? 1 : -1,
+      })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .toArray();
