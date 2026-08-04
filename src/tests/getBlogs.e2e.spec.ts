@@ -4,7 +4,7 @@ import { blogRepository } from "../blogs/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { Blog } from "../blogs/types";
+import { Blog, SortBy } from "../blogs/types";
 
 const app = express();
 
@@ -24,18 +24,16 @@ describe("GET /blogs", () => {
       "base64",
     );
 
-    const bodyCreate = {
-      name: "string",
-      description: "string",
-      websiteUrl:
-        "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
-    };
-
     for (let i = 0; i < 21; i++) {
       const responseCreate = await request(app)
         .post("/blogs")
         .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-        .send(bodyCreate)
+        .send({
+          name: `name ${i}`,
+          description: `description ${i}`,
+          websiteUrl:
+            "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
+        })
         .expect(201);
 
       responseCreateData.push(responseCreate.body);
@@ -53,7 +51,7 @@ describe("GET /blogs", () => {
     await db.disconnect();
   });
 
-  it("should return 200 and all videos with default params queries", async () => {
+  it("should return 200 and all blogs with default params queries", async () => {
     const response = await request(app).get("/blogs").expect(200);
 
     const page = 1;
@@ -74,7 +72,7 @@ describe("GET /blogs", () => {
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all videos with setting pageNumber and default pageSize in params queries", async () => {
+  it("should return 200 and all blogs with setting pageNumber and default pageSize in params queries", async () => {
     const page = 2;
 
     const response = await request(app)
@@ -98,7 +96,7 @@ describe("GET /blogs", () => {
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all videos with setting pageSize and default pageNumber in params queries", async () => {
+  it("should return 200 and all blogs with setting pageSize and default pageNumber in params queries", async () => {
     const pageSize = 11;
     const response = await request(app)
       .get(`/blogs?pageSize=${pageSize}`)
@@ -121,7 +119,7 @@ describe("GET /blogs", () => {
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all videos with setting pageNumber and pageSize params queries", async () => {
+  it("should return 200 and all blogs with setting pageNumber and pageSize params queries", async () => {
     const page = 2;
     const pageSize = 11;
 
@@ -142,6 +140,74 @@ describe("GET /blogs", () => {
     });
 
     const allBlogs = await blogRepository.find(page, pageSize);
+    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 200 and all blogs with setting asc order. Other fields default", async () => {
+    const sortDirection = "asc";
+
+    const response = await request(app)
+      .get(`/blogs?sortDirection=${sortDirection}`)
+      .expect(200);
+
+    const sortBy: SortBy = "createdAt";
+
+    const page = 1;
+    const pageSize = 10;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
+
+    const startIndex = (page - 1) * pageSize;
+
+    expect(response.body).toEqual({
+      pagesCount,
+      page,
+      pageSize,
+      totalCount: blogsCount,
+      items: [...responseCreateData]
+        .reverse()
+        .slice(startIndex, startIndex + pageSize),
+    });
+
+    const allBlogs = await blogRepository.find(
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    );
+    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 200 and all blogs with sorting by name. Other fields default", async () => {
+    const sortBy: SortBy = "name";
+
+    const response = await request(app)
+      .get(`/blogs?sortBy=${sortBy}`)
+      .expect(200);
+
+    const sortDirection = "desc";
+
+    const page = 1;
+    const pageSize = 10;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
+
+    const startIndex = (page - 1) * pageSize;
+
+    expect(response.body).toEqual({
+      pagesCount,
+      page,
+      pageSize,
+      totalCount: blogsCount,
+      items: responseCreateData
+        .sort((a, b) => b.name.localeCompare(a.name))
+        .slice(startIndex, startIndex + pageSize),
+    });
+
+    const allBlogs = await blogRepository.find(
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    );
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 });
