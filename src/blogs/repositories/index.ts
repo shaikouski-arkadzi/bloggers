@@ -8,8 +8,8 @@ export const blogRepository = {
   async find(
     page: number = 1,
     pageSize: number = 10,
-    sortBy: SortBy,
-    sortDirection: SortDirection,
+    sortBy: SortBy = "createdAt",
+    sortDirection: SortDirection = "desc",
   ): Promise<Blog[]> {
     const result = await db
       .getCollections()

@@ -41,6 +41,11 @@ describe("GET /blogs", () => {
       responseCreateData.push(responseCreate.body);
     }
 
+    responseCreateData.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+
     blogsCount = await blogRepository.count();
   });
 
