@@ -10,10 +10,17 @@ export const blogRepository = {
     pageSize: number = 10,
     sortBy: SortBy = "createdAt",
     sortDirection: SortDirection = "desc",
+    searchNameTerm: string | null = null,
   ): Promise<Blog[]> {
     const result = await db
       .getCollections()
-      .blogsCollection.find({})
+      .blogsCollection.find(
+        searchNameTerm
+          ? {
+              name: { $regex: searchNameTerm },
+            }
+          : {},
+      )
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
