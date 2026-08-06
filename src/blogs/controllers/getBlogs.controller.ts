@@ -8,6 +8,7 @@ interface BlogsQuery {
   pageSize?: string;
   sortBy?: SortBy;
   sortDirection?: SortDirection;
+  searchNameTerm?: string;
 }
 
 export const getBlogs = async (
@@ -18,6 +19,7 @@ export const getBlogs = async (
   const pageSize = Number(req.query.pageSize) || 10;
   const sortBy = req.query.sortBy || "createdAt";
   const sortDirection = req.query.sortDirection === "asc" ? "asc" : "desc";
+  const searchNameTerm = req.query.searchNameTerm || null;
 
   const allBlogsCount = await blogRepository.count();
 
@@ -28,6 +30,7 @@ export const getBlogs = async (
     pageSize,
     sortBy,
     sortDirection,
+    searchNameTerm,
   );
 
   const returnData: PaginatorBlog = {

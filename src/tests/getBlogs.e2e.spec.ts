@@ -210,4 +210,26 @@ describe("GET /blogs", () => {
     );
     expect(allBlogs.length).toBe(response.body.items.length);
   });
+
+  it("should return 200 and all blogs with name 'name 10'. Other fields default", async () => {
+    const searchNameTerm: string = "name 10";
+
+    const response = await request(app)
+      .get(`/blogs?searchNameTerm=${searchNameTerm}`)
+      .expect(200);
+
+    const page = 1;
+    const pageSize = 10;
+    const pagesCount = Math.ceil(blogsCount / pageSize);
+
+    expect(response.body).toEqual({
+      pagesCount,
+      page,
+      pageSize,
+      totalCount: blogsCount,
+      items: [responseCreateData.find((el) => el.name === "name 10")],
+    });
+
+    expect(response.body.items.length).toBe(1);
+  });
 });
