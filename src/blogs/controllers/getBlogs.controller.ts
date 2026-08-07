@@ -25,10 +25,13 @@ export const getBlogs = async (
   req: Request<{}, {}, {}, BlogsQuery>,
   res: Response<PaginatorData<Blog>>,
 ) => {
-  const page = Number(req.query.pageNumber) || 1;
-  const pageSize = Number(req.query.pageSize) || 10;
-  const sortBy = req.query.sortBy || "createdAt";
-  const sortDirection = req.query.sortDirection === "asc" ? "asc" : "desc";
+  const page = Number(req.query.pageNumber) || PAGE_DAFAULT;
+  const pageSize = Number(req.query.pageSize) || PAGE_SIZE_DAFAULT;
+  const sortBy = req.query.sortBy || SORT_FIELD_DAFAULT;
+  const sortDirection =
+    req.query.sortDirection === SortDirections.ASC
+      ? SortDirections.ASC
+      : SortDirections.DESC;
   const searchNameTerm = req.query.searchNameTerm || null;
 
   const allBlogsCount = await blogRepository.count();
