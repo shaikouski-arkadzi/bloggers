@@ -4,7 +4,8 @@ import { blogRepository } from "../blogs/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { Blog, SortBy } from "../blogs/types";
+import { Blog } from "../blogs/types";
+import { SortBy } from "../common/types";
 
 const app = express();
 
@@ -150,7 +151,7 @@ describe("GET /blogs", () => {
       .get(`/blogs?sortDirection=${sortDirection}`)
       .expect(200);
 
-    const sortBy: SortBy = "createdAt";
+    const sortBy: SortBy<Blog> = "createdAt";
 
     const page = 1;
     const pageSize = 10;
@@ -178,7 +179,7 @@ describe("GET /blogs", () => {
   });
 
   it("should return 200 and all blogs with sorting by name. Other fields default", async () => {
-    const sortBy: SortBy = "name";
+    const sortBy: SortBy<Blog> = "name";
 
     const response = await request(app)
       .get(`/blogs?sortBy=${sortBy}`)

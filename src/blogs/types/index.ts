@@ -17,13 +17,3 @@ export interface Blog extends BlogInputDto {
   isMembership: boolean;
   createdAt: string;
 }
-
-export interface PaginatorBlog {
-  pagesCount: number;
-  page: number;
-  pageSize: number;
-  totalCount: number;
-  items: Blog[];
-}
-
-export type SortBy = keyof Blog;

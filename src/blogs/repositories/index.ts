@@ -1,14 +1,14 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { Blog, BlogDb, BlogInputDto, SortBy } from "../types";
+import { Blog, BlogDb, BlogInputDto } from "../types";
 import { mapBlogDbToBlog } from "../utils";
-import { SortDirection } from "../../common/types";
+import { SortDirection, SortBy } from "../../common/types";
 
 export const blogRepository = {
   async find(
     page: number = 1,
     pageSize: number = 10,
-    sortBy: SortBy = "createdAt",
+    sortBy: SortBy<Blog> = "createdAt",
     sortDirection: SortDirection = "desc",
     searchNameTerm: string | null = null,
   ): Promise<Blog[]> {

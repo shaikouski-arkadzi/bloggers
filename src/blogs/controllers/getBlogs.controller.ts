@@ -1,19 +1,29 @@
 import { Request, Response } from "express";
-import { PaginatorBlog, SortBy } from "../types";
+import { Blog } from "../types";
 import { blogRepository } from "../repositories";
-import { SortDirection } from "../../common/types";
+import {
+  SortDirection,
+  PaginatorData,
+  SortBy,
+  SortDirections,
+} from "../../common/types";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_FIELD_DAFAULT,
+} from "../../common/constants";
 
 interface BlogsQuery {
   pageNumber?: string;
   pageSize?: string;
-  sortBy?: SortBy;
+  sortBy?: SortBy<Blog>;
   sortDirection?: SortDirection;
   searchNameTerm?: string;
 }
 
 export const getBlogs = async (
   req: Request<{}, {}, {}, BlogsQuery>,
-  res: Response<PaginatorBlog>,
+  res: Response<PaginatorData<Blog>>,
 ) => {
   const page = Number(req.query.pageNumber) || 1;
   const pageSize = Number(req.query.pageSize) || 10;
@@ -33,7 +43,7 @@ export const getBlogs = async (
     searchNameTerm,
   );
 
-  const returnData: PaginatorBlog = {
+  const returnData: PaginatorData<Blog> = {
     pagesCount,
     page,
     pageSize,
