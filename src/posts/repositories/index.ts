@@ -3,10 +3,24 @@ import { Post, PostDb, PostInputDto } from "../types";
 import { blogRepository } from "../../blogs/repositories";
 import { mapPostDbToPost } from "../utils";
 import { ObjectId } from "mongodb";
+import { SortDirection, SortBy } from "../../common/types";
 
 export const postRepository = {
-  async findAll(): Promise<Post[]> {
-    const result = await db.getCollections().postsCollection.find({}).toArray();
+  async find(
+    page: number = 1,
+    pageSize: number = 10,
+    sortBy: SortBy<Post> = "createdAt",
+    sortDirection: SortDirection = "desc",
+  ): Promise<Post[]> {
+    const result = await db
+      .getCollections()
+      .postsCollection.find({})
+      .sort({
+        [sortBy]: sortDirection === "asc" ? 1 : -1,
+      })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
 
     return result.map(mapPostDbToPost);
   },
@@ -70,5 +84,11 @@ export const postRepository = {
       .postsCollection.deleteOne({ _id: new ObjectId(id) });
 
     return result.deletedCount === 1;
+  },
+
+  async count(): Promise<number> {
+    const result = await db.getCollections().postsCollection.countDocuments({});
+
+    return result;
   },
 };
