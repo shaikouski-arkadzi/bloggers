@@ -37,6 +37,26 @@ export const postRepository = {
     return mapPostDbToPost(result);
   },
 
+  async findPostsByBlog(
+    id: string,
+    page: number = 1,
+    pageSize: number = 10,
+    sortBy: SortBy<Post> = "createdAt",
+    sortDirection: SortDirection = "desc",
+  ): Promise<Post[] | null> {
+    const result = await db
+      .getCollections()
+      .postsCollection.find({ blogId: id })
+      .sort({
+        [sortBy]: sortDirection === "asc" ? 1 : -1,
+      })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    return result.map(mapPostDbToPost);
+  },
+
   async create(post: PostInputDto): Promise<Post> {
     const blog = await blogRepository.findById(post.blogId);
 
