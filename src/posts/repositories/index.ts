@@ -43,7 +43,7 @@ export const postRepository = {
     pageSize: number = 10,
     sortBy: SortBy<Post> = "createdAt",
     sortDirection: SortDirection = "desc",
-  ): Promise<Post[] | null> {
+  ): Promise<Post[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({ blogId: id })

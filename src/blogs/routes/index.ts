@@ -3,6 +3,7 @@ import {
   createBlog,
   deleteBlog,
   getBlog,
+  getBlogPosts,
   getBlogs,
   updateBlog,
 } from "../controllers";
@@ -47,6 +48,14 @@ router.delete(
   blogExistsMiddleware,
   resultValidationMiddleware,
   deleteBlog,
+);
+
+router.get(
+  BLOGS_ROUTES.BLOG_POSTS,
+  idValidation,
+  blogExistsMiddleware,
+  resultValidationMiddleware,
+  getBlogPosts,
 );
 
 export default router;
