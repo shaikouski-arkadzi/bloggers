@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { blogsService } from "../application/blogs.service";
 import { Blog } from "../types";
-import { blogRepository } from "../repositories";
 
 export const getBlog = async (
   req: Request<{ id: string }>,
@@ -8,7 +8,7 @@ export const getBlog = async (
 ) => {
   const { id } = req.params;
 
-  const result = await blogRepository.findById(id);
+  const result = await blogsService.findById(id);
 
   if (result) {
     res.status(200).json(result);

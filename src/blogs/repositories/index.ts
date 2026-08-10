@@ -31,7 +31,7 @@ export const blogRepository = {
     return result.map(mapBlogDbToBlog);
   },
 
-  async findById(id: string): Promise<Blog | null> {
+  async findById(id: string): Promise<BlogDb | null> {
     const result = await db
       .getCollections()
       .blogsCollection.findOne({ _id: new ObjectId(id) });
@@ -40,7 +40,7 @@ export const blogRepository = {
       return null;
     }
 
-    return mapBlogDbToBlog(result);
+    return result;
   },
 
   async create(blog: BlogInputDto): Promise<Blog> {
