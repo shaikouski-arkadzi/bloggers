@@ -36,12 +36,12 @@ export const getPosts = async (
 
   const pagesCount = Math.ceil(allPostsCount / pageSize);
 
-  const result = await postRepository.find(
+  const result = await postRepository.find({
     page,
     pageSize,
     sortBy,
     sortDirection,
-  );
+  });
 
   const returnData: PaginatorData<Post> = {
     pagesCount,

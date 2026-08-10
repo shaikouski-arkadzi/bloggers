@@ -7,7 +7,12 @@ import { postRepository } from "../posts/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { Post } from "../posts/types";
-import { SortBy } from "../common/types";
+import { SortBy, SortDirections } from "../common/types";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_DIRECTION_DAFAULT,
+} from "../common/constants";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -73,8 +78,8 @@ describe("GET /posts", () => {
   it("should return 200 and all posts with default params queries", async () => {
     const response = await request(app).get("/posts").expect(200);
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(postsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -87,7 +92,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allPosts = await postRepository.find(page, pageSize);
+    const allPosts = await postRepository.find({ page, pageSize });
     expect(allPosts.length).toBe(response.body.items.length);
   });
 
@@ -98,7 +103,7 @@ describe("GET /posts", () => {
       .get(`/posts?pageNumber=${page}`)
       .expect(200);
 
-    const pageSize = 10;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(postsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -111,7 +116,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -121,7 +126,7 @@ describe("GET /posts", () => {
       .get(`/posts?pageSize=${pageSize}`)
       .expect(200);
 
-    const page = 1;
+    const page = PAGE_DAFAULT;
     const pagesCount = Math.ceil(postsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -134,7 +139,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -158,12 +163,12 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
   it("should return 200 and all posts with setting asc order. Other fields default", async () => {
-    const sortDirection = "asc";
+    const sortDirection = SortDirections.ASC;
 
     const response = await request(app)
       .get(`/posts?sortDirection=${sortDirection}`)
@@ -171,8 +176,8 @@ describe("GET /posts", () => {
 
     const sortBy: SortBy<Post> = "createdAt";
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(postsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -187,12 +192,12 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(
+    const allBlogs = await postRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -203,10 +208,10 @@ describe("GET /posts", () => {
       .get(`/posts?sortBy=${sortBy}`)
       .expect(200);
 
-    const sortDirection = "desc";
+    const sortDirection = SORT_DIRECTION_DAFAULT;
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(postsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -221,12 +226,12 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(
+    const allBlogs = await postRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 });

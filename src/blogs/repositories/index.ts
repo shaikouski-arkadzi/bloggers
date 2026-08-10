@@ -3,15 +3,29 @@ import { db } from "../../db";
 import { Blog, BlogDb, BlogInputDto } from "../types";
 import { mapBlogDbToBlog } from "../utils";
 import { SortDirection, SortBy } from "../../common/types";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_DIRECTION_DAFAULT,
+  SORT_FIELD_DAFAULT,
+} from "../../common/constants";
+
+interface BlogsQueryParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: SortBy<Blog>;
+  sortDirection?: SortDirection;
+  searchNameTerm?: string | null;
+}
 
 export const blogRepository = {
-  async find(
-    page: number = 1,
-    pageSize: number = 10,
-    sortBy: SortBy<Blog> = "createdAt",
-    sortDirection: SortDirection = "desc",
-    searchNameTerm: string | null = null,
-  ): Promise<Blog[]> {
+  async find({
+    page = PAGE_DAFAULT,
+    pageSize = PAGE_SIZE_DAFAULT,
+    sortBy = SORT_FIELD_DAFAULT,
+    sortDirection = SORT_DIRECTION_DAFAULT,
+    searchNameTerm = null,
+  }: BlogsQueryParams = {}): Promise<Blog[]> {
     const result = await db
       .getCollections()
       .blogsCollection.find(

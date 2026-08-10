@@ -4,14 +4,27 @@ import { blogRepository } from "../../blogs/repositories";
 import { mapPostDbToPost } from "../utils";
 import { ObjectId } from "mongodb";
 import { SortDirection, SortBy } from "../../common/types";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_DIRECTION_DAFAULT,
+  SORT_FIELD_DAFAULT,
+} from "../../common/constants";
+
+interface PostsQueryParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: SortBy<Post>;
+  sortDirection?: SortDirection;
+}
 
 export const postRepository = {
-  async find(
-    page: number = 1,
-    pageSize: number = 10,
-    sortBy: SortBy<Post> = "createdAt",
-    sortDirection: SortDirection = "desc",
-  ): Promise<Post[]> {
+  async find({
+    page = PAGE_DAFAULT,
+    pageSize = PAGE_SIZE_DAFAULT,
+    sortBy = SORT_FIELD_DAFAULT,
+    sortDirection = SORT_DIRECTION_DAFAULT,
+  }: PostsQueryParams = {}): Promise<Post[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({})
@@ -38,15 +51,17 @@ export const postRepository = {
   },
 
   async findPostsByBlog(
-    id: string,
-    page: number = 1,
-    pageSize: number = 10,
-    sortBy: SortBy<Post> = "createdAt",
-    sortDirection: SortDirection = "desc",
+    blogId: string,
+    {
+      page = PAGE_DAFAULT,
+      pageSize = PAGE_SIZE_DAFAULT,
+      sortBy = SORT_FIELD_DAFAULT,
+      sortDirection = SORT_DIRECTION_DAFAULT,
+    }: PostsQueryParams = {},
   ): Promise<Post[]> {
     const result = await db
       .getCollections()
-      .postsCollection.find({ blogId: id })
+      .postsCollection.find({ blogId })
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })

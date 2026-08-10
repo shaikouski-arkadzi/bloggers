@@ -90,7 +90,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allPosts = await postRepository.find(page, pageSize);
+    const allPosts = await postRepository.find({ page, pageSize });
     expect(allPosts.length).toBe(response.body.items.length);
   });
 
@@ -114,7 +114,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -137,7 +137,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -161,7 +161,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(page, pageSize);
+    const allBlogs = await postRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -190,12 +190,12 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(
+    const allBlogs = await postRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -224,12 +224,12 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find(
+    const allBlogs = await postRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 });

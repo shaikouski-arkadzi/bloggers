@@ -5,7 +5,12 @@ import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { Blog } from "../blogs/types";
-import { SortBy } from "../common/types";
+import { SortBy, SortDirections } from "../common/types";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_DIRECTION_DAFAULT,
+} from "../common/constants";
 
 const app = express();
 
@@ -55,9 +60,9 @@ describe("GET /blogs", () => {
   it("should return 200 and all blogs with default params queries", async () => {
     const response = await request(app).get("/blogs").expect(200);
 
-    const page = 1;
-    const pageSize = 10;
-    const pagesCount = Math.ceil(blogsCount / pageSize);
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
+    const pagesCount = Math.ceil(blogsCount / PAGE_SIZE_DAFAULT);
 
     const startIndex = (page - 1) * pageSize;
 
@@ -69,7 +74,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(page, pageSize);
+    const allBlogs = await blogRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -80,7 +85,7 @@ describe("GET /blogs", () => {
       .get(`/blogs?pageNumber=${page}`)
       .expect(200);
 
-    const pageSize = 10;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -93,7 +98,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(page, pageSize);
+    const allBlogs = await blogRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -103,7 +108,7 @@ describe("GET /blogs", () => {
       .get(`/blogs?pageSize=${pageSize}`)
       .expect(200);
 
-    const page = 1;
+    const page = PAGE_DAFAULT;
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -116,7 +121,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(page, pageSize);
+    const allBlogs = await blogRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -140,12 +145,12 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(page, pageSize);
+    const allBlogs = await blogRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
   it("should return 200 and all blogs with setting asc order. Other fields default", async () => {
-    const sortDirection = "asc";
+    const sortDirection = SortDirections.ASC;
 
     const response = await request(app)
       .get(`/blogs?sortDirection=${sortDirection}`)
@@ -153,8 +158,8 @@ describe("GET /blogs", () => {
 
     const sortBy: SortBy<Blog> = "createdAt";
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -169,12 +174,12 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(
+    const allBlogs = await blogRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -185,10 +190,10 @@ describe("GET /blogs", () => {
       .get(`/blogs?sortBy=${sortBy}`)
       .expect(200);
 
-    const sortDirection = "desc";
+    const sortDirection = SORT_DIRECTION_DAFAULT;
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     const startIndex = (page - 1) * pageSize;
@@ -203,12 +208,12 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find(
+    const allBlogs = await blogRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
-    );
+    });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -219,8 +224,8 @@ describe("GET /blogs", () => {
       .get(`/blogs?searchNameTerm=${searchNameTerm}`)
       .expect(200);
 
-    const page = 1;
-    const pageSize = 10;
+    const page = PAGE_DAFAULT;
+    const pageSize = PAGE_SIZE_DAFAULT;
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     expect(response.body).toEqual({
