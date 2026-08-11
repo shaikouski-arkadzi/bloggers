@@ -15,7 +15,11 @@ import {
   resultValidationMiddleware,
   sortingValidation,
 } from "../../common/validation";
-import { blogExistsMiddleware, blogInputDtoValidation } from "../validation";
+import {
+  blogExistsMiddleware,
+  blogInputDtoValidation,
+  searchNameTermValidation,
+} from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
 import {
   contentValidation,
@@ -36,6 +40,7 @@ router.get(
   BLOGS_ROUTES.ROOT,
   paginationValidation,
   sortingValidation(BLOG_FIELDS),
+  searchNameTermValidation,
   resultValidationMiddleware,
   getBlogs,
 );
