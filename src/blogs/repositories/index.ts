@@ -31,7 +31,7 @@ export const blogRepository = {
       .blogsCollection.find(
         searchNameTerm
           ? {
-              name: { $regex: searchNameTerm },
+              name: { $regex: searchNameTerm, $options: "i" },
             }
           : {},
       )
