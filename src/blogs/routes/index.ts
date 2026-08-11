@@ -26,6 +26,7 @@ import {
   shortDescriptionValidation,
   titleValidation,
 } from "../../posts/validation/postInputDto.validation.middleware";
+import { POST_FIELDS } from "../../posts/constants";
 
 const router = Router();
 
@@ -74,7 +75,7 @@ router.get(
   idValidation,
   blogExistsMiddleware,
   paginationValidation,
-  sortingValidation(BLOG_FIELDS),
+  sortingValidation(POST_FIELDS),
   resultValidationMiddleware,
   getBlogPosts,
 );
