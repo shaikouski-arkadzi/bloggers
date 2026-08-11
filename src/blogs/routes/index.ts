@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createBlog,
+  createBlogPost,
   deleteBlog,
   getBlog,
   getBlogPosts,
@@ -16,6 +17,11 @@ import {
 } from "../../common/validation";
 import { blogExistsMiddleware, blogInputDtoValidation } from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
+import {
+  contentValidation,
+  shortDescriptionValidation,
+  titleValidation,
+} from "../../posts/validation/postInputDto.validation.middleware";
 
 const router = Router();
 
@@ -66,6 +72,18 @@ router.get(
   sortingValidation(BLOG_FIELDS),
   resultValidationMiddleware,
   getBlogPosts,
+);
+
+router.post(
+  BLOGS_ROUTES.BLOG_POSTS,
+  superAdminGuardMiddleware,
+  idValidation,
+  blogExistsMiddleware,
+  titleValidation,
+  shortDescriptionValidation,
+  contentValidation,
+  resultValidationMiddleware,
+  createBlogPost,
 );
 
 export default router;

@@ -5,3 +5,4 @@ export { deleteBlog } from "./deleteBlog.controller";
 export { updateBlog } from "./updateBlog.controller";
 
 export { getBlogPosts } from "./getBlogPosts.controller";
+export { createBlogPost } from "./createBlogPost.controller";
