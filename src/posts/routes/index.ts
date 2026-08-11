@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from "express";
 import {
   createPost,
   deletePost,
@@ -6,10 +6,12 @@ import {
   getPosts,
   updatePost,
 } from "../controllers";
-import { POSTS_ROUTES } from "../constants";
+import { POST_FIELDS, POSTS_ROUTES } from "../constants";
 import {
   idValidation,
+  paginationValidation,
   resultValidationMiddleware,
+  sortingValidation,
 } from "../../common/validation";
 import { postExistsMiddleware, postInputDtoValidation } from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
@@ -23,7 +25,13 @@ router.post(
   resultValidationMiddleware,
   createPost,
 );
-router.get(POSTS_ROUTES.ROOT, getPosts);
+router.get(
+  POSTS_ROUTES.ROOT,
+  paginationValidation,
+  sortingValidation(POST_FIELDS),
+  resultValidationMiddleware,
+  getPosts,
+);
 router.get(
   POSTS_ROUTES.BY_ID,
   idValidation,
