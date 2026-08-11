@@ -101,7 +101,7 @@ export const blogRepository = {
     const filter = Object.fromEntries(
       Object.entries(conditions).map(([field, condition]) => [
         field,
-        { $regex: condition },
+        { $regex: condition, $options: "i" },
       ]),
     );
 
