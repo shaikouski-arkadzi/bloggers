@@ -35,7 +35,7 @@ export const getBlogs = async (
   const searchNameTerm = req.query.searchNameTerm || null;
 
   const allBlogsCount = await blogRepository.count(
-    searchNameTerm ? { field: "name", condition: searchNameTerm } : {},
+    searchNameTerm ? { name: searchNameTerm } : {},
   );
 
   const pagesCount = Math.ceil(allBlogsCount / pageSize);

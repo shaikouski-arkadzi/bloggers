@@ -228,8 +228,7 @@ describe("GET /blogs", () => {
     const pageSize = PAGE_SIZE_DAFAULT;
 
     blogsCount = await blogRepository.count({
-      field: "name",
-      condition: searchNameTerm,
+      name: searchNameTerm,
     });
 
     const pagesCount = Math.ceil(blogsCount / pageSize);
