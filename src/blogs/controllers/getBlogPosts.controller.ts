@@ -34,7 +34,10 @@ export const getBlogPosts = async (
       ? SortDirections.ASC
       : SortDirections.DESC;
 
-  const allPostsCount = await postRepository.count();
+  const allPostsCount = await postRepository.count({
+    field: "id",
+    condition: id,
+  });
 
   const pagesCount = Math.ceil(allPostsCount / pageSize);
 

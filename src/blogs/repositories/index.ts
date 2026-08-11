@@ -95,8 +95,20 @@ export const blogRepository = {
     return result.deletedCount === 1;
   },
 
-  async count(): Promise<number> {
-    const result = await db.getCollections().blogsCollection.countDocuments({});
+  async count({
+    field,
+    condition,
+  }: {
+    field?: keyof Blog;
+    condition?: string;
+  } = {}): Promise<number> {
+    const result = await db.getCollections().blogsCollection.countDocuments(
+      field
+        ? {
+            [field]: { $regex: condition },
+          }
+        : {},
+    );
 
     return result;
   },

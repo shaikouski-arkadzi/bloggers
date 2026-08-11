@@ -226,6 +226,12 @@ describe("GET /blogs", () => {
 
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
+
+    blogsCount = await blogRepository.count({
+      field: "name",
+      condition: searchNameTerm,
+    });
+
     const pagesCount = Math.ceil(blogsCount / pageSize);
 
     expect(response.body).toEqual({
