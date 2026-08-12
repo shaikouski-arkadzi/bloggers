@@ -63,4 +63,10 @@ export const blogsService = {
 
     return returnData;
   },
+
+  async delete(id: string): Promise<boolean> {
+    const result = await blogRepository.delete(id);
+
+    return result === 1;
+  },
 };

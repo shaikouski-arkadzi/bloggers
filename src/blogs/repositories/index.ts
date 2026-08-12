@@ -77,12 +77,12 @@ export const blogRepository = {
     return result.matchedCount === 1;
   },
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<number> {
     const result = await db
       .getCollections()
       .blogsCollection.deleteOne({ _id: new ObjectId(id) });
 
-    return result.deletedCount === 1;
+    return result.deletedCount;
   },
 
   async count(
