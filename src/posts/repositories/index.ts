@@ -72,24 +72,10 @@ export const postRepository = {
     return result.map(mapPostDbToPost);
   },
 
-  async create(post: PostInputDto): Promise<Post> {
-    const blog = await blogRepository.findById(post.blogId);
+  async create(post: PostDb): Promise<boolean> {
+    await db.getCollections().postsCollection.insertOne(post);
 
-    if (!blog) throw new Error("Не найдено блога с таким id");
-
-    const newPost: PostDb = {
-      _id: new ObjectId(),
-      title: post.title,
-      content: post.content,
-      shortDescription: post.shortDescription,
-      blogId: post.blogId,
-      blogName: blog.name,
-      createdAt: new Date().toISOString(),
-    };
-
-    await db.getCollections().postsCollection.insertOne(newPost);
-
-    return mapPostDbToPost(newPost);
+    return true;
   },
 
   async update(id: string, post: PostInputDto): Promise<boolean> {

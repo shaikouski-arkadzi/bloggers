@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Post, PostInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { postRepository } from "../repositories";
+import { postsService } from "../application/posts.service";
 
 export const createPost = async (
   req: Request<{}, {}, PostInputDto>,
@@ -9,7 +9,11 @@ export const createPost = async (
 ) => {
   const post = req.body;
 
-  const newPost = await postRepository.create(post);
+  const newPost = await postsService.create(post);
 
-  res.status(201).json(newPost);
+  if (newPost instanceof Error) {
+    res.sendStatus(500);
+  } else {
+    res.status(201).json(newPost);
+  }
 };
