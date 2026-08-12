@@ -25,7 +25,8 @@ export const blogRepository = {
     sortBy = SORT_FIELD_DAFAULT,
     sortDirection = SORT_DIRECTION_DAFAULT,
     searchNameTerm = null,
-  }: BlogsQueryParams = {}): Promise<Blog[]> {
+  }: BlogsQueryParams = {}): Promise<BlogDb[]> {
+    console.log(searchNameTerm);
     const result = await db
       .getCollections()
       .blogsCollection.find(
@@ -42,7 +43,7 @@ export const blogRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result.map(mapBlogDbToBlog);
+    return result;
   },
 
   async findById(id: string): Promise<BlogDb | null> {
