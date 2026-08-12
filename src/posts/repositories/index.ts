@@ -38,7 +38,7 @@ export const postRepository = {
     return result.map(mapPostDbToPost);
   },
 
-  async findById(id: string): Promise<Post | null> {
+  async findById(id: string): Promise<PostDb | null> {
     const result = await db
       .getCollections()
       .postsCollection.findOne({ _id: new ObjectId(id) });
@@ -47,7 +47,7 @@ export const postRepository = {
       return null;
     }
 
-    return mapPostDbToPost(result);
+    return result;
   },
 
   async findPostsByBlog(
