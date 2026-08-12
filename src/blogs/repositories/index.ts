@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
 import { Blog, BlogDb, BlogInputDto } from "../types";
-import { mapBlogDbToBlog } from "../utils";
 import { SortDirection, SortBy } from "../../common/types";
 import {
   PAGE_DAFAULT,
@@ -62,19 +61,15 @@ export const blogRepository = {
     await db.getCollections().blogsCollection.insertOne(blog);
   },
 
-  async update(id: string, blog: BlogInputDto): Promise<boolean> {
+  async update(id: ObjectId, blog: BlogInputDto): Promise<number> {
     const result = await db.getCollections().blogsCollection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: id },
       {
-        $set: {
-          name: blog.name,
-          description: blog.description,
-          websiteUrl: blog.websiteUrl,
-        },
+        $set: blog,
       },
     );
 
-    return result.matchedCount === 1;
+    return result.matchedCount;
   },
 
   async delete(id: string): Promise<number> {
