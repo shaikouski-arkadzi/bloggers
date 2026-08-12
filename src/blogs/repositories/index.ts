@@ -57,19 +57,8 @@ export const blogRepository = {
     return result;
   },
 
-  async create(blog: BlogInputDto): Promise<Blog> {
-    const newBlog: BlogDb = {
-      _id: new ObjectId(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      isMembership: false,
-      createdAt: new Date().toISOString(),
-    };
-
-    await db.getCollections().blogsCollection.insertOne(newBlog);
-
-    return mapBlogDbToBlog(newBlog);
+  async create(blog: BlogDb): Promise<void> {
+    await db.getCollections().blogsCollection.insertOne(blog);
   },
 
   async update(id: string, blog: BlogInputDto): Promise<boolean> {

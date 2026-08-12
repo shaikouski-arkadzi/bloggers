@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Blog, BlogInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { blogRepository } from "../repositories";
+import { blogsService } from "../application/blogs.service";
 
 export const createBlog = async (
   req: Request<{}, {}, BlogInputDto>,
@@ -9,7 +9,7 @@ export const createBlog = async (
 ) => {
   const blog = req.body;
 
-  const newBlog = await blogRepository.create(blog);
+  const newBlog = await blogsService.create(blog);
 
   res.status(201).json(newBlog);
 };
