@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { Post, PostDb, PostInputDto } from "../types";
+import { Post, PostDb, PostInputDto, UpdatedPost } from "../types";
 import { blogRepository } from "../../blogs/repositories";
 import { mapPostDbToPost } from "../utils";
 import { ObjectId } from "mongodb";
@@ -78,25 +78,15 @@ export const postRepository = {
     return true;
   },
 
-  async update(id: string, post: PostInputDto): Promise<boolean> {
-    const blog = await blogRepository.findById(post.blogId);
-
-    if (!blog) throw new Error("Не найдено блога с таким id");
-
+  async update(id: ObjectId, post: UpdatedPost): Promise<number> {
     const result = await db.getCollections().postsCollection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: id },
       {
-        $set: {
-          title: post.title,
-          shortDescription: post.shortDescription,
-          content: post.content,
-          blogId: post.blogId,
-          blogName: blog.name,
-        },
+        $set: post,
       },
     );
 
-    return result.matchedCount === 1;
+    return result.matchedCount;
   },
 
   async delete(id: string): Promise<boolean> {

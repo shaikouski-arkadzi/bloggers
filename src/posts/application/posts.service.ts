@@ -75,4 +75,24 @@ export const postsService = {
 
     return result;
   },
+
+  async update(id: string, post: PostInputDto): Promise<boolean> {
+    const blog = await blogRepository.findById(post.blogId);
+
+    if (!blog) throw new Error("Не найдено блога с таким id");
+
+    const idDb = new ObjectId(id);
+
+    const newPost: UpdatedPost = {
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: blog.name,
+    };
+
+    const result = await postRepository.update(idDb, newPost);
+
+    return result === 1;
+  },
 };
