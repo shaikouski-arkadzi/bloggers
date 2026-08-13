@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { APIErrorResult } from "../../common/types";
 import { postRepository } from "../../posts/repositories";
 import { Post, PostInputDto } from "../../posts/types";
+import { postsService } from "../../posts/application/posts.service";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
@@ -17,7 +18,11 @@ export const createBlogPost = async (
     blogId,
   };
 
-  const newPost = await postRepository.create(payload);
+  const newPost = await postsService.create(payload);
 
-  res.status(201).json(newPost);
+  if (newPost instanceof Error) {
+    res.sendStatus(500);
+  } else {
+    res.status(201).json(newPost);
+  }
 };
