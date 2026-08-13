@@ -24,7 +24,7 @@ export const postRepository = {
     pageSize = PAGE_SIZE_DAFAULT,
     sortBy = SORT_FIELD_DAFAULT,
     sortDirection = SORT_DIRECTION_DAFAULT,
-  }: PostsQueryParams = {}): Promise<Post[]> {
+  }: PostsQueryParams = {}): Promise<PostDb[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({})
@@ -35,7 +35,7 @@ export const postRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result.map(mapPostDbToPost);
+    return result;
   },
 
   async findById(id: string): Promise<PostDb | null> {

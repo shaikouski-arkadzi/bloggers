@@ -1,7 +1,8 @@
 import { ObjectId } from "mongodb";
 import { blogRepository } from "../../blogs/repositories";
+import { PaginatorData } from "../../common/types";
 import { postRepository } from "../repositories";
-import { Post, PostDb, PostInputDto } from "../types";
+import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { mapPostDbToPost } from "../utils";
 
 export const postsService = {
@@ -37,5 +38,35 @@ export const postsService = {
     } else {
       throw new Error("Ошибка создания поста");
     }
+  },
+
+  async findMany(queries: PostsQuery): Promise<PaginatorData<Post>> {
+    const page = Number(queries.pageNumber);
+    const pageSize = Number(queries.pageSize);
+    const sortBy = queries.sortBy;
+    const sortDirection = queries.sortDirection;
+
+    const allPostsCount = await postRepository.count();
+
+    const pagesCount = Math.ceil(allPostsCount / pageSize);
+
+    const result = await postRepository.find({
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    });
+
+    const mappedResult = result.map(mapPostDbToPost);
+
+    const returnData: PaginatorData<Post> = {
+      pagesCount,
+      page,
+      pageSize,
+      totalCount: allPostsCount,
+      items: mappedResult,
+    };
+
+    return returnData;
   },
 };

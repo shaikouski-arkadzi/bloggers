@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { SortBy, SortDirection } from "../../common/types";
 
 export interface PostInputDto {
   title: string;
@@ -17,4 +18,15 @@ export interface Post extends PostInputDto {
   id: string;
   blogName: string;
   createdAt: string;
+}
+
+export interface PostsQuery {
+  pageNumber?: string;
+  pageSize?: string;
+  sortBy?: SortBy<Post>;
+  sortDirection?: SortDirection;
+}
+
+export interface UpdatedPost extends PostInputDto {
+  blogName: string;
 }
