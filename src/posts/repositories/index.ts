@@ -58,7 +58,7 @@ export const postRepository = {
       sortBy = SORT_FIELD_DAFAULT,
       sortDirection = SORT_DIRECTION_DAFAULT,
     }: PostsQueryParams = {},
-  ): Promise<Post[]> {
+  ): Promise<PostDb[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({ blogId })
@@ -69,7 +69,7 @@ export const postRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result.map(mapPostDbToPost);
+    return result;
   },
 
   async create(post: PostDb): Promise<boolean> {

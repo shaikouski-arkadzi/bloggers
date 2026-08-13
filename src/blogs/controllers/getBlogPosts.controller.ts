@@ -1,24 +1,8 @@
 import { Request, Response } from "express";
-import { Post } from "../../posts/types";
-import { postRepository } from "../../posts/repositories";
-import {
-  PaginatorData,
-  SortBy,
-  SortDirection,
-  SortDirections,
-} from "../../common/types";
-import {
-  PAGE_DAFAULT,
-  PAGE_SIZE_DAFAULT,
-  SORT_FIELD_DAFAULT,
-} from "../../common/constants";
-
-interface PostsQuery {
-  pageNumber?: string;
-  pageSize?: string;
-  sortBy?: SortBy<Post>;
-  sortDirection?: SortDirection;
-}
+import { Post, PostsQuery } from "../../posts/types";
+import { PaginatorData } from "../../common/types";
+import { matchedData } from "express-validator";
+import { postsService } from "../../posts/application/posts.service";
 
 export const getBlogPosts = async (
   req: Request<{ id: string }, {}, {}, PostsQuery>,
@@ -26,34 +10,9 @@ export const getBlogPosts = async (
 ) => {
   const id = req.params.id;
 
-  const page = Number(req.query.pageNumber) || PAGE_DAFAULT;
-  const pageSize = Number(req.query.pageSize) || PAGE_SIZE_DAFAULT;
-  const sortBy = req.query.sortBy || SORT_FIELD_DAFAULT;
-  const sortDirection =
-    req.query.sortDirection === SortDirections.ASC
-      ? SortDirections.ASC
-      : SortDirections.DESC;
+  const blogsQueries = matchedData<PostsQuery>(req);
 
-  const allPostsCount = await postRepository.count({
-    blogId: id,
-  });
+  const result = await postsService.findManyByBlog(id, blogsQueries);
 
-  const pagesCount = Math.ceil(allPostsCount / pageSize);
-
-  const result = await postRepository.findPostsByBlog(id, {
-    page,
-    pageSize,
-    sortBy,
-    sortDirection,
-  });
-
-  const returnData: PaginatorData<Post> = {
-    pagesCount,
-    page,
-    pageSize,
-    totalCount: allPostsCount,
-    items: result,
-  };
-
-  res.status(200).json(returnData);
+  res.status(200).json(result);
 };

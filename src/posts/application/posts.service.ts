@@ -95,4 +95,39 @@ export const postsService = {
 
     return result === 1;
   },
+
+  async findManyByBlog(
+    blogId: string,
+    queries: PostsQuery,
+  ): Promise<PaginatorData<Post>> {
+    const page = Number(queries.pageNumber);
+    const pageSize = Number(queries.pageSize);
+    const sortBy = queries.sortBy;
+    const sortDirection = queries.sortDirection;
+
+    const allPostsCount = await postRepository.count({
+      blogId,
+    });
+
+    const pagesCount = Math.ceil(allPostsCount / pageSize);
+
+    const result = await postRepository.findPostsByBlog(blogId, {
+      page,
+      pageSize,
+      sortBy,
+      sortDirection,
+    });
+
+    const mappedResult = result.map(mapPostDbToPost);
+
+    const returnData: PaginatorData<Post> = {
+      pagesCount,
+      page,
+      pageSize,
+      totalCount: allPostsCount,
+      items: mappedResult,
+    };
+
+    return returnData;
+  },
 };
