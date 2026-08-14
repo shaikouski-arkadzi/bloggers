@@ -1,28 +1,22 @@
-import request from "supertest";
+import request, { Response } from "supertest";
 import express from "express";
-import dns from "node:dns";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { postRepository } from "../posts/repositories";
-import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { Post } from "../posts/types";
-import { SortBy } from "../common/types";
+import { setupApp } from "../setup-app";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
-
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const app = express();
 
 setupApp(app);
 
-describe("GET /posts", () => {
-  let responseCreateData: Post[] = [];
-  let postsCount: number;
+let createBlogResponse: Response;
 
+describe("POST /posts", () => {
   beforeAll(async () => {
     await db.connect();
 
@@ -31,205 +25,418 @@ describe("GET /posts", () => {
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
 
-    const body = {
+    const blogBody = {
       name: "string",
       description: "string",
       websiteUrl:
         "https://Bm1JGOWTQKCIPnNlT1t3guQwwleVwaU7mIVVo9WE6b-oMo3YROCnasIz2cEtnT.bAxypoZ1iQXXOsO1H0E40QYOCYVik",
     };
 
-    const createBlogResponse = await request(app)
+    createBlogResponse = await request(app)
       .post(BLOGS_PATH)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send(body)
+      .send(blogBody)
       .expect(201);
-
-    for (let i = 0; i < 21; i++) {
-      const postBody = {
-        title: `name ${i}`,
-        shortDescription: `shortDescription ${i}`,
-        content: `content ${i}`,
-        blogId: createBlogResponse.body.id,
-      };
-
-      const responseCreate = await request(app)
-        .post(POSTS_PATH)
-        .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-        .send(postBody)
-        .expect(201);
-
-      responseCreateData.push(responseCreate.body);
-    }
-
-    responseCreateData.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
-
-    postsCount = await postRepository.count();
-  }, 30000);
+  });
 
   afterAll(async () => {
     await db.disconnect();
   });
 
-  it("should return 200 and all posts with default params queries", async () => {
-    const response = await request(app).get("/posts").expect(200);
+  it("should create post with valid data", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
 
-    const page = 1;
-    const pageSize = 10;
-    const pagesCount = Math.ceil(postsCount / pageSize);
+    const createPostResponse = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(201);
 
-    const startIndex = (page - 1) * pageSize;
-
-    expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: responseCreateData.slice(startIndex, startIndex + pageSize),
+    expect(createPostResponse.body).toEqual({
+      id: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
+      title: "string",
+      shortDescription: "string",
+      content: "string",
+      blogId: expect.stringMatching(/^[0-9a-fA-F]{24}$/),
+      blogName: "string",
+      createdAt: expect.stringMatching(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      ),
     });
 
-    const allPosts = await postRepository.find({ page, pageSize });
-    expect(allPosts.length).toBe(response.body.items.length);
+    const allPosts = await postRepository.find();
+    expect(allPosts.length).toBe(1);
   });
 
-  it("should return 200 and all posts with setting pageNumber and default pageSize in params queries", async () => {
-    const page = 2;
+  it("should return 400 if title is missing", async () => {
+    const postBody = {
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
-      .get(`/posts?pageNumber=${page}`)
-      .expect(200);
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
 
-    const pageSize = 10;
-    const pagesCount = Math.ceil(postsCount / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: responseCreateData.slice(startIndex, startIndex + pageSize),
+      errorsMessages: [
+        {
+          message: "Поле обязательное",
+          field: "title",
+        },
+      ],
     });
-
-    const allBlogs = await postRepository.find({ page, pageSize });
-    expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all posts with setting pageSize and default pageNumber in params queries", async () => {
-    const pageSize = 11;
+  it("should return 400 if title is empty", async () => {
+    const postBody = {
+      title: " ",
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
     const response = await request(app)
-      .get(`/posts?pageSize=${pageSize}`)
-      .expect(200);
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
 
-    const page = 1;
-    const pagesCount = Math.ceil(postsCount / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: responseCreateData.slice(startIndex, startIndex + pageSize),
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "title",
+        },
+      ],
     });
-
-    const allBlogs = await postRepository.find({ page, pageSize });
-    expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all posts with setting pageNumber and pageSize params queries", async () => {
-    const page = 2;
-    const pageSize = 11;
+  it("should return 400 if title is not string", async () => {
+    const postBody = {
+      title: 1,
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
-      .get(`/posts?pageNumber=${page}&pageSize=${pageSize}`)
-      .expect(200);
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
 
-    const pagesCount = Math.ceil(postsCount / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: responseCreateData.slice(startIndex, startIndex + pageSize),
+      errorsMessages: [
+        {
+          message: "Поле должно быть типом string",
+          field: "title",
+        },
+      ],
     });
-
-    const allBlogs = await postRepository.find({ page, pageSize });
-    expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all posts with setting asc order. Other fields default", async () => {
-    const sortDirection = "asc";
+  it("should return 400 if title longer than 30 chars", async () => {
+    const postBody = {
+      title: "a".repeat(31),
+      shortDescription: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
-      .get(`/posts?sortDirection=${sortDirection}`)
-      .expect(200);
-
-    const sortBy: SortBy<Post> = "createdAt";
-
-    const page = 1;
-    const pageSize = 10;
-    const pagesCount = Math.ceil(postsCount / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(400);
 
     expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: [...responseCreateData]
-        .reverse()
-        .slice(startIndex, startIndex + pageSize),
+      errorsMessages: [
+        {
+          message: "Максимальная длина 30 символов",
+          field: "title",
+        },
+      ],
     });
-
-    const allBlogs = await postRepository.find({
-      page,
-      pageSize,
-      sortBy,
-      sortDirection,
-    });
-    expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all posts with sorting by name. Other fields default", async () => {
-    const sortBy: SortBy<Post> = "title";
+  it("should return 400 if shortDescription is missing", async () => {
+    const postBody = {
+      title: "string",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
 
     const response = await request(app)
-      .get(`/posts?sortBy=${sortBy}`)
-      .expect(200);
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
 
-    const sortDirection = "desc";
-
-    const page = 1;
-    const pageSize = 10;
-    const pagesCount = Math.ceil(postsCount / pageSize);
-
-    const startIndex = (page - 1) * pageSize;
+    expect(response.statusCode).toEqual(400);
 
     expect(response.body).toEqual({
-      pagesCount,
-      page,
-      pageSize,
-      totalCount: postsCount,
-      items: responseCreateData
-        .sort((a, b) => b.title.localeCompare(a.title))
-        .slice(startIndex, startIndex + pageSize),
+      errorsMessages: [
+        {
+          message: "Поле обязательное",
+          field: "shortDescription",
+        },
+      ],
     });
+  });
 
-    const allBlogs = await postRepository.find({
-      page,
-      pageSize,
-      sortBy,
-      sortDirection,
+  it("should return 400 if shortDescription is empty", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: " ",
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "shortDescription",
+        },
+      ],
     });
-    expect(allBlogs.length).toBe(response.body.items.length);
+  });
+
+  it("should return 400 if shortDescription is not string", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: 1,
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле должно быть типом string",
+          field: "shortDescription",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if shortDescription longer than 100 chars", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "a".repeat(101),
+      content: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Максимальная длина 100 символов",
+          field: "shortDescription",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if content is missing", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле обязательное",
+          field: "content",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if content is empty", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: " ",
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле не должно быть пустым",
+          field: "content",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if content is not string", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: 1,
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле должно быть типом string",
+          field: "content",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if content longer than 1000 chars", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: "a".repeat(1001),
+      blogId: createBlogResponse.body.id,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Максимальная длина 1000 символов",
+          field: "content",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if blogId is missing", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: "string",
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле обязательное",
+          field: "blogId",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if blogId is not string", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: "string",
+      blogId: 1,
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody);
+
+    expect(response.statusCode).toEqual(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Поле должно быть типом string",
+          field: "blogId",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if blog not exists by id", async () => {
+    const postBody = {
+      title: "string",
+      shortDescription: "string",
+      content: "string",
+      blogId: "6a63bff16de99509911f914c",
+    };
+
+    const response = await request(app)
+      .post(POSTS_PATH)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(postBody)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Не найдено блога с таким идентификатором",
+          field: "blogId",
+        },
+      ],
+    });
   });
 });
