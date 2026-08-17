@@ -1,17 +1,16 @@
 import { WithId } from "mongodb";
 import { db } from "../../db";
-import { UserDb } from "../types";
+import { User, UserDb } from "../types";
+import { mapUserDbToUser } from "../utils";
 
 export const userQueryRepository = {
-  async findByField(
-    filter: Partial<WithId<UserDb>>,
-  ): Promise<WithId<UserDb> | null> {
+  async findByField(filter: Partial<WithId<UserDb>>): Promise<User | null> {
     const result = await db.getCollections().usersCollection.findOne(filter);
 
     if (!result) {
       return null;
     }
 
-    return result;
+    return mapUserDbToUser(result);
   },
 };

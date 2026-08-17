@@ -1,7 +1,7 @@
 import { ObjectId, WithId } from "mongodb";
 import { userQueryRepository } from "../repositories";
 import { userCommandRepository } from "../repositories/user.command.repository";
-import { UserDb, UserInputDto } from "../types";
+import { User, UserDb, UserInputDto } from "../types";
 import { SavingException } from "../exceptions";
 import { bcryptService } from "./bcrypt.service";
 
@@ -14,11 +14,11 @@ export const userService = {
     const user = await userQueryRepository.findByField({ login });
     return user ? false : true;
   },
-  async getUserById(id: ObjectId): Promise<WithId<UserDb> | null> {
+  async getUserById(id: ObjectId): Promise<User | null> {
     const user = await userQueryRepository.findByField({ _id: id });
     return user;
   },
-  async create(user: UserInputDto): Promise<WithId<UserDb> | null> {
+  async create(user: UserInputDto): Promise<User | null> {
     const { login, email, password } = user;
 
     const isEmailAvailable = await userService.isEmailAvailable(email);

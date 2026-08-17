@@ -16,9 +16,7 @@ export const createUser = async (
 
     if (!createdUser) throw new SavingException();
 
-    const mappedUser = mapUserDbToUser(createdUser);
-
-    res.status(201).json(mappedUser);
+    res.status(201).json(createdUser);
   } catch (error) {
     if (error instanceof SavingException) {
       return res.status(400).json({
