@@ -2,6 +2,8 @@ import { SortDirections } from "../types";
 
 export const WEBSITE_URL_PATTERN =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;
+export const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+export const LOGIN_PATTERN = /^[a-zA-Z0-9_-]*$/;
 
 export const PAGE_DAFAULT = 1;
 

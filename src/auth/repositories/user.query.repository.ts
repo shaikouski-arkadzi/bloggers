@@ -1,10 +1,11 @@
+import { WithId } from "mongodb";
 import { db } from "../../db";
 import { UserDb } from "../types";
 
 export const userQueryRepository = {
-  async findByField<K extends keyof UserDb>(filter: {
-    [P in K]: UserDb[P];
-  }): Promise<UserDb | null> {
+  async findByField(
+    filter: Partial<WithId<UserDb>>,
+  ): Promise<WithId<UserDb> | null> {
     const result = await db.getCollections().usersCollection.findOne(filter);
 
     if (!result) {
