@@ -1,9 +1,10 @@
 import { ObjectId, WithId } from "mongodb";
 import { userQueryRepository } from "../repositories";
 import { userCommandRepository } from "../repositories/user.command.repository";
-import { User, UserDb, UserInputDto } from "../types";
+import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { bcryptService } from "./bcrypt.service";
+import { PaginatorData } from "../../common/types";
 
 export const userService = {
   async isEmailAvailable(email: string): Promise<boolean> {
@@ -39,4 +40,37 @@ export const userService = {
     const createdUser = await userService.getUserById(createdUserId);
     return createdUser;
   },
+  async findMany(queries: UsersQuery): Promise<PaginatorData<User>> {
+      const page = Number(queries.pageNumber);
+      const pageSize = Number(queries.pageSize);
+      const sortBy = queries.sortBy;
+      const sortDirection = queries.sortDirection;
+      const searchLoginTerm = queries.searchLoginTerm;
+      const searchEmailTerm = queries.searchEmailTerm;
+  
+      const allUsersCount = await userQueryRepository.count(
+        searchLoginTerm, searchEmailTerm,
+      );
+  
+      const pagesCount = Math.ceil(allUsersCount / pageSize);
+  
+      const result = await userQueryRepository.find({
+        page,
+        pageSize,
+        sortBy,
+        sortDirection,
+        searchLoginTerm,
+        searchEmailTerm
+      });
+  
+      const returnData: PaginatorData<User> = {
+        pagesCount,
+        page,
+        pageSize,
+        totalCount: allUsersCount,
+        items: result,
+      };
+  
+      return returnData;
+    },
 };
