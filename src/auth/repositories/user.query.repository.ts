@@ -13,4 +13,26 @@ export const userQueryRepository = {
 
     return mapUserDbToUser(result);
   },
+  async count(
+    login?: string | null,
+    email?: string | null,
+  ): Promise<number> {
+    const conditions = [];
+
+    if (login) {
+      conditions.push({
+        login: { $regex: login, $options: "i" },
+      });
+    }
+
+    if (email) {
+      conditions.push({
+        email: { $regex: email, $options: "i" },
+      });
+    }
+
+    const filter = conditions.length > 0 ? { $or: conditions } : {};
+
+    return db.getCollections().usersCollection.countDocuments(filter);
+  }
 };
