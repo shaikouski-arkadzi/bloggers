@@ -7,4 +7,11 @@ export const userCommandRepository = {
     const result = await db.getCollections().usersCollection.insertOne(user);
     return result.insertedId;
   },
+  async delete(id: string): Promise<number> {
+    const result = await db
+      .getCollections()
+      .usersCollection.deleteOne({ _id: new ObjectId(id) });
+
+    return result.deletedCount;
+  },
 };
