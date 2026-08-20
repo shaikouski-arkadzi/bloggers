@@ -24,9 +24,11 @@ export const userService = {
     const { login, email, password } = user;
 
     const isEmailAvailable = await userService.isEmailAvailable(email);
+    console.log(isEmailAvailable);
     if (!isEmailAvailable) throw new SavingException();
 
     const isLoginAvailable = await userService.isLoginAvailable(login);
+    console.log(isLoginAvailable);
     if (!isLoginAvailable) throw new SavingException();
 
     const hashPassword = await bcryptService.generateHash(password);

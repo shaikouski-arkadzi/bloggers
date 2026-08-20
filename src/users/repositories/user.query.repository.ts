@@ -3,15 +3,20 @@ import { db } from "../../db";
 import { User, UserDb } from "../types";
 import { mapUserDbToUser } from "../utils";
 import { SortBy, SortDirection } from "../../common/types";
-import { PAGE_DAFAULT, PAGE_SIZE_DAFAULT, SORT_DIRECTION_DAFAULT, SORT_FIELD_DAFAULT } from "../../common/constants";
+import {
+  PAGE_DAFAULT,
+  PAGE_SIZE_DAFAULT,
+  SORT_DIRECTION_DAFAULT,
+  SORT_FIELD_DAFAULT,
+} from "../../common/constants";
 
 interface UsersQueryParams {
   page?: number;
   pageSize?: number;
   sortBy?: SortBy<User>;
   sortDirection?: SortDirection;
-  searchLoginTerm?: string|null;
-  searchEmailTerm?: string|null;
+  searchLoginTerm?: string | null;
+  searchEmailTerm?: string | null;
 }
 
 export const userQueryRepository = {
@@ -57,10 +62,7 @@ export const userQueryRepository = {
 
     return mapUserDbToUser(result);
   },
-  async count(
-    login?: string | null,
-    email?: string | null,
-  ): Promise<number> {
+  async count(login?: string | null, email?: string | null): Promise<number> {
     const conditions = [];
 
     if (login) {
@@ -78,5 +80,5 @@ export const userQueryRepository = {
     const filter = conditions.length > 0 ? { $or: conditions } : {};
 
     return db.getCollections().usersCollection.countDocuments(filter);
-  }
+  },
 };

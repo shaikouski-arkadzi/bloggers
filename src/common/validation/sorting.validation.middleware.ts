@@ -2,7 +2,7 @@ import { query } from "express-validator";
 import { SortDirections } from "../types";
 import { Blog } from "../../blogs/types";
 import { Post } from "../../posts/types";
-import { User } from "../../auth/types";
+import { User } from "../../users/types";
 import { SORT_DIRECTION_DAFAULT, SORT_FIELD_DAFAULT } from "../constants";
 
 export const sortFieldValidation = <T extends Blog | Post | User>(

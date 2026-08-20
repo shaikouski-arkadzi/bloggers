@@ -10,8 +10,8 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../common/constants";
-import { userQueryRepository } from "../auth/repositories";
-import { User } from "../auth/types";
+import { userQueryRepository } from "../users/repositories";
+import { User } from "../users/types";
 
 const app = express();
 
@@ -38,7 +38,7 @@ describe("GET /users", () => {
         .send({
           login: `login${i}`,
           password: "password",
-          email: `example${i}@example.dev`
+          email: `example${i}@example.dev`,
         })
         .expect(201);
 
@@ -227,9 +227,7 @@ describe("GET /users", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    usersCount = await userQueryRepository.count(
-      searchLoginTerm
-    );
+    usersCount = await userQueryRepository.count(searchLoginTerm);
 
     const pagesCount = Math.ceil(usersCount / pageSize);
 
@@ -254,9 +252,7 @@ describe("GET /users", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    usersCount = await userQueryRepository.count(
-      null, searchEmailTerm
-    );
+    usersCount = await userQueryRepository.count(null, searchEmailTerm);
 
     const pagesCount = Math.ceil(usersCount / pageSize);
 
@@ -276,14 +272,17 @@ describe("GET /users", () => {
     const searchEmailTerm: string = "example11@example.dev";
 
     const response = await request(app)
-      .get(`/users?searchLoginTerm=${searchLoginTerm}&searchEmailTerm=${searchEmailTerm}`)
+      .get(
+        `/users?searchLoginTerm=${searchLoginTerm}&searchEmailTerm=${searchEmailTerm}`,
+      )
       .expect(200);
 
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
     usersCount = await userQueryRepository.count(
-      searchLoginTerm, searchEmailTerm
+      searchLoginTerm,
+      searchEmailTerm,
     );
 
     const pagesCount = Math.ceil(usersCount / pageSize);
@@ -293,7 +292,9 @@ describe("GET /users", () => {
       page,
       pageSize,
       totalCount: usersCount,
-      items: responseCreateData.filter((el) => el.login === searchLoginTerm || el.email === searchEmailTerm),
+      items: responseCreateData.filter(
+        (el) => el.login === searchLoginTerm || el.email === searchEmailTerm,
+      ),
     });
 
     expect(response.body.items.length).toBe(2);

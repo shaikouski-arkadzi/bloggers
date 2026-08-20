@@ -2,7 +2,7 @@ import { Db, MongoClient } from "mongodb";
 import { MONGO_URI } from "../settings/config";
 import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
-import { UserDb } from "../auth/types";
+import { UserDb } from "../users/types";
 
 if (!MONGO_URI) console.error("Not found mongo uri");
 

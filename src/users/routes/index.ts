@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { USERS_FIELDS, USERS_ROUTES } from "../constants";
-import { superAdminGuardMiddleware } from "../middleware";
+import { superAdminGuardMiddleware } from "../../auth/middleware";
 import {
   idValidation,
   paginationValidation,

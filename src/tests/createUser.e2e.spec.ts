@@ -3,7 +3,7 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { userQueryRepository } from "../auth/repositories";
+import { userQueryRepository } from "../users/repositories";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
