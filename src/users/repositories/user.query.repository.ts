@@ -62,6 +62,16 @@ export const userQueryRepository = {
 
     return mapUserDbToUser(result);
   },
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDb[]> {
+    const result = await db
+      .getCollections()
+      .usersCollection.find({
+        $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+      })
+      .toArray();
+
+    return result;
+  },
   async count(login?: string | null, email?: string | null): Promise<number> {
     const conditions = [];
 

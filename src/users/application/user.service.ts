@@ -1,11 +1,11 @@
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { userQueryRepository } from "../repositories";
 import { userCommandRepository } from "../repositories/user.command.repository";
-import { User, UserDb, UserInputDto, UsersQuery } from "../types";
+import { User, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
-import { bcryptService } from "./bcrypt.service";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
+import { bcryptService } from "../../auth/application";
 
 export const userService = {
   async isEmailAvailable(email: string): Promise<boolean> {

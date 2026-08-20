@@ -20,7 +20,7 @@ describe("POST /users", () => {
 
     ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
     ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString("base64");
-  });
+  }, 100000);
 
   afterAll(async () => {
     await db.disconnect();
