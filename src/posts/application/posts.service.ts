@@ -4,6 +4,8 @@ import { PaginatorData } from "../../common/types";
 import { postRepository } from "../repositories";
 import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { mapPostDbToPost } from "../utils";
+import { blogsService } from "../../blogs/application/blogs.service";
+import { NotFoundException } from "../../common/exceptions";
 
 export const postsService = {
   async findById(id: string): Promise<Post | null> {
@@ -16,10 +18,10 @@ export const postsService = {
     return mapPostDbToPost(result);
   },
 
-  async create(post: PostInputDto): Promise<Post | Error> {
-    const blog = await blogRepository.findById(post.blogId);
+  async create(post: PostInputDto): Promise<Post> {
+    const blog = await blogsService.findById(post.blogId);
 
-    if (!blog) throw new Error("Не найдено блога с таким id");
+    if (!blog) throw new NotFoundException();
 
     const newPost: PostDb = {
       _id: new ObjectId(),
@@ -31,13 +33,9 @@ export const postsService = {
       createdAt: new Date().toISOString(),
     };
 
-    const result = await postRepository.create(newPost);
+    await postRepository.create(newPost);
 
-    if (result) {
-      return mapPostDbToPost(newPost);
-    } else {
-      throw new Error("Ошибка создания поста");
-    }
+    return mapPostDbToPost(newPost);
   },
 
   async findMany(queries: PostsQuery): Promise<PaginatorData<Post>> {
@@ -104,6 +102,8 @@ export const postsService = {
     const pageSize = Number(queries.pageSize);
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
+
+    await blogsService.findById(blogId);
 
     const allPostsCount = await postRepository.count({
       blogId,

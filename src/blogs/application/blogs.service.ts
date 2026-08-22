@@ -3,13 +3,14 @@ import { blogRepository } from "../repositories";
 import { mapBlogDbToBlog } from "../utils";
 import { Blog, BlogDb, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
+import { NotFoundException } from "../../common/exceptions";
 
 export const blogsService = {
   async findById(id: string): Promise<Blog | null> {
     const result = await blogRepository.findById(id);
 
     if (!result) {
-      return null;
+      throw new NotFoundException();
     }
 
     return mapBlogDbToBlog(result);
@@ -65,12 +66,16 @@ export const blogsService = {
   },
 
   async delete(id: string): Promise<boolean> {
+    await blogsService.findById(id);
+
     const result = await blogRepository.delete(id);
 
     return result === 1;
   },
 
   async update(id: string, blog: BlogInputDto): Promise<boolean> {
+    await blogsService.findById(id);
+
     const idDB = new ObjectId(id);
 
     const newBlog: BlogInputDto = {

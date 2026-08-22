@@ -16,7 +16,6 @@ import {
   sortingValidation,
 } from "../../common/validation";
 import {
-  blogExistsMiddleware,
   blogInputDtoValidation,
   searchNameTermValidation,
 } from "../validation";
@@ -49,7 +48,6 @@ router.get(
   BLOGS_ROUTES.BY_ID,
   idValidation,
   resultValidationMiddleware,
-  blogExistsMiddleware,
   getBlog,
 );
 router.put(
@@ -58,7 +56,6 @@ router.put(
   idValidation,
   blogInputDtoValidation,
   resultValidationMiddleware,
-  blogExistsMiddleware,
   updateBlog,
 );
 router.delete(
@@ -66,7 +63,6 @@ router.delete(
   superAdminGuardMiddleware,
   idValidation,
   resultValidationMiddleware,
-  blogExistsMiddleware,
   deleteBlog,
 );
 
@@ -76,7 +72,6 @@ router.get(
   paginationValidation,
   sortingValidation(POST_FIELDS),
   resultValidationMiddleware,
-  blogExistsMiddleware,
   getBlogPosts,
 );
 
@@ -88,7 +83,6 @@ router.post(
   shortDescriptionValidation,
   contentValidation,
   resultValidationMiddleware,
-  blogExistsMiddleware,
   createBlogPost,
 );
 
