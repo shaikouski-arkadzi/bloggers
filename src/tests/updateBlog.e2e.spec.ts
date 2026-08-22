@@ -1,5 +1,6 @@
 import request from "supertest";
 import express from "express";
+import { ObjectId } from "mongodb";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
@@ -69,7 +70,7 @@ describe("PUT /blogs/:id", () => {
     };
 
     await request(app)
-      .put(`/blogs/test`)
+      .put(`/blogs/${new ObjectId()}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(bodyUpdate)
       .expect(404);
@@ -387,6 +388,29 @@ describe("PUT /blogs/:id", () => {
         {
           message: "Некорректный url",
           field: "websiteUrl",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 if pass not correct id", async () => {
+    const body = {
+      name: "strnigNew",
+      description: "strnigNew",
+      websiteUrl: "https://example.com",
+    };
+
+    const response = await request(app)
+      .put(`/blogs/test`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(body)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Некорректный ID",
+          field: "id",
         },
       ],
     });

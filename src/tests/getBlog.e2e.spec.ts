@@ -1,5 +1,6 @@
 import request from "supertest";
 import express from "express";
+import { ObjectId } from "mongodb";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
@@ -47,6 +48,22 @@ describe("GET /blogs/:id", () => {
   });
 
   it("should return 404 if video does not exist", async () => {
-    await request(app).get("/blogs/test").expect(404);
+    await request(app).get(`/blogs/${new ObjectId()}`).expect(404);
+  });
+
+  it("should return 400 if pass not correct id", async () => {
+    const response = await request(app)
+      .get(`/blogs/test`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Некорректный ID",
+          field: "id",
+        },
+      ],
+    });
   });
 });

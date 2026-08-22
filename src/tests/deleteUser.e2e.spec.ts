@@ -1,5 +1,6 @@
 import request from "supertest";
 import express from "express";
+import { ObjectId } from "mongodb";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
@@ -29,7 +30,7 @@ describe("DELETE /users/:id", () => {
     const body = {
       login: "login",
       password: "password",
-      email: "example@example.dev"
+      email: "example@example.dev",
     };
 
     const responseCreate = await request(app)
@@ -46,8 +47,24 @@ describe("DELETE /users/:id", () => {
 
   it("should return 404 if blog does not exist", async () => {
     await request(app)
-      .delete("/blogs/test")
+      .delete(`/users/${new ObjectId()}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .expect(404);
+  });
+
+  it("should return 400 if pass not correct id", async () => {
+    const response = await request(app)
+      .delete(`/users/test`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Некорректный ID",
+          field: "id",
+        },
+      ],
+    });
   });
 });

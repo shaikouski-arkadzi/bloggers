@@ -48,35 +48,35 @@ router.get(
 router.get(
   BLOGS_ROUTES.BY_ID,
   idValidation,
-  blogExistsMiddleware,
   resultValidationMiddleware,
+  blogExistsMiddleware,
   getBlog,
 );
 router.put(
   BLOGS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
-  blogExistsMiddleware,
   blogInputDtoValidation,
   resultValidationMiddleware,
+  blogExistsMiddleware,
   updateBlog,
 );
 router.delete(
   BLOGS_ROUTES.BY_ID,
   superAdminGuardMiddleware,
   idValidation,
-  blogExistsMiddleware,
   resultValidationMiddleware,
+  blogExistsMiddleware,
   deleteBlog,
 );
 
 router.get(
   BLOGS_ROUTES.BLOG_POSTS,
   idValidation,
-  blogExistsMiddleware,
   paginationValidation,
   sortingValidation(POST_FIELDS),
   resultValidationMiddleware,
+  blogExistsMiddleware,
   getBlogPosts,
 );
 
@@ -84,11 +84,11 @@ router.post(
   BLOGS_ROUTES.BLOG_POSTS,
   superAdminGuardMiddleware,
   idValidation,
-  blogExistsMiddleware,
   titleValidation,
   shortDescriptionValidation,
   contentValidation,
   resultValidationMiddleware,
+  blogExistsMiddleware,
   createBlogPost,
 );
 
