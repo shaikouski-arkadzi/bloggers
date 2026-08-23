@@ -239,4 +239,37 @@ describe("GET /blogs/:id/posts", () => {
     });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
+
+  it("should return 400 with setting 0 pageNumber", async () => {
+    const page = 0;
+
+    const response = await request(app)
+      .get(`/blogs/${blogId}/posts?pageNumber=${page}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Номер страницы должен быть больше 0",
+          field: "pageNumber",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 with setting 0 pageSize", async () => {
+    const pageSize = 0;
+    const response = await request(app)
+      .get(`/blogs/${blogId}/posts?pageSize=${pageSize}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Количество элементов на странице должно быть больше 0",
+          field: "pageSize",
+        },
+      ],
+    });
+  });
 });

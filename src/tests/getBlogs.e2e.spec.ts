@@ -243,4 +243,37 @@ describe("GET /blogs", () => {
 
     expect(response.body.items.length).toBe(1);
   });
+
+  it("should return 400 with setting 0 pageNumber", async () => {
+    const page = 0;
+
+    const response = await request(app)
+      .get(`/blogs?pageNumber=${page}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Номер страницы должен быть больше 0",
+          field: "pageNumber",
+        },
+      ],
+    });
+  });
+
+  it("should return 400 with setting 0 pageSize", async () => {
+    const pageSize = 0;
+    const response = await request(app)
+      .get(`/blogs?pageSize=${pageSize}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Количество элементов на странице должно быть больше 0",
+          field: "pageSize",
+        },
+      ],
+    });
+  });
 });
