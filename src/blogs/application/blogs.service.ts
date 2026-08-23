@@ -6,7 +6,7 @@ import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 
 export const blogsService = {
-  async findById(id: string): Promise<Blog | null> {
+  async findById(id: string): Promise<Blog> {
     const result = await blogRepository.findById(id);
 
     if (!result) {

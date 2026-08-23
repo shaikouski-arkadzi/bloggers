@@ -8,11 +8,11 @@ import { blogsService } from "../../blogs/application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
 
 export const postsService = {
-  async findById(id: string): Promise<Post | null> {
+  async findById(id: string): Promise<Post> {
     const result = await postRepository.findById(id);
 
     if (!result) {
-      return null;
+      throw new NotFoundException();
     }
 
     return mapPostDbToPost(result);
@@ -69,15 +69,19 @@ export const postsService = {
   },
 
   async delete(id: string): Promise<boolean> {
+    await postsService.findById(id);
+
     const result = await postRepository.delete(id);
 
     return result;
   },
 
   async update(id: string, post: PostInputDto): Promise<boolean> {
+    await postsService.findById(id);
+
     const blog = await blogRepository.findById(post.blogId);
 
-    if (!blog) throw new Error("Не найдено блога с таким id");
+    if (!blog) throw new NotFoundException();
 
     const idDb = new ObjectId(id);
 

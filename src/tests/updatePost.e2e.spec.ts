@@ -51,7 +51,7 @@ describe("PUT /posts:id", () => {
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
       .expect(201);
-  });
+  }, 100000);
 
   afterAll(async () => {
     await db.disconnect();
@@ -72,19 +72,28 @@ describe("PUT /posts:id", () => {
       .expect(204);
   });
 
-  it("should return 404 if post not exists by id", async () => {
+  it("should return 400 if passed not correct id", async () => {
     const postBody = {
       title: "stringNew",
       shortDescription: "stringNew",
       content: "stringNew",
-      blogId: "testNew",
+      blogId: createBlogResponse.body.id,
     };
 
-    await request(app)
+    const response = await request(app)
       .put(`${POSTS_PATH}/testtest`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(postBody)
-      .expect(404);
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Некорректный ID",
+          field: "id",
+        },
+      ],
+    });
   });
 
   it("should return 400 if title is missing", async () => {

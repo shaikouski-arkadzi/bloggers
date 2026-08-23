@@ -5,6 +5,7 @@ import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import { ObjectId } from "mongodb";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -60,10 +61,26 @@ describe("DELETE /posts/:id", () => {
       .expect(204);
   });
 
-  it("should return 404 if post does not exist", async () => {
+  it("should return 404 if blog does not exist", async () => {
     await request(app)
-      .delete("/posts/test")
+      .delete(`/posts/${new ObjectId()}`)
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .expect(404);
+  });
+
+  it("should return 400 if pass not correct id", async () => {
+    const response = await request(app)
+      .delete(`/posts/test`)
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .expect(400);
+
+    expect(response.body).toEqual({
+      errorsMessages: [
+        {
+          message: "Некорректный ID",
+          field: "id",
+        },
+      ],
+    });
   });
 });
