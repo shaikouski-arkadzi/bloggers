@@ -8,3 +8,6 @@ export const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 export const MONGO_URI = process.env.MONGO_URI;
 
 export const SALT_ROUND_COUNTS = Number(process.env.SALT_ROUND_COUNTS);
+
+export const AC_SECRET = process.env.AC_SECRET;
+export const AC_TIME = process.env.AC_TIME;
