@@ -3,10 +3,13 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import { jwtService } from "../auth/application";
 
 const app = express();
 
 setupApp(app);
+
+let createdUserId: string;
 
 describe("POST /auth/login", () => {
   beforeAll(async () => {
@@ -25,12 +28,14 @@ describe("POST /auth/login", () => {
       email: "example@example.dev",
     };
 
-    await request(app)
+    const response = await request(app)
       .post("/users")
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
       .send(body)
       .expect(201);
-  });
+
+    createdUserId = response.body.id;
+  }, 100000);
 
   afterAll(async () => {
     await db.disconnect();
@@ -42,7 +47,16 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    await request(app).post("/auth/login").send(body).expect(204);
+    const token = await jwtService.createToken(createdUserId);
+
+    const response = await request(app)
+      .post("/auth/login")
+      .send(body)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      accessToken: token,
+    });
   });
 
   it("should successfully log in user by email", async () => {
@@ -51,7 +65,16 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    await request(app).post("/auth/login").send(body).expect(204);
+    const token = await jwtService.createToken(createdUserId);
+
+    const response = await request(app)
+      .post("/auth/login")
+      .send(body)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      accessToken: token,
+    });
   });
 
   it("should return 400 if loginOrEmail is missing", async () => {
