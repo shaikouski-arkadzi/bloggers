@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
 import { db } from "../../db";
-import { User, UserDb } from "../types";
+import { User, UserDb, UserDbWithId } from "../types";
 import { mapUserDbToUser } from "../utils";
 import { SortBy, SortDirection } from "../../common/types";
 import {
@@ -62,15 +62,21 @@ export const userQueryRepository = {
 
     return mapUserDbToUser(result);
   },
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDb[]> {
-    const result = await db
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
+    const resultUsers = await db
       .getCollections()
       .usersCollection.find({
         $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
       })
       .toArray();
 
-    return result;
+    return resultUsers.map((user) => ({
+      id: user._id.toString(),
+      login: user.login,
+      email: user.email,
+      createdAt: user.createdAt,
+      password: user.password,
+    }));
   },
   async count(login?: string | null, email?: string | null): Promise<number> {
     const conditions = [];

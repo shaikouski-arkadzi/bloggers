@@ -10,6 +10,10 @@ export interface UserDb extends UserInputDto {
   createdAt: string;
 }
 
+export interface UserDbWithId extends UserDb {
+  id: string;
+}
+
 export interface User {
   id: string;
   login: string;

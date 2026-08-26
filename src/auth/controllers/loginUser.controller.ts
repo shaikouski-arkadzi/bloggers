@@ -1,22 +1,27 @@
 import { Request, Response } from "express";
-import { LoginInputDto } from "../types";
+import { LoginInputDto, LoginSuccessViewModel } from "../types";
 import { NotFoundException } from "../../common/exceptions";
-import { authService } from "../application";
+import { APIErrorResult } from "../../common/types";
+import { authService, jwtService } from "../application";
+import { MultipleUsersDuringLoginException } from "../exceptions";
 
 export const loginUser = async (
   req: Request<{}, {}, LoginInputDto>,
-  res: Response<{}>,
+  res: Response<LoginSuccessViewModel | APIErrorResult>,
 ) => {
   const credentials = req.body;
 
   try {
-    const result = await authService.login(credentials);
+    const findedUser = await authService.login(credentials);
 
-    if (!result) throw new NotFoundException();
+    const token = await jwtService.createToken(findedUser.id);
 
-    res.sendStatus(204);
+    res.status(200).json({ accessToken: token });
   } catch (error) {
-    if (error instanceof NotFoundException) {
+    if (
+      error instanceof NotFoundException ||
+      error instanceof MultipleUsersDuringLoginException
+    ) {
       return res.sendStatus(401);
     }
   }
