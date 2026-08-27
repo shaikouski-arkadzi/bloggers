@@ -1,9 +1,12 @@
 import { UserDbWithId } from "../../users/types";
 import { userQueryRepository } from "../../users/repositories";
 import { NotFoundException } from "../../common/exceptions";
-import { LoginInputDto } from "../types";
+import { LoginInputDto, MeViewModel } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
+import { jwtService } from "./jwt.service";
+import { userService } from "../../users/application";
+import { ObjectId } from "mongodb";
 
 export const authService = {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
@@ -42,5 +45,24 @@ export const authService = {
     if (findedUsers.length === 0) throw new NotFoundException();
 
     return findedUsers[0];
+  },
+  async userInfo(auth: string): Promise<MeViewModel> {
+    const [_, token] = auth.split(" ");
+
+    const decoded = await jwtService.decodeToken(token);
+
+    if (!decoded) throw new NotFoundException();
+
+    const uuidObjectId = new ObjectId(decoded.uuid);
+
+    const findedUser = await userService.getUserById(uuidObjectId);
+
+    if (!findedUser) throw new NotFoundException();
+
+    return {
+      email: findedUser.email,
+      login: findedUser.login,
+      userId: findedUser.id,
+    };
   },
 };

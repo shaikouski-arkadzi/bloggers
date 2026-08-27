@@ -6,7 +6,7 @@ export type JwtPayload = {
 };
 
 export const jwtService = {
-  async createToken(id: string): Promise<string> {
+  async createToken(uuid: string): Promise<string> {
     if (!AC_SECRET || !AC_TIME) {
       throw new Error("AC_SECRET or AC_TIME is not defined");
     }
@@ -15,7 +15,7 @@ export const jwtService = {
       expiresIn: AC_TIME,
     } as jwt.SignOptions;
 
-    return jwt.sign({ id }, AC_SECRET, options);
+    return jwt.sign({ uuid }, AC_SECRET, options);
   },
 
   async decodeToken(token: string): Promise<JwtPayload | null> {

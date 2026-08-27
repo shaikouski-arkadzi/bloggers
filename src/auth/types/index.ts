@@ -6,3 +6,9 @@ export interface LoginInputDto {
 export interface LoginSuccessViewModel {
   accessToken: string;
 }
+
+export interface MeViewModel {
+  email: string;
+  login: string;
+  userId: string;
+}
