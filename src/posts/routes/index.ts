@@ -15,6 +15,8 @@ import {
 } from "../../common/validation";
 import { postInputDtoValidation } from "../validation";
 import { superAdminGuardMiddleware } from "../../auth/middleware";
+import { COMMENT_FIELDS } from "../../comments/constants";
+import { getPostComments } from "../../comments/controllers";
 
 const router = Router();
 
@@ -52,6 +54,14 @@ router.delete(
   idValidation,
   resultValidationMiddleware,
   deletePost,
+);
+
+router.get(
+  POSTS_ROUTES.POST_COMMENTS,
+  paginationValidation,
+  sortingValidation(COMMENT_FIELDS),
+  resultValidationMiddleware,
+  getPostComments,
 );
 
 export default router;

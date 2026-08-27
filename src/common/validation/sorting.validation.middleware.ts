@@ -4,8 +4,9 @@ import { Blog } from "../../blogs/types";
 import { Post } from "../../posts/types";
 import { User } from "../../users/types";
 import { SORT_DIRECTION_DAFAULT, SORT_FIELD_DAFAULT } from "../constants";
+import { Comment } from "../../comments/types";
 
-export const sortFieldValidation = <T extends Blog | Post | User>(
+export const sortFieldValidation = <T extends Blog | Post | User | Comment>(
   fields: (keyof T)[],
 ) =>
   query("sortBy")
@@ -18,6 +19,6 @@ export const sortDirectionValidation = query("sortDirection")
   .isIn(Object.values(SortDirections))
   .withMessage("Проверьте значение в sortDirection");
 
-export const sortingValidation = <T extends Blog | Post | User>(
+export const sortingValidation = <T extends Blog | Post | User | Comment>(
   fields: (keyof T)[],
 ) => [sortFieldValidation(fields), sortDirectionValidation];

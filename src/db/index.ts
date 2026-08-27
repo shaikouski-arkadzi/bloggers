@@ -3,6 +3,7 @@ import { MONGO_URI } from "../settings/config";
 import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
 import { UserDb } from "../users/types";
+import { CommentDb } from "../comments/types";
 
 if (!MONGO_URI) console.error("Not found mongo uri");
 
@@ -36,6 +37,7 @@ export const db = {
       blogsCollection: this.getDbName().collection<BlogDb>("blogs"),
       postsCollection: this.getDbName().collection<PostDb>("posts"),
       usersCollection: this.getDbName().collection<UserDb>("users"),
+      commentsCollection: this.getDbName().collection<CommentDb>("comments"),
     };
   },
 };
