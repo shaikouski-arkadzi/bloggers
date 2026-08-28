@@ -1,8 +1,11 @@
 import { ObjectId } from "mongodb";
 import { SortBy, SortDirection } from "../../common/types";
 
+export interface CommentInputModel {
+  content: string;
+}
+
 export interface CommentDb {
-  _id: ObjectId;
   content: string;
   createdAt: string;
   postId: ObjectId;

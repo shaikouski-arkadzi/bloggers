@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import {
   PAGE_DAFAULT,
   PAGE_SIZE_DAFAULT,
@@ -7,7 +7,7 @@ import {
 } from "../../common/constants";
 import { SortBy, SortDirection } from "../../common/types";
 import { db } from "../../db";
-import { Comment } from "../types";
+import { Comment, CommentDb } from "../types";
 import { mapCommentDbToComment } from "../utils";
 
 interface CommentsQueryParams {
@@ -40,7 +40,17 @@ export const commentsQueryRepository = {
 
     return result.map(mapCommentDbToComment);
   },
+  async findByField(
+    filter: Partial<WithId<CommentDb>>,
+  ): Promise<Comment | null> {
+    const result = await db.getCollections().commentsCollection.findOne(filter);
 
+    if (!result) {
+      return null;
+    }
+
+    return mapCommentDbToComment(result);
+  },
   async count(
     conditions: Partial<Record<keyof Comment, string>> = {},
   ): Promise<number> {

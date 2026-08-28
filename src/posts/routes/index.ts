@@ -14,9 +14,12 @@ import {
   sortingValidation,
 } from "../../common/validation";
 import { postInputDtoValidation } from "../validation";
-import { superAdminGuardMiddleware } from "../../auth/middleware";
+import {
+  jwtValidationMiddleware,
+  superAdminGuardMiddleware,
+} from "../../auth/middleware";
 import { COMMENT_FIELDS } from "../../comments/constants";
-import { getPostComments } from "../../comments/controllers";
+import { createPostComment, getPostComments } from "../../comments/controllers";
 
 const router = Router();
 
@@ -62,6 +65,13 @@ router.get(
   sortingValidation(COMMENT_FIELDS),
   resultValidationMiddleware,
   getPostComments,
+);
+
+router.post(
+  POSTS_ROUTES.POST_COMMENTS,
+  jwtValidationMiddleware,
+  resultValidationMiddleware,
+  createPostComment,
 );
 
 export default router;
