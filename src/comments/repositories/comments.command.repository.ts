@@ -21,4 +21,12 @@ export const commentsCommandRepository = {
 
     return result.matchedCount;
   },
+
+  async delete(id: string): Promise<number> {
+    const result = await db
+      .getCollections()
+      .commentsCollection.deleteOne({ _id: new ObjectId(id) });
+
+    return result.deletedCount;
+  },
 };

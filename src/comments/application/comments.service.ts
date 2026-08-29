@@ -113,4 +113,21 @@ export const commentsService = {
 
     return result === 1;
   },
+
+  async delete(userId: string, commentId: string): Promise<boolean | Error> {
+    const user = await userService.getUserById(new ObjectId(userId));
+
+    if (!user) throw new UnauthorizedException();
+
+    const comment = await commentsService.getCommentById(commentId);
+
+    if (!comment) throw new NotFoundException();
+
+    if (comment.commentatorInfo.userId !== userId)
+      throw new PermissionException();
+
+    const result = await commentsCommandRepository.delete(commentId);
+
+    return result === 1;
+  },
 };
