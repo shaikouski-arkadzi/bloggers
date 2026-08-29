@@ -46,16 +46,8 @@ export const authService = {
 
     return findedUsers[0];
   },
-  async userInfo(auth: string): Promise<MeViewModel> {
-    const [_, token] = auth.split(" ");
-
-    const decoded = await jwtService.decodeToken(token);
-
-    if (!decoded) throw new NotFoundException();
-
-    const uuidObjectId = new ObjectId(decoded.uuid);
-
-    const findedUser = await userService.getUserById(uuidObjectId);
+  async userInfo(userId: string): Promise<MeViewModel> {
+    const findedUser = await userService.getUserById(new ObjectId(userId));
 
     if (!findedUser) throw new NotFoundException();
 
