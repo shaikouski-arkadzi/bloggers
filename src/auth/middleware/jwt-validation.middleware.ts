@@ -23,7 +23,9 @@ export const jwtValidationMiddleware = async (
 
   const verified = await jwtService.verifyToken(token);
 
-  if (!verified) {
+  if (verified) {
+    req.userId = verified.uuid;
+  } else {
     res.sendStatus(401);
     return;
   }
