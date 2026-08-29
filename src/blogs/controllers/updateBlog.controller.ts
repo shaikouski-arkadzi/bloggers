@@ -24,14 +24,3 @@ export const updateBlog = async (
     }
   }
 };
-
-// if (typeof id === "string") {
-//     const blog = await blogRepository.findById(id);
-
-//     if (!blog) {
-//       res.sendStatus(404);
-//       return;
-//     }
-
-//     next();
-//   }

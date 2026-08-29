@@ -1,30 +1,38 @@
 import { Request, Response } from "express";
+import { CommentInputModel } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
-import { Comment, CommentInputModel } from "../types";
 import { commentsService } from "../application";
 import { UnauthorizedException } from "../../auth/exceptions";
+import { PermissionException } from "../exceptions";
 
-export const createPostComment = async (
+export const updateComment = async (
   req: Request<{ id: string }, {}, CommentInputModel>,
-  res: Response<Comment | APIErrorResult>,
+  res: Response<APIErrorResult | null>,
 ) => {
   try {
-    const auth = req.headers["authorization"] as string;
-    const postId = req.params.id;
     const comment = req.body;
+    const commentId = req.params.id;
+    const userId = req.userId;
 
-    const { content } = comment;
+    if (!userId) throw new UnauthorizedException();
 
-    const newComment = await commentsService.create(auth, postId, content);
+    const result = await commentsService.update(userId, commentId, comment);
 
-    if (newComment) res.status(201).json(newComment);
+    if (result) {
+      res.sendStatus(204);
+    } else {
+      throw new NotFoundException();
+    }
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);
     }
     if (error instanceof UnauthorizedException) {
       res.sendStatus(401);
+    }
+    if (error instanceof PermissionException) {
+      res.sendStatus(403);
     }
   }
 };

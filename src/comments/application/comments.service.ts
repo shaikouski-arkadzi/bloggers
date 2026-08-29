@@ -8,7 +8,9 @@ import {
   commentsCommandRepository,
   commentsQueryRepository,
 } from "../repositories";
-import { Comment, CommentDb, CommentsQuery } from "../types";
+import { Comment, CommentDb, CommentInputModel, CommentsQuery } from "../types";
+import { NotFoundException } from "../../common/exceptions";
+import { PermissionException } from "../exceptions";
 
 export const commentsService = {
   async getCommentById(id: string): Promise<Comment | null> {
@@ -86,5 +88,29 @@ export const commentsService = {
     });
 
     return comment;
+  },
+
+  async update(
+    userId: string,
+    commentId: string,
+    commentInput: CommentInputModel,
+  ): Promise<boolean> {
+    const user = await userService.getUserById(new ObjectId(userId));
+
+    if (!user) throw new UnauthorizedException();
+
+    const comment = await commentsService.getCommentById(commentId);
+
+    if (!comment) throw new NotFoundException();
+
+    if (comment.commentatorInfo.userId !== userId)
+      throw new PermissionException();
+
+    const result = await commentsCommandRepository.update(
+      commentId,
+      commentInput,
+    );
+
+    return result === 1;
   },
 };
