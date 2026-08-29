@@ -11,6 +11,14 @@ import {
 import { Comment, CommentDb, CommentsQuery } from "../types";
 
 export const commentsService = {
+  async getCommentById(id: string): Promise<Comment | null> {
+    const commentObjectId = new ObjectId(id);
+    const comment = await commentsQueryRepository.findByField({
+      _id: commentObjectId,
+    });
+    return comment;
+  },
+
   async findManyByPost(
     postId: string,
     queries: CommentsQuery,
