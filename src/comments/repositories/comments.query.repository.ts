@@ -52,7 +52,7 @@ export const commentsQueryRepository = {
     return mapCommentDbToComment(result);
   },
   async count(
-    conditions: Partial<Record<keyof CommentDb, string>> = {},
+    conditions: Partial<Record<keyof CommentDb, string | ObjectId>> = {},
   ): Promise<number> {
     const filter = Object.fromEntries(
       Object.entries(conditions).map(([field, condition]) => [
