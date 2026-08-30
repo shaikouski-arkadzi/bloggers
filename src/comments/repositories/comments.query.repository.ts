@@ -57,7 +57,9 @@ export const commentsQueryRepository = {
     const filter = Object.fromEntries(
       Object.entries(conditions).map(([field, condition]) => [
         field,
-        { $regex: condition, $options: "i" },
+        condition instanceof ObjectId
+          ? condition
+          : { $regex: condition, $options: "i" },
       ]),
     );
 

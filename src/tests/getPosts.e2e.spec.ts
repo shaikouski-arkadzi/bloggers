@@ -201,7 +201,7 @@ describe("GET /posts", () => {
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
-  it("should return 200 and all posts with sorting by name. Other fields default", async () => {
+  it("should return 200 and all posts with sorting by title. Other fields default", async () => {
     const sortBy: SortBy<Post> = "title";
 
     const response = await request(app)
