@@ -71,6 +71,8 @@ export const commentsService = {
 
     if (!user) throw new UnauthorizedException();
 
+    await postsService.findById(postId);
+
     const payload: CommentDb = {
       content,
       commentatorInfo: {
