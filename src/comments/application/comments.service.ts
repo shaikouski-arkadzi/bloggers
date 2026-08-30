@@ -32,7 +32,7 @@ export const commentsService = {
 
     await postsService.findById(postId);
 
-    const allCommentsCount = await commentsQueryRepository.count();
+    const allCommentsCount = await commentsQueryRepository.count({ postId });
 
     const pagesCount = Math.ceil(allCommentsCount / pageSize);
 
