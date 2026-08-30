@@ -20,6 +20,7 @@ import {
 } from "../../auth/middleware";
 import { COMMENT_FIELDS } from "../../comments/constants";
 import { createPostComment, getPostComments } from "../../comments/controllers";
+import { contentValidation } from "../../comments/validation";
 
 const router = Router();
 
@@ -70,6 +71,7 @@ router.get(
 router.post(
   POSTS_ROUTES.POST_COMMENTS,
   jwtValidationMiddleware,
+  contentValidation,
   resultValidationMiddleware,
   createPostComment,
 );
