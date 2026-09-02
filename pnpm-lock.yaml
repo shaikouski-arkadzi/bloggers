@@ -26,6 +26,9 @@ importers:
       mongodb:
         specifier: ^7.5.0
         version: 7.5.0
+      nodemailer:
+        specifier: ^9.1.1
+        version: 9.1.1
     devDependencies:
       '@types/bcrypt':
         specifier: ^6.0.0
@@ -1833,6 +1836,10 @@ packages:
   node-releases@2.0.48:
     resolution: {integrity: sha512-1uz8041X6LoI6ZSdZacM9lVY28vuzDlSKitnpbSNK0RfKoIJkX29NBPVEFXhnuSuEOA9Ww0xnPJ+ILWbGAv8DA==}
     engines: {node: '>=18'}
+
+  nodemailer@9.1.1:
+    resolution: {integrity: sha512-izw9mVKFix6YSnC9eLgV6g1opl9DUlRio9ZNcq+Wu9Ujn2UwF+8Nl0B8nz22kEC+CTZCvinkxwJ0DeFbb6NwcQ==}
+    engines: {node: '>=6.0.0'}
 
   nodemon@3.1.14:
     resolution: {integrity: sha512-jakjZi93UtB3jHMWsXL68FXSAosbLfY0In5gtKq3niLSkrWznrVBzXFNOEMJUfc9+Ke7SHWoAZsiMkNP3vq6Jw==}
@@ -4385,6 +4392,8 @@ snapshots:
   node-int64@0.4.0: {}
 
   node-releases@2.0.48: {}
+
+  nodemailer@9.1.1: {}
 
   nodemon@3.1.14:
     dependencies:
