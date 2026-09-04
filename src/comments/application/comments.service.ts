@@ -87,7 +87,7 @@ export const commentsService = {
     userId: string,
     commentId: string,
     commentInput: CommentInputModel,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const user = await userService.getUserById(new ObjectId(userId));
 
     if (!user) throw new UnauthorizedException();
@@ -99,12 +99,7 @@ export const commentsService = {
     if (comment.commentatorInfo.userId !== userId)
       throw new PermissionException();
 
-    const result = await commentsCommandRepository.update(
-      commentId,
-      commentInput,
-    );
-
-    return result === 1;
+    await commentsCommandRepository.update(commentId, commentInput);
   },
 
   async delete(userId: string, commentId: string): Promise<boolean | Error> {

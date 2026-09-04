@@ -17,13 +17,9 @@ export const updateComment = async (
 
     if (!userId) throw new UnauthorizedException();
 
-    const result = await commentsService.update(userId, commentId, comment);
+    await commentsService.update(userId, commentId, comment);
 
-    if (result) {
-      res.sendStatus(204);
-    } else {
-      throw new NotFoundException();
-    }
+    res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);

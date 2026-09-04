@@ -11,15 +11,13 @@ export const commentsCommandRepository = {
     return result.insertedId;
   },
 
-  async update(id: string, comment: CommentInputModel): Promise<number> {
-    const result = await db.getCollections().commentsCollection.updateOne(
+  async update(id: string, comment: CommentInputModel): Promise<void> {
+    await db.getCollections().commentsCollection.updateOne(
       { _id: new ObjectId(id) },
       {
         $set: comment,
       },
     );
-
-    return result.matchedCount;
   },
 
   async delete(id: string): Promise<number> {
