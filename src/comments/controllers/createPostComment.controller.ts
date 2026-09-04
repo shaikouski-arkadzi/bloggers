@@ -10,13 +10,15 @@ export const createPostComment = async (
   res: Response<Comment | APIErrorResult>,
 ) => {
   try {
-    const auth = req.headers["authorization"] as string;
     const postId = req.params.id;
     const comment = req.body;
+    const userId = req.userId;
+
+    if (!userId) throw new UnauthorizedException();
 
     const { content } = comment;
 
-    const newComment = await commentsService.create(auth, postId, content);
+    const newComment = await commentsService.create(userId, postId, content);
 
     if (newComment) res.status(201).json(newComment);
   } catch (error) {

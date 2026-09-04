@@ -57,17 +57,11 @@ export const commentsService = {
   },
 
   async create(
-    auth: string,
+    userId: string,
     postId: string,
     content: string,
   ): Promise<Comment | null> {
-    const [_, token] = auth.split(" ");
-
-    const decoded = await jwtService.decodeToken(token);
-
-    if (!decoded) throw new UnauthorizedException();
-
-    const userObjectId = new ObjectId(decoded.uuid);
+    const userObjectId = new ObjectId(userId);
 
     const user = await userService.getUserById(userObjectId);
 
@@ -78,7 +72,7 @@ export const commentsService = {
     const payload: CommentDb = {
       content,
       commentatorInfo: {
-        userId: decoded.uuid,
+        userId,
         userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
