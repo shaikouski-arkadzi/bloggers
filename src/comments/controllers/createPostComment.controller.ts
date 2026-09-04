@@ -4,6 +4,7 @@ import { NotFoundException } from "../../common/exceptions";
 import { Comment, CommentInputModel } from "../types";
 import { commentsService } from "../application";
 import { UnauthorizedException } from "../../auth/exceptions";
+import { commentsQueryRepository } from "../repositories";
 
 export const createPostComment = async (
   req: Request<{ id: string }, {}, CommentInputModel>,
@@ -18,7 +19,11 @@ export const createPostComment = async (
 
     const { content } = comment;
 
-    const newComment = await commentsService.create(userId, postId, content);
+    const newCommentId = await commentsService.create(userId, postId, content);
+
+    const newComment = await commentsQueryRepository.findByField({
+      _id: newCommentId,
+    });
 
     if (newComment) res.status(201).json(newComment);
   } catch (error) {

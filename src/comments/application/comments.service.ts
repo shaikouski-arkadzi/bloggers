@@ -1,5 +1,4 @@
 import { ObjectId } from "mongodb";
-import { jwtService } from "../../auth/application";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
 import { postsService } from "../../posts/application/posts.service";
@@ -60,7 +59,7 @@ export const commentsService = {
     userId: string,
     postId: string,
     content: string,
-  ): Promise<Comment | null> {
+  ): Promise<ObjectId> {
     const userObjectId = new ObjectId(userId);
 
     const user = await userService.getUserById(userObjectId);
@@ -81,11 +80,7 @@ export const commentsService = {
 
     const commentId = await commentsCommandRepository.create(payload);
 
-    const comment = await commentsQueryRepository.findByField({
-      _id: commentId,
-    });
-
-    return comment;
+    return commentId;
   },
 
   async update(
