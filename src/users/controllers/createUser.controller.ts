@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { User, UserInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { userService } from "../application";
-import { mapUserDbToUser } from "../utils";
 import { SavingException } from "../exceptions";
+import { userQueryRepository } from "../repositories";
 
 export const createUser = async (
   req: Request<{}, {}, UserInputDto>,
@@ -12,11 +12,15 @@ export const createUser = async (
   const user = req.body;
 
   try {
-    const createdUser = await userService.create(user);
+    const createdUserId = await userService.create(user);
 
-    if (!createdUser) throw new SavingException();
+    const newUser = await userQueryRepository.findByField({
+      _id: createdUserId,
+    });
 
-    res.status(201).json(createdUser);
+    if (!newUser) throw new SavingException();
+
+    res.status(201).json(newUser);
   } catch (error) {
     if (error instanceof SavingException) {
       return res.status(400).json({

@@ -20,15 +20,13 @@ export const userService = {
     const user = await userQueryRepository.findByField({ _id: id });
     return user;
   },
-  async create(user: UserInputDto): Promise<User | null> {
+  async create(user: UserInputDto): Promise<ObjectId> {
     const { login, email, password } = user;
 
     const isEmailAvailable = await userService.isEmailAvailable(email);
-    console.log(isEmailAvailable);
     if (!isEmailAvailable) throw new SavingException();
 
     const isLoginAvailable = await userService.isLoginAvailable(login);
-    console.log(isLoginAvailable);
     if (!isLoginAvailable) throw new SavingException();
 
     const hashPassword = await bcryptService.generateHash(password);
@@ -40,8 +38,7 @@ export const userService = {
       createdAt: new Date().toISOString(),
     };
     const createdUserId = await userCommandRepository.create(newUser);
-    const createdUser = await userService.getUserById(createdUserId);
-    return createdUser;
+    return createdUserId;
   },
   async findMany(queries: UsersQuery): Promise<PaginatorData<User>> {
     const page = Number(queries.pageNumber);
