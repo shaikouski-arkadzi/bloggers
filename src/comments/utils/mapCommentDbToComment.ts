@@ -7,7 +7,7 @@ export const mapCommentDbToComment = (
   id: commentDb._id.toString(),
   content: commentDb.content,
   commentatorInfo: {
-    userId: commentDb.commentatorInfo.userId,
+    userId: commentDb.commentatorInfo.userId.toString(),
     userLogin: commentDb.commentatorInfo.userLogin,
   },
   createdAt: commentDb.createdAt,

@@ -9,7 +9,7 @@ export interface CommentDb {
   content: string;
   createdAt: string;
   postId: ObjectId;
-  commentatorInfo: CommentatorInfo;
+  commentatorInfo: CommentatorInfoDB;
 }
 
 export interface Comment {
@@ -17,6 +17,16 @@ export interface Comment {
   content: string;
   createdAt: string;
   commentatorInfo: CommentatorInfo;
+}
+
+export interface CommentatorInfo {
+  userId: string;
+  userLogin: string;
+}
+
+export interface CommentatorInfoDB {
+  userId: ObjectId;
+  userLogin: string;
 }
 
 export interface CommentatorInfo {

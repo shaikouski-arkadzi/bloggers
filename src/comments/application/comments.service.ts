@@ -68,17 +68,16 @@ export const commentsService = {
 
     await postsService.findById(postId);
 
-    const payload: CommentDb = {
+    const payload: Omit<Comment, "id"> = {
       content,
       commentatorInfo: {
         userId,
         userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
-      postId: new ObjectId(postId),
     };
 
-    const commentId = await commentsCommandRepository.create(payload);
+    const commentId = await commentsCommandRepository.create(payload, postId);
 
     return commentId;
   },
@@ -102,7 +101,7 @@ export const commentsService = {
     await commentsCommandRepository.update(commentId, commentInput);
   },
 
-  async delete(userId: string, commentId: string): Promise<void> {
+  async delete(userId: string, commentId: string): Promise<void | Error> {
     const user = await userService.getUserById(new ObjectId(userId));
 
     if (!user) throw new UnauthorizedException();

@@ -1,12 +1,18 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { CommentDb, CommentInputModel } from "../types";
+import { Comment, CommentDb, CommentInputModel } from "../types";
+import { mapCommentToCommentDB } from "../utils";
 
 export const commentsCommandRepository = {
-  async create(comment: CommentDb): Promise<ObjectId> {
+  async create(
+    comment: Omit<Comment, "id">,
+    postId: string,
+  ): Promise<ObjectId> {
+    const commentDB = mapCommentToCommentDB(comment, postId);
+
     const result = await db
       .getCollections()
-      .commentsCollection.insertOne(comment);
+      .commentsCollection.insertOne(commentDB);
 
     return result.insertedId;
   },
