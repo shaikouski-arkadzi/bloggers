@@ -74,13 +74,11 @@ export const userService = {
 
     return returnData;
   },
-  async delete(id: string): Promise<boolean | Error> {
+  async delete(id: string): Promise<void> {
     const user = await userService.getUserById(new ObjectId(id));
 
     if (!user) throw new NotFoundException();
 
-    const result = await userCommandRepository.delete(id);
-
-    return result === 1;
+    await userCommandRepository.delete(id);
   },
 };

@@ -9,11 +9,9 @@ export const deleteUser = async (
   try {
     const { id } = req.params;
 
-    const result = await userService.delete(id);
+    await userService.delete(id);
 
-    if (result) {
-      return res.sendStatus(204);
-    }
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       return res.sendStatus(404);
