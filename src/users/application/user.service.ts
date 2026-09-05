@@ -1,11 +1,12 @@
 import { ObjectId } from "mongodb";
 import { userQueryRepository } from "../repositories";
 import { userCommandRepository } from "../repositories/user.command.repository";
-import { User, UserInputDto, UsersQuery } from "../types";
+import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { bcryptService } from "../../auth/application";
+import { mapUserDbToRegisterUser } from "../utils";
 
 export const userService = {
   async isEmailAvailable(email: string): Promise<boolean> {
@@ -20,7 +21,10 @@ export const userService = {
     const user = await userQueryRepository.findByField({ _id: id });
     return user;
   },
-  async create(user: UserInputDto): Promise<ObjectId> {
+  async create(
+    user: UserInputDto,
+    register: boolean = false,
+  ): Promise<ObjectId> {
     const { login, email, password } = user;
 
     const isEmailAvailable = await userService.isEmailAvailable(email);
@@ -31,15 +35,21 @@ export const userService = {
 
     const hashPassword = await bcryptService.generateHash(password);
 
-    const newUser = {
+    let newUser: UserDb = {
       login,
       email,
       password: hashPassword,
       createdAt: new Date().toISOString(),
     };
+
+    if (register) {
+      newUser = mapUserDbToRegisterUser(newUser);
+    }
+
     const createdUserId = await userCommandRepository.create(newUser);
     return createdUserId;
   },
+
   async findMany(queries: UsersQuery): Promise<PaginatorData<User>> {
     const page = Number(queries.pageNumber);
     const pageSize = Number(queries.pageSize);

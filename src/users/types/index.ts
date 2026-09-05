@@ -8,6 +8,9 @@ export interface UserInputDto {
 
 export interface UserDb extends UserInputDto {
   createdAt: string;
+  confirmaionCode?: string;
+  confirmationCodeExpiration?: string;
+  isConfirmed?: boolean;
 }
 
 export interface UserDbWithId extends UserDb {

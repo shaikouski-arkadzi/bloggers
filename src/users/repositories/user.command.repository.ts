@@ -3,7 +3,7 @@ import { db } from "../../db";
 import { UserDb } from "../types";
 
 export const userCommandRepository = {
-  async create(user: Omit<UserDb, "_id">): Promise<ObjectId> {
+  async create(user: UserDb): Promise<ObjectId> {
     const result = await db.getCollections().usersCollection.insertOne(user);
     return result.insertedId;
   },
