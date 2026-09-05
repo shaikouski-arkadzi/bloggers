@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { CommentInputModel } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { commentsService } from "../application";
@@ -16,13 +15,9 @@ export const deleteComment = async (
 
     if (!userId) throw new UnauthorizedException();
 
-    const result = await commentsService.delete(userId, commentId);
+    await commentsService.delete(userId, commentId);
 
-    if (result) {
-      res.sendStatus(204);
-    } else {
-      throw new NotFoundException();
-    }
+    res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);

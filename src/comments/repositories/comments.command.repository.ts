@@ -20,11 +20,9 @@ export const commentsCommandRepository = {
     );
   },
 
-  async delete(id: string): Promise<number> {
-    const result = await db
+  async delete(id: string): Promise<void> {
+    await db
       .getCollections()
       .commentsCollection.deleteOne({ _id: new ObjectId(id) });
-
-    return result.deletedCount;
   },
 };
