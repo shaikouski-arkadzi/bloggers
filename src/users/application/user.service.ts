@@ -5,8 +5,10 @@ import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
-import { bcryptService } from "../../auth/application";
+import { bcryptService, nodemailerService } from "../../auth/application";
 import { mapUserDbToRegisterUser } from "../utils";
+import { randomUUID } from "crypto";
+import { registerTemplateMail } from "../../auth/utils";
 
 export const userService = {
   async isEmailAvailable(email: string): Promise<boolean> {
@@ -44,6 +46,10 @@ export const userService = {
 
     if (register) {
       newUser = mapUserDbToRegisterUser(newUser);
+
+      nodemailerService
+        .sendEmail(email, randomUUID(), registerTemplateMail)
+        .catch((e) => console.log(e));
     }
 
     const createdUserId = await userCommandRepository.create(newUser);
