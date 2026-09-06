@@ -1,9 +1,16 @@
 import { Router } from "express";
 import { resultValidationMiddleware } from "../../common/validation";
 import { AUTH_ROUTES } from "../constants";
-import { loginUser, registerUser, userInfo } from "../controllers";
+import {
+  loginUser,
+  registerUser,
+  resendRegistrationEmail,
+  userInfo,
+} from "../controllers";
 import { loginInputDtoValidation } from "../validation";
 import { jwtValidationMiddleware } from "../middleware";
+import { userInputDtoValidation } from "../../users/validation";
+import { emailValidation } from "../../users/validation/userInputDto.validation.middleware";
 
 const router = Router();
 
@@ -16,6 +23,18 @@ router.post(
 
 router.get(AUTH_ROUTES.ME, jwtValidationMiddleware, userInfo);
 
-router.post(AUTH_ROUTES.REGISTRATION, registerUser);
+router.post(
+  AUTH_ROUTES.REGISTRATION,
+  userInputDtoValidation,
+  resultValidationMiddleware,
+  registerUser,
+);
+
+router.post(
+  AUTH_ROUTES.REGISTRATION_EMAIL_RESENDING,
+  emailValidation,
+  resultValidationMiddleware,
+  resendRegistrationEmail,
+);
 
 export default router;

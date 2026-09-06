@@ -12,3 +12,12 @@ export interface MeViewModel {
   login: string;
   userId: string;
 }
+
+export interface RegistrationEmailResending {
+  email: string;
+}
+
+export interface IAuthCode {
+  id: string;
+  confirmaionCode?: string;
+}

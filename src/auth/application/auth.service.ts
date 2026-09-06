@@ -4,9 +4,11 @@ import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
-import { jwtService } from "./jwt.service";
 import { userService } from "../../users/application";
 import { ObjectId } from "mongodb";
+import { authQueryRepository } from "../repositories";
+import { nodemailerService } from "./nodemailer.service";
+import { registerTemplateMail } from "../utils";
 
 export const authService = {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
@@ -56,5 +58,15 @@ export const authService = {
       login: findedUser.login,
       userId: findedUser.id,
     };
+  },
+  async resendEmail(email: string): Promise<void> {
+    const userCode = await authQueryRepository.getUserAuthCode(email);
+
+    if (!userCode) throw new NotFoundException();
+    if (!userCode.confirmaionCode) throw new NotFoundException();
+
+    nodemailerService
+      .sendEmail(email, userCode.confirmaionCode, registerTemplateMail)
+      .catch((e) => console.log(e));
   },
 };
