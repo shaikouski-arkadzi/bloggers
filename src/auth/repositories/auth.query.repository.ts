@@ -12,4 +12,15 @@ export const authQueryRepository = {
 
     return mapUserDbToAuth(result);
   },
+  async getUserByCode(code: string): Promise<IAuthCode | null> {
+    const result = await db
+      .getCollections()
+      .usersCollection.findOne({ confirmaionCode: code });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapUserDbToAuth(result);
+  },
 };

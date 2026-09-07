@@ -6,4 +6,5 @@ export const AUTH_ROUTES = {
   ME: "/me",
   REGISTRATION: "/registration",
   REGISTRATION_EMAIL_RESENDING: "/registration-email-resending",
+  REGISTRATION_CONFIRMATION: "/registration-confirmation",
 } as const;

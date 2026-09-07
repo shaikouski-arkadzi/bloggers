@@ -2,6 +2,7 @@ import { Router } from "express";
 import { resultValidationMiddleware } from "../../common/validation";
 import { AUTH_ROUTES } from "../constants";
 import {
+  confirmRegistration,
   loginUser,
   registerUser,
   resendRegistrationEmail,
@@ -35,6 +36,12 @@ router.post(
   emailValidation,
   resultValidationMiddleware,
   resendRegistrationEmail,
+);
+
+router.post(
+  AUTH_ROUTES.REGISTRATION_CONFIRMATION,
+  resultValidationMiddleware,
+  confirmRegistration,
 );
 
 export default router;

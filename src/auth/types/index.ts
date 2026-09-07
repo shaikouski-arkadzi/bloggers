@@ -17,6 +17,10 @@ export interface RegistrationEmailResending {
   email: string;
 }
 
+export interface RegistrationConfirmationCodeModel {
+  code: string;
+}
+
 export interface IAuthCode {
   id: string;
   confirmaionCode?: string;

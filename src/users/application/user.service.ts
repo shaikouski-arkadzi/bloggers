@@ -48,7 +48,7 @@ export const userService = {
       newUser = mapUserDbToRegisterUser(newUser);
 
       nodemailerService
-        .sendEmail(email, randomUUID(), registerTemplateMail)
+        .sendEmail(email, newUser.confirmaionCode!, registerTemplateMail)
         .catch((e) => console.log(e));
     }
 

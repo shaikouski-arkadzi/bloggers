@@ -12,4 +12,12 @@ export const userCommandRepository = {
       .getCollections()
       .usersCollection.deleteOne({ _id: new ObjectId(id) });
   },
+  async update(id: string, user: Partial<UserDb>): Promise<void> {
+    await db.getCollections().usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: user,
+      },
+    );
+  },
 };

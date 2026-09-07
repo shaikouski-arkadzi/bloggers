@@ -1,5 +1,8 @@
 import { UserDbWithId } from "../../users/types";
-import { userQueryRepository } from "../../users/repositories";
+import {
+  userCommandRepository,
+  userQueryRepository,
+} from "../../users/repositories";
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel } from "../types";
 import { bcryptService } from "./bcrypt.service";
@@ -68,5 +71,16 @@ export const authService = {
     nodemailerService
       .sendEmail(email, userCode.confirmaionCode, registerTemplateMail)
       .catch((e) => console.log(e));
+  },
+  async confirmUser(code: string): Promise<void> {
+    const user = await authQueryRepository.getUserByCode(code);
+
+    if (!user) throw new NotFoundException();
+
+    await userCommandRepository.update(user.id, {
+      isConfirmed: true,
+      confirmaionCode: undefined,
+      confirmationCodeExpiration: undefined,
+    });
   },
 };
