@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { ObjectId } from "mongodb";
 import { UserDbWithId } from "../../users/types";
 import {
   userCommandRepository,
@@ -8,7 +10,6 @@ import { LoginInputDto, MeViewModel } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
 import { userService } from "../../users/application";
-import { ObjectId } from "mongodb";
 import { authQueryRepository } from "../repositories";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
@@ -68,8 +69,17 @@ export const authService = {
     if (!userCode) throw new NotFoundException();
     if (!userCode.confirmaionCode) throw new NotFoundException();
 
+    const newCode = randomUUID();
+
+    await userCommandRepository.update(userCode.id, {
+      confirmaionCode: newCode,
+      confirmationCodeExpiration: new Date(
+        Date.now() + 24 * 60 * 60 * 1000,
+      ).toISOString(),
+    });
+
     nodemailerService
-      .sendEmail(email, userCode.confirmaionCode, registerTemplateMail)
+      .sendEmail(email, newCode, registerTemplateMail)
       .catch((e) => console.log(e));
   },
   async confirmUser(code: string): Promise<void> {
