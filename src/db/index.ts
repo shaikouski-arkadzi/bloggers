@@ -4,6 +4,7 @@ import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
 import { UserDb } from "../users/types";
 import { CommentDb } from "../comments/types";
+import { RefreshTokensDBCollection } from "../auth/types";
 
 if (!MONGO_URI) console.error("Not found mongo uri");
 
@@ -38,6 +39,7 @@ export const db = {
       postsCollection: this.getDbName().collection<PostDb>("posts"),
       usersCollection: this.getDbName().collection<UserDb>("users"),
       commentsCollection: this.getDbName().collection<CommentDb>("comments"),
+      refreshTokensCollection: this.getDbName().collection<RefreshTokensDBCollection>("refreshTokens"),
     };
   },
 };

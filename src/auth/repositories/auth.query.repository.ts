@@ -1,6 +1,9 @@
 import { db } from "../../db";
-import { mapUserDbToAuth } from "../utils/mapUserDbToAuth";
-import { IAuthCode } from "../types";
+import {
+  mapRefreshTokensDBModelToRefreshTokensModel,
+  mapUserDbToAuth,
+} from "../utils";
+import { IAuthCode, RefreshTokensCollection } from "../types";
 
 export const authQueryRepository = {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
@@ -22,5 +25,18 @@ export const authQueryRepository = {
     }
 
     return mapUserDbToAuth(result);
+  },
+  async getRefreshTokenModel(
+    refreshToken: string,
+  ): Promise<RefreshTokensCollection | null> {
+    const result = await db
+      .getCollections()
+      .refreshTokensCollection.findOne({ refreshToken });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapRefreshTokensDBModelToRefreshTokensModel(result);
   },
 };

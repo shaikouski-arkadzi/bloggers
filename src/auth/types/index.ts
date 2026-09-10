@@ -25,3 +25,12 @@ export interface IAuthCode {
   id: string;
   confirmaionCode?: string;
 }
+
+export interface RefreshTokensDBCollection {
+  refreshToken: string;
+}
+
+export interface RefreshTokensCollection {
+  id: string;
+  refreshToken: string;
+}
