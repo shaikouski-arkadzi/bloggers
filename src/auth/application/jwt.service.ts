@@ -1,21 +1,32 @@
 import jwt from "jsonwebtoken";
-import { AC_SECRET, AC_TIME } from "../../settings/config";
+import { AC_SECRET, AC_TIME, RT_SECRET, RT_TIME } from "../../settings/config";
 
 export type JwtPayload = {
   uuid: string;
+  tokenType: TokenType;
 };
 
+export type TokenType = "access" | "refresh";
+
 export const jwtService = {
-  async createToken(uuid: string): Promise<string> {
+  async createToken(
+    uuid: string,
+    tokenType: TokenType = "access",
+  ): Promise<string> {
     if (!AC_SECRET || !AC_TIME) {
       throw new Error("AC_SECRET or AC_TIME is not defined");
     }
+    if (!RT_SECRET || !RT_TIME) {
+      throw new Error("RT_SECRET or RT_TIME is not defined");
+    }
 
     const options = {
-      expiresIn: AC_TIME,
+      expiresIn: tokenType === "access" ? AC_TIME : RT_TIME,
     } as jwt.SignOptions;
 
-    return jwt.sign({ uuid }, AC_SECRET, options);
+    const secret: jwt.Secret = tokenType === "access" ? AC_SECRET : RT_SECRET;
+
+    return jwt.sign({ uuid, tokenType: tokenType }, secret, options);
   },
 
   async decodeToken(token: string): Promise<JwtPayload | null> {
@@ -27,13 +38,21 @@ export const jwtService = {
     }
   },
 
-  async verifyToken(token: string): Promise<JwtPayload | null> {
+  async verifyToken(
+    token: string,
+    tokenType: TokenType = "access",
+  ): Promise<JwtPayload | null> {
     if (!AC_SECRET || !AC_TIME) {
       throw new Error("AC_SECRET or AC_TIME is not defined");
     }
+    if (!RT_SECRET || !RT_TIME) {
+      throw new Error("RT_SECRET or RT_TIME is not defined");
+    }
+
+    const secret: jwt.Secret = tokenType === "access" ? AC_SECRET : RT_SECRET;
 
     try {
-      return jwt.verify(token, AC_SECRET) as JwtPayload;
+      return jwt.verify(token, secret) as JwtPayload;
     } catch (error) {
       console.error("Token verify some error");
       return null;

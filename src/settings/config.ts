@@ -12,5 +12,8 @@ export const SALT_ROUND_COUNTS = Number(process.env.SALT_ROUND_COUNTS);
 export const AC_SECRET = process.env.AC_SECRET;
 export const AC_TIME = Number(process.env.AC_TIME);
 
+export const RT_SECRET = process.env.RT_SECRET;
+export const RT_TIME = Number(process.env.RT_TIME);
+
 export const GOOGLE_APP_PASSWORD = process.env.GOOGLE_APP_PASSWORD;
 export const GOOGLE_APP_EMAIL = process.env.GOOGLE_APP_EMAIL;
