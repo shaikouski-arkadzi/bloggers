@@ -3,3 +3,4 @@ export { userInfo } from "./userInfo.controller";
 export { registerUser } from "./registerUser.controller";
 export { resendRegistrationEmail } from "./resendRegistrationEmail.controller";
 export { confirmRegistration } from "./confirmRegistration.controller";
+export { updateTokens } from "./updateTokens.controller";

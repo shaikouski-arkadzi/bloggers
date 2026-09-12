@@ -6,10 +6,14 @@ import {
   loginUser,
   registerUser,
   resendRegistrationEmail,
+  updateTokens,
   userInfo,
 } from "../controllers";
 import { loginInputDtoValidation } from "../validation";
-import { jwtValidationMiddleware } from "../middleware";
+import {
+  jwtValidationMiddleware,
+  refreshTokenValidationMiddleware,
+} from "../middleware";
 import { userInputDtoValidation } from "../../users/validation";
 import { emailValidation } from "../../users/validation/userInputDto.validation.middleware";
 
@@ -42,6 +46,13 @@ router.post(
   AUTH_ROUTES.REGISTRATION_CONFIRMATION,
   resultValidationMiddleware,
   confirmRegistration,
+);
+
+router.post(
+  AUTH_ROUTES.REFRESH_TOKEN,
+  refreshTokenValidationMiddleware,
+  resultValidationMiddleware,
+  updateTokens,
 );
 
 export default router;

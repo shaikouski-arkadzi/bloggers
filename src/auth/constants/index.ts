@@ -7,4 +7,5 @@ export const AUTH_ROUTES = {
   REGISTRATION: "/registration",
   REGISTRATION_EMAIL_RESENDING: "/registration-email-resending",
   REGISTRATION_CONFIRMATION: "/registration-confirmation",
+  REFRESH_TOKEN: "/refresh-token",
 } as const;

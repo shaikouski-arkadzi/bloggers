@@ -8,11 +8,16 @@ import {
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel } from "../types";
 import { bcryptService } from "./bcrypt.service";
-import { MultipleUsersDuringLoginException } from "../exceptions";
+import {
+  MultipleUsersDuringLoginException,
+  RefreshTokenExistInBlackListException,
+} from "../exceptions";
 import { userService } from "../../users/application";
 import { authQueryRepository } from "../repositories";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
+import { updateTokens } from "../controllers";
+import { authCommandRepository } from "../repositories/auth.command.repository";
 
 export const authService = {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
@@ -92,5 +97,17 @@ export const authService = {
       confirmaionCode: undefined,
       confirmationCodeExpiration: undefined,
     });
+  },
+  async updateTokens(userId: string, refreshToken: string): Promise<void> {
+    const findedUser = await userService.getUserById(new ObjectId(userId));
+
+    if (!findedUser) throw new NotFoundException();
+
+    const oldRefreshToken =
+      await authQueryRepository.getRefreshTokenModel(refreshToken);
+
+    if (oldRefreshToken) throw new RefreshTokenExistInBlackListException();
+
+    await authCommandRepository.create({ refreshToken });
   },
 };
