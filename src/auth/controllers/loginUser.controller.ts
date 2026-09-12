@@ -5,6 +5,7 @@ import { APIErrorResult } from "../../common/types";
 import { authService, jwtService } from "../application";
 import { MultipleUsersDuringLoginException } from "../exceptions";
 import { REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
+import { TokenType } from "../application/jwt.service";
 
 export const loginUser = async (
   req: Request<{}, {}, LoginInputDto>,
@@ -15,8 +16,14 @@ export const loginUser = async (
   try {
     const findedUser = await authService.login(credentials);
 
-    const accessToken = await jwtService.createToken(findedUser.id, "access");
-    const refreshToken = await jwtService.createToken(findedUser.id, "refresh");
+    const accessToken = await jwtService.createToken(
+      findedUser.id,
+      TokenType.Access,
+    );
+    const refreshToken = await jwtService.createToken(
+      findedUser.id,
+      TokenType.Refresh,
+    );
 
     res
       .status(200)

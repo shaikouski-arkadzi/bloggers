@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { jwtService } from "../application";
+import { TokenType } from "../application/jwt.service";
 
 export const refreshTokenValidationMiddleware = async (
   req: Request,
@@ -13,7 +14,10 @@ export const refreshTokenValidationMiddleware = async (
     return;
   }
 
-  const verified = await jwtService.verifyToken(refreshToken, "refresh");
+  const verified = await jwtService.verifyToken(
+    refreshToken,
+    TokenType.Refresh,
+  );
 
   if (verified) {
     req.userId = verified.uuid;

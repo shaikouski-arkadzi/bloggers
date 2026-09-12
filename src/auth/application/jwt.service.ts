@@ -6,12 +6,15 @@ export type JwtPayload = {
   tokenType: TokenType;
 };
 
-export type TokenType = "access" | "refresh";
+export enum TokenType {
+  Access = "access",
+  Refresh = "refresh",
+}
 
 export const jwtService = {
   async createToken(
     uuid: string,
-    tokenType: TokenType = "access",
+    tokenType: TokenType = TokenType.Access,
   ): Promise<string> {
     if (!AC_SECRET || !AC_TIME) {
       throw new Error("AC_SECRET or AC_TIME is not defined");
@@ -40,7 +43,7 @@ export const jwtService = {
 
   async verifyToken(
     token: string,
-    tokenType: TokenType = "access",
+    tokenType: TokenType = TokenType.Access,
   ): Promise<JwtPayload | null> {
     if (!AC_SECRET || !AC_TIME) {
       throw new Error("AC_SECRET or AC_TIME is not defined");

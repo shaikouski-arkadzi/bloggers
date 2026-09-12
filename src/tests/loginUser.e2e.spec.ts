@@ -4,6 +4,7 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { jwtService } from "../auth/application";
+import { TokenType } from "../auth/application/jwt.service";
 
 const app = express();
 
@@ -47,7 +48,7 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    const token = await jwtService.createToken(createdUserId);
+    const token = await jwtService.createToken(createdUserId, TokenType.Access);
 
     const response = await request(app)
       .post("/auth/login")
@@ -65,7 +66,7 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    const token = await jwtService.createToken(createdUserId);
+    const token = await jwtService.createToken(createdUserId, TokenType.Access);
 
     const response = await request(app)
       .post("/auth/login")

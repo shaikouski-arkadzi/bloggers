@@ -11,7 +11,7 @@ export const AUTH_ROUTES = {
   LOGOUT: "/logout",
 } as const;
 
-export const REFRESH_TOKEN_COOKIE_OPTIONS = {
+export const REFRESH_TOKEN_COOKIE_OPTIONS = Object.freeze({
   secure: true,
   httpOnly: true,
-};
+});
