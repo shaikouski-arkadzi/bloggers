@@ -1,4 +1,5 @@
 import express, { Express } from "express";
+import cookieParser from "cookie-parser";
 import blogsRoutes from "./blogs/routes";
 import postsRoutes from "./posts/routes";
 import testingRoutes from "./testing/routes";
@@ -14,6 +15,7 @@ import { COMMENTS_PATH } from "./comments/constants";
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); // middleware для парсинга JSON в теле запроса
+  app.use(cookieParser()); // Парсит cookies входящего запроса
 
   app.use(BLOGS_PATH, blogsRoutes);
 

@@ -14,9 +14,16 @@ export const loginUser = async (
   try {
     const findedUser = await authService.login(credentials);
 
-    const token = await jwtService.createToken(findedUser.id);
+    const accessToken = await jwtService.createToken(findedUser.id, "access");
+    const refreshToken = await jwtService.createToken(findedUser.id, "refresh");
 
-    res.status(200).json({ accessToken: token });
+    res
+      .status(200)
+      .cookie("refreshToken", refreshToken, {
+        secure: true,
+        httpOnly: true,
+      })
+      .json({ accessToken });
   } catch (error) {
     if (
       error instanceof NotFoundException ||
