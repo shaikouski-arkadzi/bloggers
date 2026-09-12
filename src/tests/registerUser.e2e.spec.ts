@@ -3,6 +3,8 @@ import express from "express";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { userQueryRepository } from "../users/repositories";
+import { nodemailerService } from "../auth/application";
+import { registerTemplateMail } from "../auth/utils";
 
 const app = express();
 
@@ -13,26 +15,35 @@ describe("POST /auth/registration", () => {
     await db.connect();
 
     await request(app).delete("/testing/all-data").expect(204);
+
+    jest.spyOn(nodemailerService, "sendEmail").mockResolvedValue(true);
   });
 
   afterAll(async () => {
     await db.disconnect();
+
+    jest.restoreAllMocks();
   });
 
   it("should register user with valid data", async () => {
     const body = {
       login: "login",
       password: "password",
-      email: "example@example.dev"
+      email: "example@example.dev",
     };
 
-    await request(app)
-      .post("/auth/registration")
-      .send(body)
-      .expect(204);
+    await request(app).post("/auth/registration").send(body).expect(204);
 
     const allUsers = await userQueryRepository.find();
     expect(allUsers.length).toBe(1);
+
+    expect(nodemailerService.sendEmail).toHaveBeenCalledTimes(1);
+
+    expect(nodemailerService.sendEmail).toHaveBeenCalledWith(
+      body.email,
+      expect.any(String),
+      registerTemplateMail,
+    );
   });
 
   it("should return 400 if login is missing", async () => {
@@ -41,9 +52,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -64,9 +73,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -87,9 +94,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -110,9 +115,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -173,9 +176,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -196,9 +197,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -219,9 +218,7 @@ describe("POST /auth/registration", () => {
       email: "example1@example.dev",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -281,9 +278,7 @@ describe("POST /auth/registration", () => {
       password: "password",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -304,9 +299,7 @@ describe("POST /auth/registration", () => {
       email: " ",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -327,9 +320,7 @@ describe("POST /auth/registration", () => {
       email: 1,
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 
@@ -350,9 +341,7 @@ describe("POST /auth/registration", () => {
       email: "email@example",
     };
 
-    const response = await request(app)
-      .post("/auth/registration")
-      .send(body);
+    const response = await request(app).post("/auth/registration").send(body);
 
     expect(response.statusCode).toEqual(400);
 

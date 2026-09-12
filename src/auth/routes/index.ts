@@ -16,6 +16,7 @@ import {
 } from "../middleware";
 import { userInputDtoValidation } from "../../users/validation";
 import { emailValidation } from "../../users/validation/userInputDto.validation.middleware";
+import { logout } from "../controllers/logout.controller";
 
 const router = Router();
 

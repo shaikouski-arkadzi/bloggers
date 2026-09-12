@@ -3,6 +3,8 @@ import express from "express";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { userQueryRepository } from "../users/repositories";
+import { nodemailerService } from "../auth/application";
+import { registerTemplateMail } from "../auth/utils";
 
 const app = express();
 
@@ -13,35 +15,44 @@ describe("POST /auth/registration-email-resending", () => {
     await db.connect();
 
     await request(app).delete("/testing/all-data").expect(204);
+
+    jest.spyOn(nodemailerService, "sendEmail").mockResolvedValue(true);
   });
 
   afterAll(async () => {
     await db.disconnect();
+
+    jest.restoreAllMocks();
   });
 
   it("should resend email for register user with valid data", async () => {
     const userBody = {
       login: "login",
       password: "password",
-      email: "example@example.dev"
+      email: "example@example.dev",
     };
 
-    await request(app)
-      .post("/auth/registration")
-      .send(userBody)
-      .expect(204);
+    await request(app).post("/auth/registration").send(userBody).expect(204);
 
     const allUsers = await userQueryRepository.find();
     expect(allUsers.length).toBe(1);
 
     const body = {
-      email: "example@example.dev"
+      email: "example@example.dev",
     };
 
     await request(app)
       .post("/auth/registration-email-resending")
       .send(body)
       .expect(204);
+
+    expect(nodemailerService.sendEmail).toHaveBeenCalledTimes(2);
+
+    expect(nodemailerService.sendEmail).toHaveBeenCalledWith(
+      body.email,
+      expect.any(String),
+      registerTemplateMail,
+    );
   });
 
   it("should return 400 if email is missing", async () => {
