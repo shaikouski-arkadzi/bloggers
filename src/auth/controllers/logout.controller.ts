@@ -1,28 +1,21 @@
 import { Request, Response } from "express";
-import { LoginSuccessViewModel } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { APIErrorResult } from "../../common/types";
-import { authService, jwtService } from "../application";
+import { authService } from "../application";
 import { RefreshTokenExistInBlackListException } from "../exceptions";
 import { REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
 
-export const updateTokens = async (
+export const logout = async (
   req: Request,
-  res: Response<LoginSuccessViewModel | APIErrorResult>,
+  res: Response<void | APIErrorResult>,
 ) => {
   const userId = req.userId!;
   const refreshToken = req.cookies?.refreshToken!;
 
   try {
-    await authService.updateTokens(userId, refreshToken);
+    await authService.logout(userId, refreshToken);
 
-    const accessToken = await jwtService.createToken(userId, "access");
-    const refreshTokenNew = await jwtService.createToken(userId, "refresh");
-
-    res
-      .status(200)
-      .cookie("refreshToken", refreshTokenNew, REFRESH_TOKEN_COOKIE_OPTIONS)
-      .json({ accessToken });
+    res.status(204).clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS);
   } catch (error) {
     if (
       error instanceof NotFoundException ||

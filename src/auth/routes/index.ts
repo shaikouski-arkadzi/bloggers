@@ -55,4 +55,11 @@ router.post(
   updateTokens,
 );
 
+router.post(
+  AUTH_ROUTES.LOGOUT,
+  refreshTokenValidationMiddleware,
+  resultValidationMiddleware,
+  logout,
+);
+
 export default router;

@@ -4,6 +4,7 @@ import { NotFoundException } from "../../common/exceptions";
 import { APIErrorResult } from "../../common/types";
 import { authService, jwtService } from "../application";
 import { MultipleUsersDuringLoginException } from "../exceptions";
+import { REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
 
 export const loginUser = async (
   req: Request<{}, {}, LoginInputDto>,
@@ -19,10 +20,7 @@ export const loginUser = async (
 
     res
       .status(200)
-      .cookie("refreshToken", refreshToken, {
-        secure: true,
-        httpOnly: true,
-      })
+      .cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
       .json({ accessToken });
   } catch (error) {
     if (

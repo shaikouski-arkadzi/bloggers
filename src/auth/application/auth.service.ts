@@ -110,4 +110,16 @@ export const authService = {
 
     await authCommandRepository.create({ refreshToken });
   },
+  async logout(userId: string, refreshToken: string): Promise<void> {
+    const findedUser = await userService.getUserById(new ObjectId(userId));
+
+    if (!findedUser) throw new NotFoundException();
+
+    const oldRefreshToken =
+      await authQueryRepository.getRefreshTokenModel(refreshToken);
+
+    if (oldRefreshToken) throw new RefreshTokenExistInBlackListException();
+
+    await authCommandRepository.create({ refreshToken });
+  },
 };

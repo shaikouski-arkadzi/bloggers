@@ -8,4 +8,10 @@ export const AUTH_ROUTES = {
   REGISTRATION_EMAIL_RESENDING: "/registration-email-resending",
   REGISTRATION_CONFIRMATION: "/registration-confirmation",
   REFRESH_TOKEN: "/refresh-token",
+  LOGOUT: "/logout",
 } as const;
+
+export const REFRESH_TOKEN_COOKIE_OPTIONS = {
+  secure: true,
+  httpOnly: true,
+};
