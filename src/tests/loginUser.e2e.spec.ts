@@ -48,16 +48,28 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    const token = await jwtService.createToken(createdUserId, TokenType.Access);
-
     const response = await request(app)
       .post("/auth/login")
       .send(body)
       .expect(200);
 
     expect(response.body).toEqual({
-      accessToken: token,
+      accessToken: expect.any(String),
     });
+
+    const setCookie = response.headers["set-cookie"];
+
+    const cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    const refreshCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+
+    expect(refreshCookie).toEqual(expect.any(String));
   });
 
   it("should successfully log in user by email", async () => {
@@ -66,16 +78,28 @@ describe("POST /auth/login", () => {
       password: "password",
     };
 
-    const token = await jwtService.createToken(createdUserId, TokenType.Access);
-
     const response = await request(app)
       .post("/auth/login")
       .send(body)
       .expect(200);
 
     expect(response.body).toEqual({
-      accessToken: token,
+      accessToken: expect.any(String),
     });
+
+    const setCookie = response.headers["set-cookie"];
+
+    const cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    const refreshCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+
+    expect(refreshCookie).toEqual(expect.any(String));
   });
 
   it("should return 400 if loginOrEmail is missing", async () => {
