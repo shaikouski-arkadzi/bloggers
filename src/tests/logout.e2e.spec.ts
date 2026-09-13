@@ -18,7 +18,7 @@ const createUserBody = {
   email: "example@example.dev",
 };
 
-describe("POST /auth/refresh-token", () => {
+describe("POST /auth/logout", () => {
   beforeAll(async () => {
     await db.connect();
 
@@ -66,23 +66,23 @@ describe("POST /auth/refresh-token", () => {
     await db.disconnect();
   });
 
-  it("should successfully refresh token", async () => {
+  it("should successfully logout user", async () => {
     await request(app)
-      .post("/auth/refresh-token")
+      .post("/auth/logout")
       .set("Cookie", refreshCookie)
-      .expect(200);
+      .expect(204);
   });
 
   it("should return 401 for an invalid refresh token", async () => {
     await request(app)
-      .post("/auth/refresh-token")
+      .post("/auth/logout")
       .set("Cookie", "refreshToken=invalid-token")
       .expect(401);
   });
 
   it("should return 401 for old refresh token", async () => {
     await request(app)
-      .post("/auth/refresh-token")
+      .post("/auth/logout")
       .set("Cookie", refreshCookie)
       .expect(401);
   });

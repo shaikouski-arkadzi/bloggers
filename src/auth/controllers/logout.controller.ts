@@ -15,7 +15,9 @@ export const logout = async (
   try {
     await authService.logout(userId, refreshToken);
 
-    res.status(204).clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS);
+    res
+      .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)
+      .sendStatus(204);
   } catch (error) {
     if (
       error instanceof NotFoundException ||
