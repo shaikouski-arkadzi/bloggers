@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { blogsCommandRepository, blogsQueryRepository } from "../repositories";
-import { mapBlogDbToBlog } from "../utils";
+import { createBlogDb, mapBlogDbToBlog } from "../utils";
 import { Blog, BlogDb, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
@@ -13,22 +13,15 @@ export const blogsService = {
       throw new NotFoundException();
     }
 
-    return mapBlogDbToBlog(result);
+    return result;
   },
 
-  async create(blog: BlogInputDto): Promise<Blog> {
-    const newBlogInDb: BlogDb = {
-      _id: new ObjectId(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      isMembership: false,
-      createdAt: new Date().toISOString(),
-    };
+  async create(blog: BlogInputDto): Promise<string> {
+    const newBlogInDb = createBlogDb(blog);
 
-    await blogsCommandRepository.create(newBlogInDb);
+    const blogId = await blogsCommandRepository.create(newBlogInDb);
 
-    return mapBlogDbToBlog(newBlogInDb);
+    return blogId.toString();
   },
 
   async findMany(queries: BlogsQuery): Promise<PaginatorData<Blog>> {
@@ -52,14 +45,12 @@ export const blogsService = {
       searchNameTerm,
     });
 
-    const mappedResult = result.map(mapBlogDbToBlog);
-
     const returnData: PaginatorData<Blog> = {
       pagesCount,
       page,
       pageSize,
       totalCount: allBlogsCount,
-      items: mappedResult,
+      items: result,
     };
 
     return returnData;

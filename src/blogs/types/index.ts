@@ -8,7 +8,7 @@ export interface BlogInputDto {
 }
 
 export interface BlogDb extends BlogInputDto {
-  _id: ObjectId;
+  // _id: ObjectId;
   isMembership: boolean;
   createdAt: string;
 }

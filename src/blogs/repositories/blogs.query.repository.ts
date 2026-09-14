@@ -8,6 +8,7 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
+import { mapBlogDbToBlog } from "../utils";
 
 interface BlogsQueryParams {
   page?: number;
@@ -24,7 +25,7 @@ export const blogsQueryRepository = {
     sortBy = SORT_FIELD_DAFAULT,
     sortDirection = SORT_DIRECTION_DAFAULT,
     searchNameTerm = null,
-  }: BlogsQueryParams = {}): Promise<BlogDb[]> {
+  }: BlogsQueryParams = {}): Promise<Blog[]> {
     console.log(searchNameTerm);
     const result = await db
       .getCollections()
@@ -42,10 +43,10 @@ export const blogsQueryRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result;
+    return result.map(mapBlogDbToBlog);
   },
 
-  async findById(id: string): Promise<BlogDb | null> {
+  async findById(id: string): Promise<Blog | null> {
     const result = await db
       .getCollections()
       .blogsCollection.findOne({ _id: new ObjectId(id) });
@@ -54,7 +55,7 @@ export const blogsQueryRepository = {
       return null;
     }
 
-    return result;
+    return mapBlogDbToBlog(result);
   },
 
   async count(
