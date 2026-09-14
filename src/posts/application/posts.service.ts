@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { blogRepository } from "../../blogs/repositories";
+import { postsCommandRepository, postsQueryRepository } from "../repositories";
 import { PaginatorData } from "../../common/types";
-import { postRepository } from "../repositories";
+import { blogsQueryRepository } from "../../blogs/repositories";
 import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { mapPostDbToPost } from "../utils";
 import { blogsService } from "../../blogs/application/blogs.service";
@@ -9,7 +9,7 @@ import { NotFoundException } from "../../common/exceptions";
 
 export const postsService = {
   async findById(id: string): Promise<Post> {
-    const result = await postRepository.findById(id);
+    const result = await postsQueryRepository.findById(id);
 
     if (!result) {
       throw new NotFoundException();
@@ -33,7 +33,7 @@ export const postsService = {
       createdAt: new Date().toISOString(),
     };
 
-    await postRepository.create(newPost);
+    await postsCommandRepository.create(newPost);
 
     return mapPostDbToPost(newPost);
   },
@@ -44,11 +44,11 @@ export const postsService = {
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
 
-    const allPostsCount = await postRepository.count();
+    const allPostsCount = await postsQueryRepository.count();
 
     const pagesCount = Math.ceil(allPostsCount / pageSize);
 
-    const result = await postRepository.find({
+    const result = await postsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -71,7 +71,7 @@ export const postsService = {
   async delete(id: string): Promise<boolean> {
     await postsService.findById(id);
 
-    const result = await postRepository.delete(id);
+    const result = await postsCommandRepository.delete(id);
 
     return result;
   },
@@ -79,7 +79,7 @@ export const postsService = {
   async update(id: string, post: PostInputDto): Promise<boolean> {
     await postsService.findById(id);
 
-    const blog = await blogRepository.findById(post.blogId);
+    const blog = await blogsQueryRepository.findById(post.blogId);
 
     if (!blog) throw new NotFoundException();
 
@@ -93,7 +93,7 @@ export const postsService = {
       blogName: blog.name,
     };
 
-    const result = await postRepository.update(idDb, newPost);
+    const result = await postsCommandRepository.update(idDb, newPost);
 
     return result === 1;
   },
@@ -109,13 +109,13 @@ export const postsService = {
 
     await blogsService.findById(blogId);
 
-    const allPostsCount = await postRepository.count({
+    const allPostsCount = await postsQueryRepository.count({
       blogId,
     });
 
     const pagesCount = Math.ceil(allPostsCount / pageSize);
 
-    const result = await postRepository.findPostsByBlog(blogId, {
+    const result = await postsQueryRepository.findPostsByBlog(blogId, {
       page,
       pageSize,
       sortBy,

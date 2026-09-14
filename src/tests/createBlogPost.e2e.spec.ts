@@ -1,9 +1,8 @@
 import request, { Response } from "supertest";
 import express from "express";
 import { BLOGS_PATH } from "../blogs/constants";
-import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { postRepository } from "../posts/repositories";
+import { postsQueryRepository } from "../posts/repositories";
 import { db } from "../db";
 import { setupApp } from "../setup-app";
 
@@ -70,7 +69,7 @@ describe("POST /blogs/:id/posts", () => {
       ),
     });
 
-    const allPosts = await postRepository.find();
+    const allPosts = await postsQueryRepository.find();
     expect(allPosts.length).toBe(1);
   });
 

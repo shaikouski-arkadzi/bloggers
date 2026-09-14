@@ -1,6 +1,5 @@
 import request from "supertest";
 import express from "express";
-import { blogRepository } from "../blogs/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
@@ -11,6 +10,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
+import { blogsQueryRepository } from "../blogs/repositories";
 
 const app = express();
 
@@ -50,7 +50,7 @@ describe("GET /blogs", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    blogsCount = await blogRepository.count();
+    blogsCount = await blogsQueryRepository.count();
   });
 
   afterAll(async () => {
@@ -74,7 +74,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({ page, pageSize });
+    const allBlogs = await blogsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -98,7 +98,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({ page, pageSize });
+    const allBlogs = await blogsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -121,7 +121,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({ page, pageSize });
+    const allBlogs = await blogsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -145,7 +145,7 @@ describe("GET /blogs", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({ page, pageSize });
+    const allBlogs = await blogsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -174,7 +174,7 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({
+    const allBlogs = await blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -208,7 +208,7 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await blogRepository.find({
+    const allBlogs = await blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -227,7 +227,7 @@ describe("GET /blogs", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    blogsCount = await blogRepository.count({
+    blogsCount = await blogsQueryRepository.count({
       name: searchNameTerm,
     });
 

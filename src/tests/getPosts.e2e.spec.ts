@@ -3,7 +3,6 @@ import express from "express";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { postRepository } from "../posts/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { Post } from "../posts/types";
@@ -13,6 +12,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
+import { postsQueryRepository } from "../posts/repositories";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -68,7 +68,7 @@ describe("GET /posts", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    postsCount = await postRepository.count();
+    postsCount = await postsQueryRepository.count();
   }, 30000);
 
   afterAll(async () => {
@@ -92,7 +92,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allPosts = await postRepository.find({ page, pageSize });
+    const allPosts = await postsQueryRepository.find({ page, pageSize });
     expect(allPosts.length).toBe(response.body.items.length);
   });
 
@@ -116,7 +116,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find({ page, pageSize });
+    const allBlogs = await postsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -139,7 +139,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find({ page, pageSize });
+    const allBlogs = await postsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -163,7 +163,7 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find({ page, pageSize });
+    const allBlogs = await postsQueryRepository.find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -192,7 +192,7 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find({
+    const allBlogs = await postsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -226,7 +226,7 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postRepository.find({
+    const allBlogs = await postsQueryRepository.find({
       page,
       pageSize,
       sortBy,

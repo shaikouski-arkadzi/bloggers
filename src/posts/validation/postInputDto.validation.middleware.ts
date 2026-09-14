@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { blogRepository } from "../../blogs/repositories";
+import { blogsQueryRepository } from "../../blogs/repositories";
 
 export const titleValidation = body("title")
   .exists()
@@ -49,7 +49,7 @@ export const blogIdValidation = body("blogId")
   .withMessage("Некорректый id")
   .bail()
   .custom(async (blogId) => {
-    const blog = await blogRepository.findById(blogId);
+    const blog = await blogsQueryRepository.findById(blogId);
 
     if (!blog) {
       throw new Error("Не найдено блога с таким идентификатором");

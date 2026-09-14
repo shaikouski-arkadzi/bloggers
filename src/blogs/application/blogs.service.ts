@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { blogRepository } from "../repositories";
+import { blogsCommandRepository, blogsQueryRepository } from "../repositories";
 import { mapBlogDbToBlog } from "../utils";
 import { Blog, BlogDb, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
@@ -7,7 +7,7 @@ import { NotFoundException } from "../../common/exceptions";
 
 export const blogsService = {
   async findById(id: string): Promise<Blog> {
-    const result = await blogRepository.findById(id);
+    const result = await blogsQueryRepository.findById(id);
 
     if (!result) {
       throw new NotFoundException();
@@ -26,7 +26,7 @@ export const blogsService = {
       createdAt: new Date().toISOString(),
     };
 
-    await blogRepository.create(newBlogInDb);
+    await blogsCommandRepository.create(newBlogInDb);
 
     return mapBlogDbToBlog(newBlogInDb);
   },
@@ -38,13 +38,13 @@ export const blogsService = {
     const sortDirection = queries.sortDirection;
     const searchNameTerm = queries.searchNameTerm;
 
-    const allBlogsCount = await blogRepository.count(
+    const allBlogsCount = await blogsQueryRepository.count(
       searchNameTerm ? { name: searchNameTerm } : {},
     );
 
     const pagesCount = Math.ceil(allBlogsCount / pageSize);
 
-    const result = await blogRepository.find({
+    const result = await blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -68,7 +68,7 @@ export const blogsService = {
   async delete(id: string): Promise<boolean> {
     await blogsService.findById(id);
 
-    const result = await blogRepository.delete(id);
+    const result = await blogsCommandRepository.delete(id);
 
     return result === 1;
   },
@@ -84,7 +84,7 @@ export const blogsService = {
       websiteUrl: blog.websiteUrl,
     };
 
-    const result = await blogRepository.update(idDB, newBlog);
+    const result = await blogsCommandRepository.update(idDB, newBlog);
 
     return result === 1;
   },

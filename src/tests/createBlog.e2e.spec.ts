@@ -1,7 +1,7 @@
 import request from "supertest";
 import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { blogRepository } from "../blogs/repositories";
+import { blogsQueryRepository } from "../blogs/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 
@@ -52,7 +52,7 @@ describe("POST /blogs", () => {
       ),
     });
 
-    const allBlogs = await blogRepository.find();
+    const allBlogs = await blogsQueryRepository.find();
     expect(allBlogs.length).toBe(1);
   });
 
