@@ -12,12 +12,9 @@ export const updateBlog = async (
     const blogData = req.body;
     const { id } = req.params;
 
-    const result = await blogsService.update(id, blogData);
+    await blogsService.update(id, blogData);
 
-    if (result) {
-      res.sendStatus(204);
-    } else {
-    }
+    res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);

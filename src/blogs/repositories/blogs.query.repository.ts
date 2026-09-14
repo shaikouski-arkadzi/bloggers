@@ -26,7 +26,6 @@ export const blogsQueryRepository = {
     sortDirection = SORT_DIRECTION_DAFAULT,
     searchNameTerm = null,
   }: BlogsQueryParams = {}): Promise<Blog[]> {
-    console.log(searchNameTerm);
     const result = await db
       .getCollections()
       .blogsCollection.find(

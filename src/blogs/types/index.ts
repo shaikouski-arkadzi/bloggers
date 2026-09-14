@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { SortBy, SortDirection } from "../../common/types";
 
 export interface BlogInputDto {
@@ -8,7 +7,6 @@ export interface BlogInputDto {
 }
 
 export interface BlogDb extends BlogInputDto {
-  // _id: ObjectId;
   isMembership: boolean;
   createdAt: string;
 }

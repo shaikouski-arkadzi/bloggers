@@ -64,19 +64,9 @@ export const blogsService = {
     return result === 1;
   },
 
-  async update(id: string, blog: BlogInputDto): Promise<boolean> {
+  async update(id: string, blog: BlogInputDto): Promise<void> {
     await blogsService.findById(id);
 
-    const idDB = new ObjectId(id);
-
-    const newBlog: BlogInputDto = {
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-    };
-
-    const result = await blogsCommandRepository.update(idDB, newBlog);
-
-    return result === 1;
+    await blogsCommandRepository.update(id, blog);
   },
 };

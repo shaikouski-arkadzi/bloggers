@@ -9,15 +9,13 @@ export const blogsCommandRepository = {
     return result.insertedId;
   },
 
-  async update(id: ObjectId, blog: BlogInputDto): Promise<number> {
-    const result = await db.getCollections().blogsCollection.updateOne(
-      { _id: id },
+  async update(id: string, blog: BlogInputDto): Promise<void> {
+    await db.getCollections().blogsCollection.updateOne(
+      { _id: new ObjectId(id) },
       {
         $set: blog,
       },
     );
-
-    return result.matchedCount;
   },
 
   async delete(id: string): Promise<number> {
