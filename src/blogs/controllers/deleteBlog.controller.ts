@@ -9,11 +9,9 @@ export const deleteBlog = async (
   try {
     const { id } = req.params;
 
-    const result = await blogsService.delete(id);
+    await blogsService.delete(id);
 
-    if (result) {
-      return res.sendStatus(204);
-    }
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);

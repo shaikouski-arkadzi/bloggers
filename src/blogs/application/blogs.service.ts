@@ -56,12 +56,10 @@ export const blogsService = {
     return returnData;
   },
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<void> {
     await blogsService.findById(id);
 
-    const result = await blogsCommandRepository.delete(id);
-
-    return result === 1;
+    await blogsCommandRepository.delete(id);
   },
 
   async update(id: string, blog: BlogInputDto): Promise<void> {

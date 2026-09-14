@@ -18,11 +18,9 @@ export const blogsCommandRepository = {
     );
   },
 
-  async delete(id: string): Promise<number> {
-    const result = await db
+  async delete(id: string): Promise<void> {
+    await db
       .getCollections()
       .blogsCollection.deleteOne({ _id: new ObjectId(id) });
-
-    return result.deletedCount;
   },
 };
