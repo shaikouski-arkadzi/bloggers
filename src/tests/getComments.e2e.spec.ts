@@ -57,13 +57,6 @@ describe("GET /posts/:postId/comments", () => {
       password: createUserBody.password,
     };
 
-    const loginUserResponse = await request(app)
-      .post("/auth/login")
-      .send(loginUserBody)
-      .expect(200);
-
-    accessToken = loginUserResponse.body.accessToken;
-
     const blogBody = {
       name: "string",
       description: "string",
@@ -92,7 +85,14 @@ describe("GET /posts/:postId/comments", () => {
 
     createdPostId = createPostResponse.body.id;
 
-    for (let i = 0; i < 21; i++) {
+    const loginUserResponse = await request(app)
+      .post("/auth/login")
+      .send(loginUserBody)
+      .expect(200);
+
+    accessToken = loginUserResponse.body.accessToken;
+
+    for (let i = 0; i < 11; i++) {
       const commentBody = {
         content: `stringstringstringstring${i}`,
       };

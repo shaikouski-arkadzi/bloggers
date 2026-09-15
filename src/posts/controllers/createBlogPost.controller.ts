@@ -4,7 +4,7 @@ import { Post, PostInputDto } from "../../posts/types";
 import { postsService } from "../../posts/application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
 import { postsQueryRepository } from "../../posts/repositories";
-import { SavingException } from "../exceptions";
+import { BlogForPostNotExistException, SavingException } from "../exceptions";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
@@ -30,6 +30,9 @@ export const createBlogPost = async (
     res.status(201).json(createdPost);
   } catch (error) {
     if (error instanceof NotFoundException) {
+      res.sendStatus(404);
+    }
+    if (error instanceof BlogForPostNotExistException) {
       res.sendStatus(404);
     }
     if (error instanceof Error) {
