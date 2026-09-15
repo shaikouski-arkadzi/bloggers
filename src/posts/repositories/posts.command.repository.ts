@@ -3,10 +3,10 @@ import { db } from "../../db";
 import { PostDb, UpdatedPost } from "../types";
 
 export const postsCommandRepository = {
-  async create(post: PostDb): Promise<boolean> {
-    await db.getCollections().postsCollection.insertOne(post);
+  async create(post: PostDb): Promise<ObjectId> {
+    const result = await db.getCollections().postsCollection.insertOne(post);
 
-    return true;
+    return result.insertedId;
   },
 
   async update(id: ObjectId, post: UpdatedPost): Promise<number> {

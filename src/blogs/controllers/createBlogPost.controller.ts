@@ -3,6 +3,8 @@ import { APIErrorResult } from "../../common/types";
 import { Post, PostInputDto } from "../../posts/types";
 import { postsService } from "../../posts/application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
+import { postsQueryRepository } from "../../posts/repositories";
+import { SavingException } from "../exceptions";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
@@ -19,9 +21,13 @@ export const createBlogPost = async (
       blogId,
     };
 
-    const newPost = await postsService.create(payload);
+    const createdPostId = await postsService.create(payload);
 
-    if (newPost) res.status(201).json(newPost);
+    const createdPost = await postsQueryRepository.findById(createdPostId);
+
+    if (!createdPost) throw new SavingException();
+
+    res.status(201).json(createdPost);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);

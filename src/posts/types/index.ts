@@ -1,4 +1,3 @@
-import { ObjectId } from "mongodb";
 import { SortBy, SortDirection } from "../../common/types";
 
 export interface PostInputDto {
@@ -9,7 +8,6 @@ export interface PostInputDto {
 }
 
 export interface PostDb extends PostInputDto {
-  _id: ObjectId;
   blogName: string;
   createdAt: string;
 }

@@ -3,9 +3,10 @@ import { postsCommandRepository, postsQueryRepository } from "../repositories";
 import { PaginatorData } from "../../common/types";
 import { blogsQueryRepository } from "../../blogs/repositories";
 import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
-import { mapPostDbToPost } from "../utils";
+import { createPostDb, mapPostDbToPost } from "../utils";
 import { blogsService } from "../../blogs/application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
+import { BlogForPostNotExistException } from "../exceptions";
 
 export const postsService = {
   async findById(id: string): Promise<Post> {
@@ -15,27 +16,19 @@ export const postsService = {
       throw new NotFoundException();
     }
 
-    return mapPostDbToPost(result);
+    return result;
   },
 
-  async create(post: PostInputDto): Promise<Post> {
-    const blog = await blogsService.findById(post.blogId);
+  async create(post: PostInputDto): Promise<string> {
+    const blog = await blogsQueryRepository.findById(post.blogId);
 
-    if (!blog) throw new NotFoundException();
+    if (!blog) throw new BlogForPostNotExistException();
 
-    const newPost: PostDb = {
-      _id: new ObjectId(),
-      title: post.title,
-      content: post.content,
-      shortDescription: post.shortDescription,
-      blogId: post.blogId,
-      blogName: blog.name,
-      createdAt: new Date().toISOString(),
-    };
+    const newPost = createPostDb(post, blog);
 
-    await postsCommandRepository.create(newPost);
+    const createdPostId = await postsCommandRepository.create(newPost);
 
-    return mapPostDbToPost(newPost);
+    return createdPostId.toString();
   },
 
   async findMany(queries: PostsQuery): Promise<PaginatorData<Post>> {
@@ -55,14 +48,12 @@ export const postsService = {
       sortDirection,
     });
 
-    const mappedResult = result.map(mapPostDbToPost);
-
     const returnData: PaginatorData<Post> = {
       pagesCount,
       page,
       pageSize,
       totalCount: allPostsCount,
-      items: mappedResult,
+      items: result,
     };
 
     return returnData;
@@ -122,14 +113,12 @@ export const postsService = {
       sortDirection,
     });
 
-    const mappedResult = result.map(mapPostDbToPost);
-
     const returnData: PaginatorData<Post> = {
       pagesCount,
       page,
       pageSize,
       totalCount: allPostsCount,
-      items: mappedResult,
+      items: result,
     };
 
     return returnData;

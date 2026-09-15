@@ -1,6 +1,7 @@
+import { WithId } from "mongodb";
 import { Post, PostDb } from "../types";
 
-export const mapPostDbToPost = (postDb: PostDb): Post => ({
+export const mapPostDbToPost = (postDb: WithId<PostDb>): Post => ({
   id: postDb._id.toString(),
   title: postDb.title,
   content: postDb.content,

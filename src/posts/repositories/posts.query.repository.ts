@@ -8,6 +8,7 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
+import { mapPostDbToPost } from "../utils";
 
 interface PostsQueryParams {
   page?: number;
@@ -22,7 +23,7 @@ export const postsQueryRepository = {
     pageSize = PAGE_SIZE_DAFAULT,
     sortBy = SORT_FIELD_DAFAULT,
     sortDirection = SORT_DIRECTION_DAFAULT,
-  }: PostsQueryParams = {}): Promise<PostDb[]> {
+  }: PostsQueryParams = {}): Promise<Post[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({})
@@ -33,10 +34,10 @@ export const postsQueryRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result;
+    return result.map(mapPostDbToPost);
   },
 
-  async findById(id: string): Promise<PostDb | null> {
+  async findById(id: string): Promise<Post | null> {
     const result = await db
       .getCollections()
       .postsCollection.findOne({ _id: new ObjectId(id) });
@@ -45,7 +46,7 @@ export const postsQueryRepository = {
       return null;
     }
 
-    return result;
+    return mapPostDbToPost(result);
   },
 
   async findPostsByBlog(
@@ -56,7 +57,7 @@ export const postsQueryRepository = {
       sortBy = SORT_FIELD_DAFAULT,
       sortDirection = SORT_DIRECTION_DAFAULT,
     }: PostsQueryParams = {},
-  ): Promise<PostDb[]> {
+  ): Promise<Post[]> {
     const result = await db
       .getCollections()
       .postsCollection.find({ blogId })
@@ -67,7 +68,7 @@ export const postsQueryRepository = {
       .limit(pageSize)
       .toArray();
 
-    return result;
+    return result.map(mapPostDbToPost);
   },
 
   async count(
