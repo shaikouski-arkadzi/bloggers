@@ -3,3 +3,6 @@ export { getPosts } from "./getPosts.controller";
 export { getPost } from "./getPost.controller";
 export { deletePost } from "./deletePost.controller";
 export { updatePost } from "./updatePost.controller";
+
+export { getBlogPosts } from "./getBlogPosts.controller";
+export { createBlogPost } from "./createBlogPost.controller";

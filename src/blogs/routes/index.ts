@@ -1,10 +1,8 @@
 import { Router } from "express";
 import {
   createBlog,
-  createBlogPost,
   deleteBlog,
   getBlog,
-  getBlogPosts,
   getBlogs,
   updateBlog,
 } from "../controllers";
@@ -26,6 +24,7 @@ import {
   titleValidation,
 } from "../../posts/validation/postInputDto.validation.middleware";
 import { POST_FIELDS } from "../../posts/constants";
+import { createBlogPost, getBlogPosts } from "../../posts/controllers";
 
 const router = Router();
 
