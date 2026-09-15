@@ -59,12 +59,10 @@ export const postsService = {
     return returnData;
   },
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<void> {
     await postsService.findById(id);
 
-    const result = await postsCommandRepository.delete(id);
-
-    return result;
+    await postsCommandRepository.delete(id);
   },
 
   async update(id: string, post: PostInputDto): Promise<void> {

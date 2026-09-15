@@ -18,11 +18,9 @@ export const postsCommandRepository = {
     );
   },
 
-  async delete(id: string): Promise<boolean> {
-    const result = await db
+  async delete(id: string): Promise<void> {
+    await db
       .getCollections()
       .postsCollection.deleteOne({ _id: new ObjectId(id) });
-
-    return result.deletedCount === 1;
   },
 };

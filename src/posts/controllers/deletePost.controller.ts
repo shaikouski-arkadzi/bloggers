@@ -4,16 +4,14 @@ import { NotFoundException } from "../../common/exceptions";
 
 export const deletePost = async (
   req: Request<{ id: string }>,
-  res: Response<null>,
+  res: Response,
 ) => {
   try {
     const { id } = req.params;
 
-    const result = await postsService.delete(id);
+    await postsService.delete(id);
 
-    if (result) {
-      return res.sendStatus(204);
-    }
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);
