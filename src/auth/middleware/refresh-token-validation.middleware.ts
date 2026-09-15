@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
+import { authQueryRepository } from "../repositories";
+import { userQueryRepository } from "../../users/repositories";
 
 export const refreshTokenValidationMiddleware = async (
   req: Request,
@@ -14,13 +17,32 @@ export const refreshTokenValidationMiddleware = async (
     return;
   }
 
+  const oldRefreshToken =
+    await authQueryRepository.getRefreshTokenModel(refreshToken);
+
+  if (oldRefreshToken) {
+    res.sendStatus(401);
+    return;
+  }
+
   const verified = await jwtService.verifyToken(
     refreshToken,
     TokenType.Refresh,
   );
 
   if (verified) {
-    req.userId = verified.uuid;
+    const userId = verified.uuid;
+
+    const user = await userQueryRepository.findByField({
+      _id: new ObjectId(userId),
+    });
+
+    if (!user) {
+      res.sendStatus(401);
+      return;
+    }
+
+    req.userId = userId;
   } else {
     res.sendStatus(401);
     return;
