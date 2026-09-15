@@ -46,17 +46,7 @@ export const blogIdValidation = body("blogId")
   .bail()
   .withMessage("Поле не должно быть пустым")
   .isLength({ min: 24, max: 24 })
-  .withMessage("Некорректый id")
-  .bail()
-  .custom(async (blogId) => {
-    const blog = await blogsQueryRepository.findById(blogId);
-
-    if (!blog) {
-      throw new Error("Не найдено блога с таким идентификатором");
-    }
-
-    return true;
-  });
+  .withMessage("Некорректый id");
 
 export const postInputDtoValidation = [
   titleValidation,

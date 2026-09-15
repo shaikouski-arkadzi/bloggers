@@ -9,15 +9,13 @@ export const postsCommandRepository = {
     return result.insertedId;
   },
 
-  async update(id: ObjectId, post: UpdatedPost): Promise<number> {
-    const result = await db.getCollections().postsCollection.updateOne(
-      { _id: id },
+  async update(id: string, post: UpdatedPost): Promise<void> {
+    await db.getCollections().postsCollection.updateOne(
+      { _id: new ObjectId(id) },
       {
         $set: post,
       },
     );
-
-    return result.matchedCount;
   },
 
   async delete(id: string): Promise<boolean> {

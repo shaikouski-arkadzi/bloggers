@@ -3,6 +3,7 @@ import { PostInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { postsService } from "../application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
+import { BlogForPostNotExistException } from "../exceptions";
 
 export const updatePost = async (
   req: Request<{ id: string }, {}, PostInputDto>,
@@ -12,12 +13,22 @@ export const updatePost = async (
     const post = req.body;
     const { id } = req.params;
 
-    const result = await postsService.update(id, post);
+    await postsService.update(id, post);
 
-    if (result) res.sendStatus(204);
+    res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       res.sendStatus(404);
+    }
+    if (error instanceof BlogForPostNotExistException) {
+      res.status(400).json({
+        errorsMessages: [
+          {
+            message: "Не найдено блога с таким идентификатором",
+            field: "blogId",
+          },
+        ],
+      });
     }
   }
 };

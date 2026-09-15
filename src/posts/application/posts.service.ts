@@ -3,7 +3,7 @@ import { postsCommandRepository, postsQueryRepository } from "../repositories";
 import { PaginatorData } from "../../common/types";
 import { blogsQueryRepository } from "../../blogs/repositories";
 import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
-import { createPostDb, mapPostDbToPost } from "../utils";
+import { createPostDb, mapPostDbToPost, updatePostDb } from "../utils";
 import { blogsService } from "../../blogs/application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
@@ -67,26 +67,16 @@ export const postsService = {
     return result;
   },
 
-  async update(id: string, post: PostInputDto): Promise<boolean> {
+  async update(id: string, post: PostInputDto): Promise<void> {
     await postsService.findById(id);
 
     const blog = await blogsQueryRepository.findById(post.blogId);
 
-    if (!blog) throw new NotFoundException();
+    if (!blog) throw new BlogForPostNotExistException();
 
-    const idDb = new ObjectId(id);
+    const updatedPost: UpdatedPost = updatePostDb(post, blog);
 
-    const newPost: UpdatedPost = {
-      title: post.title,
-      shortDescription: post.shortDescription,
-      content: post.content,
-      blogId: post.blogId,
-      blogName: blog.name,
-    };
-
-    const result = await postsCommandRepository.update(idDb, newPost);
-
-    return result === 1;
+    await postsCommandRepository.update(id, updatedPost);
   },
 
   async findManyByBlog(
