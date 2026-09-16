@@ -217,4 +217,31 @@ describe("POST /auth/login", () => {
 
     await request(app).post("/auth/login").send(body).expect(401);
   });
+
+  it("should reject expired accessToken", async () => {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "login",
+        password: "password",
+      })
+      .expect(200);
+
+    const { accessToken } = response.body;
+
+    expect(accessToken).toEqual(expect.any(String));
+
+    await request(app)
+      .get("/auth/me")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    // Ждём 11 секунд
+    await new Promise((resolve) => setTimeout(resolve, 11_000));
+
+    await request(app)
+      .get("/auth/me")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(401);
+  }, 20_000);
 });
