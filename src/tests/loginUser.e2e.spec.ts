@@ -244,4 +244,36 @@ describe("POST /auth/login", () => {
       .set("Authorization", `Bearer ${accessToken}`)
       .expect(401);
   }, 20_000);
+
+  it("should reject expired refreshToken", async () => {
+    const response = await request(app)
+      .post("/auth/login")
+      .send({
+        loginOrEmail: "login",
+        password: "password",
+      })
+      .expect(200);
+
+    const setCookie = response.headers["set-cookie"];
+
+    const cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    const refreshCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+
+    expect(refreshCookie).toEqual(expect.any(String));
+
+    // Ждём 16 секунд
+    await new Promise((resolve) => setTimeout(resolve, 16_000));
+
+    await request(app)
+      .post("/auth/refresh-token")
+      .set("Cookie", refreshCookie)
+      .expect(401);
+  }, 25_000);
 });
