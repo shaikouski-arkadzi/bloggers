@@ -17,11 +17,11 @@ export const loginUser = async (
     const findedUser = await authService.login(credentials);
 
     const accessToken = await jwtService.createToken(
-      findedUser.id,
+      { uuid: findedUser.id },
       TokenType.Access,
     );
     const refreshToken = await jwtService.createToken(
-      findedUser.id,
+      { uuid: findedUser.id },
       TokenType.Refresh,
     );
 

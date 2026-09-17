@@ -17,9 +17,12 @@ export const updateTokens = async (
   try {
     await authService.updateTokens(userId, refreshToken);
 
-    const accessToken = await jwtService.createToken(userId, TokenType.Access);
+    const accessToken = await jwtService.createToken(
+      { uuid: userId },
+      TokenType.Access,
+    );
     const refreshTokenNew = await jwtService.createToken(
-      userId,
+      { uuid: userId },
       TokenType.Refresh,
     );
 

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { AC_SECRET, AC_TIME, RT_SECRET, RT_TIME } from "../../settings/config";
 
 export type JwtPayload = {
-  uuid: string;
+  data: TokenInput;
   tokenType: TokenType;
 };
 
@@ -11,9 +11,15 @@ export enum TokenType {
   Refresh = "refresh",
 }
 
+type TokenInput = {
+  uuid?: string;
+  device_name?: string;
+  ip?: string;
+};
+
 export const jwtService = {
   async createToken(
-    uuid: string,
+    data: TokenInput,
     tokenType: TokenType = TokenType.Access,
   ): Promise<string> {
     if (!AC_SECRET || !AC_TIME) {
@@ -29,7 +35,7 @@ export const jwtService = {
 
     const secret: jwt.Secret = tokenType === "access" ? AC_SECRET : RT_SECRET;
 
-    return jwt.sign({ uuid, tokenType: tokenType }, secret, options);
+    return jwt.sign({ uuid: data.uuid, tokenType: tokenType }, secret, options);
   },
 
   async decodeToken(token: string): Promise<JwtPayload | null> {
