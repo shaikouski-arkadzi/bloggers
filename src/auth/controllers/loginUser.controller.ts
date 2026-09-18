@@ -11,6 +11,11 @@ export const loginUser = async (
   req: Request<{}, {}, LoginInputDto>,
   res: Response<LoginSuccessViewModel | APIErrorResult>,
 ) => {
+  const ip = req.ip;
+  const device_name = req.get("User-Agent") ?? "Unknown device";
+
+  console.log({ ip, device_name });
+
   const credentials = req.body;
 
   try {
