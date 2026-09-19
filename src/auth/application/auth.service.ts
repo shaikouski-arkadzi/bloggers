@@ -152,7 +152,7 @@ export const authService = {
         userId: decodedToken.uuid,
       });
     }
-    if (mode === "create") {
+    if (mode === "update") {
       await authCommandRepository.updateSession({
         deviceId: decodedToken.deviceId,
         deviceName: decodedToken.deviceName,

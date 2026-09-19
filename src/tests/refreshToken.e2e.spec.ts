@@ -60,6 +60,8 @@ describe("POST /auth/refresh-token", () => {
     refreshCookie = cookies.find((cookie: string) =>
       cookie.startsWith("refreshToken="),
     );
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }, 100000);
 
   afterAll(async () => {
