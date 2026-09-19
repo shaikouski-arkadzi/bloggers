@@ -2,33 +2,34 @@ import { Request, Response } from "express";
 import { LoginSuccessViewModel } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { APIErrorResult } from "../../common/types";
-import { authService, jwtService } from "../application";
+import { authService } from "../application";
 import { RefreshTokenExistInBlackListException } from "../exceptions";
 import { REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
-import { TokenType } from "../application/jwt.service";
 
 export const updateTokens = async (
   req: Request,
   res: Response<LoginSuccessViewModel | APIErrorResult>,
 ) => {
-  const userId = req.userId!;
-  const refreshToken = req.cookies?.refreshToken!;
+  const ip = req.ip;
+  const userId = req.userId;
+  const deviceId = req.deviceId;
+  const refreshTokenOld = req.cookies?.refreshToken!;
+  const deviceName = req.get("User-Agent") ?? "Unknown device";
+
+  if (!ip || !userId || !deviceId) throw new Error();
 
   try {
-    await authService.updateTokens(userId, refreshToken);
-
-    const accessToken = await jwtService.createToken(
-      { uuid: userId },
-      TokenType.Access,
-    );
-    const refreshTokenNew = await jwtService.createToken(
-      { uuid: userId },
-      TokenType.Refresh,
+    await authService.updateTokens(userId, refreshTokenOld);
+    const { accessToken, refreshToken } = await authService.createTokens(
+      userId,
+      ip,
+      deviceName,
+      deviceId,
     );
 
     res
       .status(200)
-      .cookie("refreshToken", refreshTokenNew, REFRESH_TOKEN_COOKIE_OPTIONS)
+      .cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
       .json({ accessToken });
   } catch (error) {
     if (
@@ -36,6 +37,9 @@ export const updateTokens = async (
       error instanceof RefreshTokenExistInBlackListException
     ) {
       return res.sendStatus(401);
+    }
+    if (error instanceof Error) {
+      return res.sendStatus(500);
     }
   }
 };

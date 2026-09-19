@@ -26,4 +26,14 @@ export const authCommandRepository = {
 
     await db.getCollections().sessionsCollection.insertOne(sessionDB);
   },
+  async updateSession(session: SessionModel): Promise<void> {
+    const sessionDB = mapSessionToSessionDB(session);
+
+    await db
+      .getCollections()
+      .sessionsCollection.updateOne(
+        { deviceId: sessionDB.deviceId, userId: sessionDB.userId },
+        { $set: sessionDB },
+      );
+  },
 };

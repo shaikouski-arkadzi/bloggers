@@ -109,7 +109,11 @@ export const authService = {
     userId: string,
     ip: string,
     deviceName: string,
+    deviceId?: string,
   ): Promise<Tokens> {
+    const mode: "create" | "update" = deviceId ? "update" : "create";
+    if (mode === "create") deviceId = new ObjectId().toString();
+
     const accessToken = await jwtService.createToken(
       { uuid: userId },
       TokenType.Access,
@@ -117,7 +121,7 @@ export const authService = {
     const refreshToken = await jwtService.createToken(
       {
         uuid: userId,
-        deviceId: new ObjectId().toString(),
+        deviceId,
         deviceName,
         ip,
       },
@@ -137,13 +141,24 @@ export const authService = {
       throw new Error();
     }
 
-    await authCommandRepository.createSession({
-      deviceId: decodedToken.deviceId,
-      deviceName: decodedToken.deviceName,
-      ip: decodedToken.ip,
-      iat: decodedToken.iat,
-      userId: decodedToken.uuid,
-    });
+    if (mode === "create") {
+      await authCommandRepository.createSession({
+        deviceId: decodedToken.deviceId,
+        deviceName: decodedToken.deviceName,
+        ip: decodedToken.ip,
+        iat: decodedToken.iat,
+        userId: decodedToken.uuid,
+      });
+    }
+    if (mode === "create") {
+      await authCommandRepository.updateSession({
+        deviceId: decodedToken.deviceId,
+        deviceName: decodedToken.deviceName,
+        ip: decodedToken.ip,
+        iat: decodedToken.iat,
+        userId: decodedToken.uuid,
+      });
+    }
 
     return { accessToken, refreshToken };
   },
