@@ -18,14 +18,6 @@ export const refreshTokenValidationMiddleware = async (
     return;
   }
 
-  const oldRefreshToken =
-    await authQueryRepository.getRefreshTokenModel(refreshToken);
-
-  if (oldRefreshToken) {
-    res.sendStatus(401);
-    return;
-  }
-
   const verified = await jwtService.verifyToken(
     refreshToken,
     TokenType.Refresh,

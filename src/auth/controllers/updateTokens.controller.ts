@@ -13,13 +13,11 @@ export const updateTokens = async (
   const ip = req.ip;
   const userId = req.userId;
   const deviceId = req.deviceId;
-  const refreshTokenOld = req.cookies?.refreshToken!;
   const deviceName = req.get("User-Agent") ?? "Unknown device";
 
   if (!ip || !userId || !deviceId) throw new Error();
 
   try {
-    await authService.updateTokens(userId, refreshTokenOld);
     const { accessToken, refreshToken } = await authService.createTokens(
       userId,
       ip,

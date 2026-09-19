@@ -99,15 +99,12 @@ export const authService = {
       confirmationCodeExpiration: undefined,
     });
   },
-  async updateTokens(userId: string, refreshToken: string): Promise<void> {
-    await authCommandRepository.create({ refreshToken });
-  },
+  async updateTokens(): Promise<void> {},
   async logout(
     userId: string,
     deviceId: string,
     refreshToken: string,
   ): Promise<void> {
-    await authCommandRepository.create({ refreshToken });
     await authCommandRepository.deleteSession(userId, deviceId);
   },
   async createTokens(

@@ -27,19 +27,6 @@ export const authQueryRepository = {
 
     return mapUserDbToAuth(result);
   },
-  async getRefreshTokenModel(
-    refreshToken: string,
-  ): Promise<RefreshTokensCollection | null> {
-    const result = await db
-      .getCollections()
-      .refreshTokensCollection.findOne({ refreshToken });
-
-    if (!result) {
-      return null;
-    }
-
-    return mapRefreshTokensDBModelToRefreshTokensModel(result);
-  },
   async getSessionByIAT(iat: number): Promise<SessionModel | null> {
     const result = await db
       .getCollections()

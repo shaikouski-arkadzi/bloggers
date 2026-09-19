@@ -39,8 +39,6 @@ export const db = {
       postsCollection: this.getDbName().collection<PostDb>("posts"),
       usersCollection: this.getDbName().collection<UserDb>("users"),
       commentsCollection: this.getDbName().collection<CommentDb>("comments"),
-      refreshTokensCollection:
-        this.getDbName().collection<RefreshTokensDBCollection>("refreshTokens"),
       sessionsCollection:
         this.getDbName().collection<SessionsDBCollection>("sessions"),
     };
