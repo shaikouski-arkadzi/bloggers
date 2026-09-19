@@ -9,11 +9,14 @@ export const logout = async (
   req: Request,
   res: Response<void | APIErrorResult>,
 ) => {
-  const userId = req.userId!;
+  const userId = req.userId;
+  const deviceId = req.deviceId;
   const refreshToken = req.cookies?.refreshToken!;
 
+  if (!userId || !deviceId) throw new Error();
+
   try {
-    await authService.logout(userId, refreshToken);
+    await authService.logout(userId, deviceId, refreshToken);
 
     res
       .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)
@@ -24,6 +27,9 @@ export const logout = async (
       error instanceof RefreshTokenExistInBlackListException
     ) {
       return res.sendStatus(401);
+    }
+    if (error instanceof Error) {
+      return res.sendStatus(500);
     }
   }
 };

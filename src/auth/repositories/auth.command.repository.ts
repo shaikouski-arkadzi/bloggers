@@ -36,4 +36,10 @@ export const authCommandRepository = {
         { $set: sessionDB },
       );
   },
+  async deleteSession(userId: string, deviceId: string): Promise<void> {
+    await db.getCollections().sessionsCollection.deleteOne({
+      deviceId: new ObjectId(deviceId),
+      userId: new ObjectId(userId),
+    });
+  },
 };
