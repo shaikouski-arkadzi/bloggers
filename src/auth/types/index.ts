@@ -52,3 +52,8 @@ export interface SessionModel {
   deviceId: string;
   deviceName: string;
 }
+
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
+}

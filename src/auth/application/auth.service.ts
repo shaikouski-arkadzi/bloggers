@@ -6,7 +6,7 @@ import {
   userQueryRepository,
 } from "../../users/repositories";
 import { NotFoundException } from "../../common/exceptions";
-import { LoginInputDto, MeViewModel } from "../types";
+import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import {
   MultipleUsersDuringLoginException,
@@ -18,6 +18,7 @@ import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
 import { updateTokens } from "../controllers";
 import { authCommandRepository } from "../repositories/auth.command.repository";
+import { jwtService, TokenType } from "./jwt.service";
 
 export const authService = {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
@@ -103,5 +104,47 @@ export const authService = {
   },
   async logout(userId: string, refreshToken: string): Promise<void> {
     await authCommandRepository.create({ refreshToken });
+  },
+  async createTokens(
+    userId: string,
+    ip: string,
+    deviceName: string,
+  ): Promise<Tokens> {
+    const accessToken = await jwtService.createToken(
+      { uuid: userId },
+      TokenType.Access,
+    );
+    const refreshToken = await jwtService.createToken(
+      {
+        uuid: userId,
+        deviceId: new ObjectId().toString(),
+        deviceName,
+        ip,
+      },
+      TokenType.Refresh,
+    );
+
+    const decodedToken = await jwtService.decodeToken(refreshToken);
+
+    if (
+      !decodedToken ||
+      !decodedToken.deviceId ||
+      !decodedToken.deviceName ||
+      !decodedToken.ip ||
+      !decodedToken.uuid ||
+      decodedToken.iat == null
+    ) {
+      throw new Error();
+    }
+
+    await authCommandRepository.createSession({
+      deviceId: decodedToken.deviceId,
+      deviceName: decodedToken.deviceName,
+      ip: decodedToken.ip,
+      iat: decodedToken.iat,
+      userId: decodedToken.uuid,
+    });
+
+    return { accessToken, refreshToken };
   },
 };
