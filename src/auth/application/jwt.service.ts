@@ -14,7 +14,8 @@ export enum TokenType {
 
 type TokenInput = {
   uuid: string;
-  device_name?: string;
+  deviceId?: string;
+  deviceName?: string;
   ip?: string;
 };
 

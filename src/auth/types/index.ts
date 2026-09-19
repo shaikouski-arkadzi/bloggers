@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export interface LoginInputDto {
   loginOrEmail: string;
   password: string;
@@ -33,4 +35,20 @@ export interface RefreshTokensDBCollection {
 export interface RefreshTokensCollection {
   id: string;
   refreshToken: string;
+}
+
+export interface SessionsDBCollection {
+  userId: ObjectId;
+  iat: number;
+  ip: string;
+  deviceId: ObjectId;
+  deviceName: string;
+}
+
+export interface SessionModel {
+  userId: string;
+  iat: number;
+  ip: string;
+  deviceId: string;
+  deviceName: string;
 }

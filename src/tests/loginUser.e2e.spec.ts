@@ -268,8 +268,8 @@ describe("POST /auth/login", () => {
 
     expect(refreshCookie).toEqual(expect.any(String));
 
-    // Ждём 16 секунд
-    await new Promise((resolve) => setTimeout(resolve, 16_000));
+    // Ждём 21 секунду
+    await new Promise((resolve) => setTimeout(resolve, 21_000));
 
     await request(app)
       .post("/auth/refresh-token")

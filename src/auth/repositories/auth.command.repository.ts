@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { RefreshTokensDBCollection } from "../types";
+import { RefreshTokensDBCollection, SessionModel } from "../types";
+import { mapSessionToSessionDB } from "../utils";
 
 export const authCommandRepository = {
   async create(tokenModel: RefreshTokensDBCollection): Promise<ObjectId> {
@@ -19,5 +20,10 @@ export const authCommandRepository = {
         $set: tokenModel,
       },
     );
+  },
+  async createSession(session: SessionModel): Promise<void> {
+    const sessionDB = mapSessionToSessionDB(session);
+
+    await db.getCollections().sessionsCollection.insertOne(sessionDB);
   },
 };
