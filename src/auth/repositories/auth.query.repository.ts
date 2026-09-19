@@ -1,9 +1,10 @@
 import { db } from "../../db";
 import {
   mapRefreshTokensDBModelToRefreshTokensModel,
+  mapSessionsDBToSession,
   mapUserDbToAuth,
 } from "../utils";
-import { IAuthCode, RefreshTokensCollection } from "../types";
+import { IAuthCode, RefreshTokensCollection, SessionModel } from "../types";
 
 export const authQueryRepository = {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
@@ -38,5 +39,16 @@ export const authQueryRepository = {
     }
 
     return mapRefreshTokensDBModelToRefreshTokensModel(result);
+  },
+  async getSessionByIAT(iat: number): Promise<SessionModel | null> {
+    const result = await db
+      .getCollections()
+      .sessionsCollection.findOne({ iat });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapSessionsDBToSession(result);
   },
 };

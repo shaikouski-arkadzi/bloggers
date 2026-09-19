@@ -11,6 +11,7 @@ export const refreshTokenValidationMiddleware = async (
   next: NextFunction,
 ) => {
   const refreshToken = req.cookies?.refreshToken;
+  const deviceName = req.get("User-Agent") || "Unknown device";
 
   if (!refreshToken) {
     res.sendStatus(401);
@@ -32,6 +33,7 @@ export const refreshTokenValidationMiddleware = async (
 
   if (verified) {
     const userId = verified.uuid;
+    const { iat, deviceId } = verified;
 
     const user = await userQueryRepository.findByField({
       _id: new ObjectId(userId),
@@ -42,7 +44,30 @@ export const refreshTokenValidationMiddleware = async (
       return;
     }
 
+    if (!deviceId) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const session = await authQueryRepository.getSessionByIAT(iat);
+
+    if (!session) {
+      res.sendStatus(401);
+      return;
+    }
+
+    if (session.deviceName !== deviceName) {
+      res.sendStatus(401);
+      return;
+    }
+
+    if (session.deviceId !== deviceId) {
+      res.sendStatus(401);
+      return;
+    }
+
     req.userId = userId;
+    req.deviceId = deviceId;
   } else {
     res.sendStatus(401);
     return;
