@@ -100,12 +100,8 @@ export const authService = {
     });
   },
   async updateTokens(): Promise<void> {},
-  async logout(
-    userId: string,
-    deviceId: string,
-    refreshToken: string,
-  ): Promise<void> {
-    await authCommandRepository.deleteSession(userId, deviceId);
+  async logout(iat: string): Promise<void> {
+    await authCommandRepository.deleteSession(iat);
   },
   async createTokens(
     userId: string,

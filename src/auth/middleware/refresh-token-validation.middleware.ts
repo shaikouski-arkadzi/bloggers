@@ -58,8 +58,14 @@ export const refreshTokenValidationMiddleware = async (
       return;
     }
 
+    if (session.iat !== iat) {
+      res.sendStatus(401);
+      return;
+    }
+
     req.userId = userId;
     req.deviceId = deviceId;
+    req.iat = iat.toString();
   } else {
     res.sendStatus(401);
     return;

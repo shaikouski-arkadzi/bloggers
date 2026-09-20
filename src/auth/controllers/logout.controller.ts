@@ -9,14 +9,12 @@ export const logout = async (
   req: Request,
   res: Response<void | APIErrorResult>,
 ) => {
-  const userId = req.userId;
-  const deviceId = req.deviceId;
-  const refreshToken = req.cookies?.refreshToken!;
+  const iat = req.iat;
 
-  if (!userId || !deviceId) throw new Error();
+  if (!iat) throw new Error();
 
   try {
-    await authService.logout(userId, deviceId, refreshToken);
+    await authService.logout(iat);
 
     res
       .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)

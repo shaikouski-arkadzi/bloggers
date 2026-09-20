@@ -1,6 +1,5 @@
-import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { RefreshTokensDBCollection, SessionModel } from "../types";
+import { SessionModel } from "../types";
 import { mapSessionToSessionDB } from "../utils";
 
 export const authCommandRepository = {
@@ -19,10 +18,9 @@ export const authCommandRepository = {
         { $set: sessionDB },
       );
   },
-  async deleteSession(userId: string, deviceId: string): Promise<void> {
+  async deleteSession(iat: string): Promise<void> {
     await db.getCollections().sessionsCollection.deleteOne({
-      deviceId: new ObjectId(deviceId),
-      userId: new ObjectId(userId),
+      iat: Number(iat),
     });
   },
 };
