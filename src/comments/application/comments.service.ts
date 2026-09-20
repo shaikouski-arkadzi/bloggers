@@ -8,8 +8,10 @@ import {
   commentsQueryRepository,
 } from "../repositories";
 import { Comment, CommentDb, CommentInputModel, CommentsQuery } from "../types";
-import { NotFoundException } from "../../common/exceptions";
-import { PermissionException } from "../exceptions";
+import {
+  NotFoundException,
+  PermissionException,
+} from "../../common/exceptions";
 
 export const commentsService = {
   async getCommentById(id: string): Promise<Comment | null> {

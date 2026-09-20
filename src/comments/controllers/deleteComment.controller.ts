@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { APIErrorResult } from "../../common/types";
-import { NotFoundException } from "../../common/exceptions";
+import {
+  NotFoundException,
+  PermissionException,
+} from "../../common/exceptions";
 import { commentsService } from "../application";
 import { UnauthorizedException } from "../../auth/exceptions";
-import { PermissionException } from "../exceptions";
 
 export const deleteComment = async (
   req: Request<{ id: string }>,
