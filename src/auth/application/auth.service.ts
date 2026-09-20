@@ -8,15 +8,11 @@ import {
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
-import {
-  MultipleUsersDuringLoginException,
-  RefreshTokenExistInBlackListException,
-} from "../exceptions";
+import { MultipleUsersDuringLoginException } from "../exceptions";
 import { userService } from "../../users/application";
 import { authQueryRepository } from "../repositories";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
-import { updateTokens } from "../controllers";
 import { authCommandRepository } from "../repositories/auth.command.repository";
 import { jwtService, TokenType } from "./jwt.service";
 
@@ -101,7 +97,7 @@ export const authService = {
   },
   async updateTokens(): Promise<void> {},
   async logout(iat: string): Promise<void> {
-    await authCommandRepository.deleteSession(iat);
+    await authCommandRepository.deleteSessionByIAT(iat);
   },
   async createTokens(
     userId: string,

@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
 import { IAuthCode, SessionModel } from "../types";
+import { ObjectId } from "mongodb";
 
 export const authQueryRepository = {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
@@ -27,6 +28,17 @@ export const authQueryRepository = {
     const result = await db
       .getCollections()
       .sessionsCollection.findOne({ iat });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapSessionsDBToSession(result);
+  },
+  async getSessionByDeviceId(deviceId: string): Promise<SessionModel | null> {
+    const result = await db
+      .getCollections()
+      .sessionsCollection.findOne({ deviceId: new ObjectId(deviceId) });
 
     if (!result) {
       return null;
