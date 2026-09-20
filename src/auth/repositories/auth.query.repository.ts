@@ -1,10 +1,6 @@
 import { db } from "../../db";
-import {
-  mapRefreshTokensDBModelToRefreshTokensModel,
-  mapSessionsDBToSession,
-  mapUserDbToAuth,
-} from "../utils";
-import { IAuthCode, RefreshTokensCollection, SessionModel } from "../types";
+import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
+import { IAuthCode, SessionModel } from "../types";
 
 export const authQueryRepository = {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
