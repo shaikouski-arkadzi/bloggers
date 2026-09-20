@@ -6,12 +6,14 @@ import testingRoutes from "./testing/routes";
 import usersRoutes from "./users/routes";
 import authRoutes from "./auth/routes";
 import commentsRoutes from "./comments/routes";
+import securityRoutes from "./security/routes";
 import { BLOGS_PATH } from "./blogs/constants";
 import { POSTS_PATH } from "./posts/constants";
 import { AUTH_PATH } from "./auth/constants";
 import { TESTING_PATH } from "./testing/constants";
 import { USERS_PATH } from "./users/constants";
 import { COMMENTS_PATH } from "./comments/constants";
+import { SECURITY_PATH } from "./security/constants";
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); // middleware для парсинга JSON в теле запроса
@@ -26,6 +28,8 @@ export const setupApp = (app: Express) => {
   app.use(AUTH_PATH, authRoutes);
 
   app.use(COMMENTS_PATH, commentsRoutes);
+
+  app.use(SECURITY_PATH, securityRoutes);
 
   app.use(TESTING_PATH, testingRoutes);
 
