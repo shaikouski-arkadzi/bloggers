@@ -69,7 +69,30 @@ describe("POST /auth/login", () => {
       cookie.startsWith("refreshToken="),
     );
 
-    expect(refreshCookie).toEqual(expect.any(String));
+    const refreshToken = refreshCookie
+      ?.split(";")[0]
+      .split("=")
+      .slice(1)
+      .join("=");
+
+    const verified = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
+
+    expect(verified).toEqual(
+      expect.objectContaining({
+        deviceId: expect.any(String),
+        deviceName: expect.any(String),
+        exp: expect.any(Number),
+        iat: expect.any(Number),
+        ip: expect.any(String),
+        tokenType: TokenType.Refresh,
+        uuid: createdUserId,
+      }),
+    );
+
+    expect(refreshToken).toEqual(expect.any(String));
   });
 
   it("should successfully log in user by email", async () => {
