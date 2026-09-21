@@ -3,6 +3,8 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import { jwtService } from "../auth/application";
+import { JwtPayload, TokenType } from "../auth/application/jwt.service";
 
 const app = express();
 
@@ -11,6 +13,7 @@ setupApp(app);
 let createdUserId: string;
 let accessToken: string;
 let refreshCookie: string;
+let firstSession: JwtPayload | null;
 
 const createUserBody = {
   login: "login",
@@ -61,6 +64,29 @@ describe("POST /auth/refresh-token", () => {
       cookie.startsWith("refreshToken="),
     );
 
+    const refreshToken = refreshCookie
+      ?.split(";")[0]
+      .split("=")
+      .slice(1)
+      .join("=");
+
+    firstSession = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
+
+    expect(firstSession).toEqual(
+      expect.objectContaining({
+        deviceId: expect.any(String),
+        deviceName: expect.any(String),
+        exp: expect.any(Number),
+        iat: expect.any(Number),
+        ip: expect.any(String),
+        tokenType: TokenType.Refresh,
+        uuid: createdUserId,
+      }),
+    );
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }, 100000);
 
@@ -69,10 +95,38 @@ describe("POST /auth/refresh-token", () => {
   });
 
   it("should successfully refresh token", async () => {
-    await request(app)
+    const refreshTokenResponse = await request(app)
       .post("/auth/refresh-token")
       .set("Cookie", refreshCookie)
       .expect(200);
+
+    const setCookie = refreshTokenResponse.headers["set-cookie"];
+
+    const cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    const refreshCookieNew = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+
+    const refreshToken = refreshCookieNew
+      ?.split(";")[0]
+      .split("=")
+      .slice(1)
+      .join("=");
+
+    const secondSession = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
+
+    expect(secondSession?.deviceId === firstSession?.deviceId);
+    expect(secondSession?.deviceName === firstSession?.deviceName);
+    expect(secondSession?.ip === firstSession?.ip);
+    expect(secondSession?.iat !== firstSession?.iat);
   });
 
   it("should return 401 for an invalid refresh token", async () => {
