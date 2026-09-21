@@ -3,6 +3,12 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import {
+  JwtPayload,
+  jwtService,
+  TokenType,
+} from "../auth/application/jwt.service";
+import { authQueryRepository } from "../auth/repositories";
 
 const app = express();
 
@@ -11,6 +17,7 @@ setupApp(app);
 let createdUserId: string;
 let accessToken: string;
 let refreshCookie: string;
+let session: JwtPayload | null;
 
 const createUserBody = {
   login: "login",
@@ -60,6 +67,28 @@ describe("POST /auth/logout", () => {
     refreshCookie = cookies.find((cookie: string) =>
       cookie.startsWith("refreshToken="),
     );
+
+    const refreshToken = refreshCookie
+      ?.split(";")[0]
+      .split("=")
+      .slice(1)
+      .join("=");
+
+    session = await jwtService.verifyToken(refreshToken, TokenType.Refresh);
+
+    expect(session).not.toBeNull();
+
+    expect(session).toEqual(
+      expect.objectContaining({
+        deviceId: expect.any(String),
+        deviceName: expect.any(String),
+        exp: expect.any(Number),
+        iat: expect.any(Number),
+        ip: expect.any(String),
+        tokenType: TokenType.Refresh,
+        uuid: createdUserId,
+      }),
+    );
   }, 100000);
 
   afterAll(async () => {
@@ -67,10 +96,17 @@ describe("POST /auth/logout", () => {
   });
 
   it("should successfully logout user", async () => {
+    const iat = session!.iat;
+
+    if (!iat && session === null) throw new Error();
     await request(app)
       .post("/auth/logout")
       .set("Cookie", refreshCookie)
       .expect(204);
+
+    const oldSession = await authQueryRepository.getSessionByIAT(session!.iat);
+
+    expect(oldSession).toBeNull();
   });
 
   it("should return 401 for an invalid refresh token", async () => {
