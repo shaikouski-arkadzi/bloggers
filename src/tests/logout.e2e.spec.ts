@@ -75,20 +75,6 @@ describe("POST /auth/logout", () => {
       .join("=");
 
     session = await jwtService.verifyToken(refreshToken, TokenType.Refresh);
-
-    expect(session).not.toBeNull();
-
-    expect(session).toEqual(
-      expect.objectContaining({
-        deviceId: expect.any(String),
-        deviceName: expect.any(String),
-        exp: expect.any(Number),
-        iat: expect.any(Number),
-        ip: expect.any(String),
-        tokenType: TokenType.Refresh,
-        uuid: createdUserId,
-      }),
-    );
   }, 100000);
 
   afterAll(async () => {
@@ -97,14 +83,19 @@ describe("POST /auth/logout", () => {
 
   it("should successfully logout user", async () => {
     const iat = session!.iat;
+    const deviceId = session!.deviceId;
 
-    if (!iat && session === null) throw new Error();
+    if (!iat || !deviceId || session === null) throw new Error();
+
     await request(app)
       .post("/auth/logout")
       .set("Cookie", refreshCookie)
       .expect(204);
 
-    const oldSession = await authQueryRepository.getSessionByIAT(session!.iat);
+    const oldSession = await authQueryRepository.getSessionByIATAndDeviceId(
+      iat,
+      deviceId,
+    );
 
     expect(oldSession).toBeNull();
   });

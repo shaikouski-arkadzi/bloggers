@@ -10,11 +10,12 @@ export const logout = async (
   res: Response<void | APIErrorResult>,
 ) => {
   const iat = req.iat;
+  const deviceId = req.deviceId;
 
-  if (!iat) throw new Error();
+  if (!deviceId || !iat) throw new Error();
 
   try {
-    await authService.logout(iat);
+    await authService.logout(iat, deviceId);
 
     res
       .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)
