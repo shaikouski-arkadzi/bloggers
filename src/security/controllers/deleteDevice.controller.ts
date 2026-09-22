@@ -20,7 +20,7 @@ export const deleteDevice = async (
   try {
     await securityService.deleteDevice(userId, deviceIdToDelete);
 
-    return res.status(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       return res.sendStatus(401);
