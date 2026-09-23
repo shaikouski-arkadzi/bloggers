@@ -8,9 +8,13 @@ export const getUsers = async (
   req: Request<{}, {}, {}, UsersQuery>,
   res: Response<PaginatorData<User>>,
 ) => {
-  const usersQueries = matchedData<UsersQuery>(req);
+  try {
+    const usersQueries = matchedData<UsersQuery>(req);
 
-  const result = await userService.findMany(usersQueries);
+    const result = await userService.findMany(usersQueries);
 
-  res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 };

@@ -11,10 +11,12 @@ export const getPost = async (
     const { id } = req.params;
     const post = await postsService.findById(id);
 
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

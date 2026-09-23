@@ -28,8 +28,7 @@ export const deleteDevice = async (
     if (error instanceof PermissionException) {
       return res.sendStatus(403);
     }
-    if (error instanceof Error) {
-      return res.sendStatus(500);
-    }
+
+    return res.sendStatus(500);
   }
 };

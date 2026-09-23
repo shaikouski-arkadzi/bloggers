@@ -15,13 +15,13 @@ export const updatePost = async (
 
     await postsService.update(id, post);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
     if (error instanceof BlogForPostNotExistException) {
-      res.status(400).json({
+      return res.status(400).json({
         errorsMessages: [
           {
             message: "Не найдено блога с таким идентификатором",
@@ -30,5 +30,7 @@ export const updatePost = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

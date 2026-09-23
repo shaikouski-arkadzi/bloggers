@@ -17,7 +17,7 @@ export const logout = async (
   try {
     await authService.logout(iat, deviceId);
 
-    res
+    return res
       .clearCookie("refreshToken", REFRESH_TOKEN_COOKIE_OPTIONS)
       .sendStatus(204);
   } catch (error) {
@@ -27,8 +27,7 @@ export const logout = async (
     ) {
       return res.sendStatus(401);
     }
-    if (error instanceof Error) {
-      return res.sendStatus(500);
-    }
+
+    return res.sendStatus(500);
   }
 };

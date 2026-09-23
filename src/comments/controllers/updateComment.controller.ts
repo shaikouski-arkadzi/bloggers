@@ -21,16 +21,17 @@ export const updateComment = async (
 
     await commentsService.update(userId, commentId, comment);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
     if (error instanceof UnauthorizedException) {
-      res.sendStatus(401);
+      return res.sendStatus(401);
     }
     if (error instanceof PermissionException) {
-      res.sendStatus(403);
+      return res.sendStatus(403);
     }
+    return res.sendStatus(500);
   }
 };

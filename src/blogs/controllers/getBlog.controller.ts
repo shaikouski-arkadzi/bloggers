@@ -13,11 +13,13 @@ export const getBlog = async (
     const result = await blogsService.findById(id);
 
     if (result) {
-      res.status(200).json(result);
+      return res.status(200).json(result);
     }
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

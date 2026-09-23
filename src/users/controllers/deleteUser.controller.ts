@@ -16,5 +16,7 @@ export const deleteUser = async (
     if (error instanceof NotFoundException) {
       return res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

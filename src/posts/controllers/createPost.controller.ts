@@ -18,10 +18,10 @@ export const createPost = async (
 
     if (!createdPost) throw new SavingException();
 
-    res.status(201).json(createdPost);
+    return res.status(201).json(createdPost);
   } catch (error) {
     if (error instanceof BlogForPostNotExistException) {
-      res.status(400).json({
+      return res.status(400).json({
         errorsMessages: [
           {
             message: "Не найдено блога с таким идентификатором",
@@ -30,5 +30,7 @@ export const createPost = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

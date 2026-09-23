@@ -16,5 +16,7 @@ export const deleteBlog = async (
     if (error instanceof NotFoundException) {
       res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

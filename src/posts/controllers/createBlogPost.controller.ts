@@ -27,16 +27,15 @@ export const createBlogPost = async (
 
     if (!createdPost) throw new SavingException();
 
-    res.status(201).json(createdPost);
+    return res.status(201).json(createdPost);
   } catch (error) {
-    if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+    if (
+      error instanceof NotFoundException ||
+      error instanceof BlogForPostNotExistException
+    ) {
+      return res.sendStatus(404);
     }
-    if (error instanceof BlogForPostNotExistException) {
-      res.sendStatus(404);
-    }
-    if (error instanceof Error) {
-      res.sendStatus(500);
-    }
+
+    return res.sendStatus(500);
   }
 };

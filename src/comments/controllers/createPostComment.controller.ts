@@ -25,13 +25,14 @@ export const createPostComment = async (
       _id: newCommentId,
     });
 
-    if (newComment) res.status(201).json(newComment);
+    if (newComment) return res.status(201).json(newComment);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
     if (error instanceof UnauthorizedException) {
-      res.sendStatus(401);
+      return res.sendStatus(401);
     }
+    return res.sendStatus(500);
   }
 };

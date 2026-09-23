@@ -13,10 +13,10 @@ export const confirmRegistration = async (
   try {
     await authService.confirmUser(code);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.status(400).json({
+      return res.status(400).json({
         errorsMessages: [
           {
             message: "Invalid confirmation code",
@@ -25,5 +25,7 @@ export const confirmRegistration = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

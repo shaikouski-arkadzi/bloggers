@@ -16,13 +16,15 @@ export const userInfo = async (
 
     const userInfo = await authService.userInfo(userId);
 
-    res.status(200).json(userInfo);
+    return res.status(200).json(userInfo);
   } catch (error) {
-    if (error instanceof UnauthorizedException) {
+    if (
+      error instanceof UnauthorizedException ||
+      error instanceof NotFoundException
+    ) {
       return res.sendStatus(401);
     }
-    if (error instanceof NotFoundException) {
-      return res.sendStatus(401);
-    }
+
+    return res.sendStatus(500);
   }
 };

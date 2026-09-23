@@ -25,7 +25,7 @@ export const updateTokens = async (
       deviceId,
     );
 
-    res
+    return res
       .status(200)
       .cookie("refreshToken", refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
       .json({ accessToken });
@@ -36,8 +36,7 @@ export const updateTokens = async (
     ) {
       return res.sendStatus(401);
     }
-    if (error instanceof Error) {
-      return res.sendStatus(500);
-    }
+
+    return res.sendStatus(500);
   }
 };

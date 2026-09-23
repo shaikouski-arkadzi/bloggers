@@ -13,7 +13,7 @@ export const resendRegistrationEmail = async (
   try {
     await authService.resendEmail(email);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
       return res.status(400).json({
@@ -25,5 +25,7 @@ export const resendRegistrationEmail = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

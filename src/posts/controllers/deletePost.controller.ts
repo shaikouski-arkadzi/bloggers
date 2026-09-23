@@ -14,7 +14,9 @@ export const deletePost = async (
     return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

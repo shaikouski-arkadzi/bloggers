@@ -20,7 +20,7 @@ export const createUser = async (
 
     if (!newUser) throw new SavingException();
 
-    res.status(201).json(newUser);
+    return res.status(201).json(newUser);
   } catch (error) {
     if (error instanceof SavingException) {
       return res.status(400).json({
@@ -32,5 +32,7 @@ export const createUser = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

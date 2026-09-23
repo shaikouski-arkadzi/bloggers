@@ -10,12 +10,15 @@ export const createBlog = async (
   res: Response<Blog | APIErrorResult>,
 ) => {
   const blog = req.body;
+  try {
+    const newBlogId = await blogsService.create(blog);
 
-  const newBlogId = await blogsService.create(blog);
+    const createdBlog = await blogsQueryRepository.findById(newBlogId);
 
-  const createdBlog = await blogsQueryRepository.findById(newBlogId);
+    if (!createdBlog) throw new SavingException();
 
-  if (!createdBlog) throw new SavingException();
-
-  res.status(201).json(createdBlog);
+    return res.status(201).json(createdBlog);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 };

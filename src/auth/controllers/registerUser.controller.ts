@@ -13,7 +13,7 @@ export const registerUser = async (
   try {
     await userService.create(user, true);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof SavingException) {
       return res.status(400).json({
@@ -25,5 +25,7 @@ export const registerUser = async (
         ],
       });
     }
+
+    return res.sendStatus(500);
   }
 };

@@ -23,8 +23,7 @@ export const getDevices = async (
     if (error instanceof NotFoundException) {
       return res.sendStatus(401);
     }
-    if (error instanceof Error) {
-      return res.sendStatus(500);
-    }
+
+    return res.sendStatus(500);
   }
 };

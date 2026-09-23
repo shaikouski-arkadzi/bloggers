@@ -14,10 +14,12 @@ export const updateBlog = async (
 
     await blogsService.update(id, blogData);
 
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
+
+    return res.sendStatus(500);
   }
 };

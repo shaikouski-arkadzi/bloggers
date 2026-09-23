@@ -8,9 +8,13 @@ export const getPosts = async (
   req: Request<{}, {}, {}, PostsQuery>,
   res: Response<PaginatorData<Post>>,
 ) => {
-  const blogsQueries = matchedData<PostsQuery>(req);
+  try {
+    const blogsQueries = matchedData<PostsQuery>(req);
 
-  const result = await postsService.findMany(blogsQueries);
+    const result = await postsService.findMany(blogsQueries);
 
-  res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
 };
