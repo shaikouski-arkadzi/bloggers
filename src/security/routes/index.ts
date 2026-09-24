@@ -4,7 +4,11 @@ import {
   idValidation,
   resultValidationMiddleware,
 } from "../../common/validation";
-import { deleteDevice, getDevices } from "../controllers";
+import {
+  deleteDevice,
+  deleteDevicesExceptCurrent,
+  getDevices,
+} from "../controllers";
 import { refreshTokenValidationMiddleware } from "../../auth/middleware";
 
 const router = Router();
@@ -14,6 +18,13 @@ router.get(
   refreshTokenValidationMiddleware,
   resultValidationMiddleware,
   getDevices,
+);
+
+router.delete(
+  SECURITY_ROUTES.DEVICES,
+  refreshTokenValidationMiddleware,
+  resultValidationMiddleware,
+  deleteDevicesExceptCurrent,
 );
 
 router.delete(

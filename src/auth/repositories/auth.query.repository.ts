@@ -49,4 +49,16 @@ export const authQueryRepository = {
 
     return mapSessionsDBToSession(result);
   },
+  async getSessionsByUserId(userId: string): Promise<SessionModel[] | null> {
+    const result = await db
+      .getCollections()
+      .sessionsCollection.find({ userId: new ObjectId(userId) })
+      .toArray();
+
+    if (!result.length) {
+      return null;
+    }
+
+    return result.map(mapSessionsDBToSession);
+  },
 };

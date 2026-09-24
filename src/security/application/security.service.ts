@@ -18,4 +18,22 @@ export const securityService = {
 
     await authCommandRepository.deleteSessionByDeviceId(deviceId);
   },
+  async deleteDevicesExceptCurrent(
+    userId: string,
+    deviceId: string,
+  ): Promise<void> {
+    const userSessions = await authQueryRepository.getSessionsByUserId(userId);
+
+    if (!userSessions) throw new NotFoundException();
+
+    const sessionsForDelete = userSessions.filter(
+      (session) => session.deviceId !== deviceId,
+    );
+
+    await Promise.all(
+      sessionsForDelete.map((session) =>
+        authCommandRepository.deleteSessionByDeviceId(session.deviceId),
+      ),
+    );
+  },
 };
