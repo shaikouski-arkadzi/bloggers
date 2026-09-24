@@ -11,15 +11,28 @@ const app = express();
 
 setupApp(app);
 
-let createdUserId: string;
-let accessToken: string;
-let refreshCookie: string;
-let firstSession: JwtPayload | null;
+let createdFirstUserId: string;
+let createdSecondUserId: string;
+let refreshFirstCookie: string;
+let firstUserSession: JwtPayload | null;
+let refreshSecondCookie: string;
+let secondUserSession: JwtPayload | null;
 
-const createUserBody = {
+const createFirstUserBody = {
   login: "login",
   password: "password",
   email: "example@example.dev",
+};
+
+const loginFirstUserBody = {
+  loginOrEmail: createFirstUserBody.login,
+  password: createFirstUserBody.password,
+};
+
+const createSecondUserBody = {
+  login: "login2",
+  password: "password",
+  email: "example2@example.dev",
 };
 
 describe("DELETE /security/devices/:id", () => {
@@ -33,50 +46,72 @@ describe("DELETE /security/devices/:id", () => {
       "base64",
     );
 
-    const createUserResponse = await request(app)
+    const createFirstUserResponse = await request(app)
       .post("/users")
       .set("Authorization", `Basic ${ADMIN_TOKEN}`)
-      .send(createUserBody)
+      .send(createFirstUserBody)
       .expect(201);
 
-    createdUserId = createUserResponse.body.id;
+    const createSecondUserResponse = await request(app)
+      .post("/users")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(createSecondUserBody)
+      .expect(201);
 
-    const loginUserBody = {
-      loginOrEmail: createUserBody.login,
-      password: createUserBody.password,
+    createdFirstUserId = createFirstUserResponse.body.id;
+    createdSecondUserId = createSecondUserResponse.body.id;
+
+    const loginSecondUserBody = {
+      loginOrEmail: createSecondUserBody.login,
+      password: createSecondUserBody.password,
     };
 
-    const loginUserResponse = await request(app)
+    const loginFirstUserResponse = await request(app)
       .post("/auth/login")
-      .send(loginUserBody)
+      .send(loginFirstUserBody)
       .expect(200);
 
-    accessToken = loginUserResponse.body.accessToken;
+    const loginSecondUserResponse = await request(app)
+      .post("/auth/login")
+      .send(loginSecondUserBody)
+      .expect(200);
 
-    const setCookie = loginUserResponse.headers["set-cookie"];
+    let setCookie = loginFirstUserResponse.headers["set-cookie"];
 
-    const cookies = Array.isArray(setCookie)
+    let cookies = Array.isArray(setCookie)
       ? setCookie
       : setCookie
         ? [setCookie]
         : [];
 
-    refreshCookie = cookies.find((cookie: string) =>
+    refreshFirstCookie = cookies.find((cookie: string) =>
       cookie.startsWith("refreshToken="),
     );
 
-    const refreshToken = refreshCookie
+    setCookie = loginSecondUserResponse.headers["set-cookie"];
+
+    cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    refreshSecondCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+
+    let refreshToken = refreshFirstCookie
       ?.split(";")[0]
       .split("=")
       .slice(1)
       .join("=");
 
-    firstSession = await jwtService.verifyToken(
+    firstUserSession = await jwtService.verifyToken(
       refreshToken,
       TokenType.Refresh,
     );
 
-    expect(firstSession).toEqual(
+    expect(firstUserSession).toEqual(
       expect.objectContaining({
         deviceId: expect.any(String),
         deviceName: expect.any(String),
@@ -84,7 +119,30 @@ describe("DELETE /security/devices/:id", () => {
         iat: expect.any(Number),
         ip: expect.any(String),
         tokenType: TokenType.Refresh,
-        uuid: createdUserId,
+        uuid: createdFirstUserId,
+      }),
+    );
+
+    refreshToken = refreshSecondCookie
+      ?.split(";")[0]
+      .split("=")
+      .slice(1)
+      .join("=");
+
+    secondUserSession = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
+
+    expect(secondUserSession).toEqual(
+      expect.objectContaining({
+        deviceId: expect.any(String),
+        deviceName: expect.any(String),
+        exp: expect.any(Number),
+        iat: expect.any(Number),
+        ip: expect.any(String),
+        tokenType: TokenType.Refresh,
+        uuid: createdSecondUserId,
       }),
     );
 
@@ -97,8 +155,8 @@ describe("DELETE /security/devices/:id", () => {
 
   it("should successfully delete device from login", async () => {
     await request(app)
-      .delete(`/security/devices/${firstSession?.deviceId}`)
-      .set("Cookie", refreshCookie)
+      .delete(`/security/devices/${firstUserSession?.deviceId}`)
+      .set("Cookie", refreshFirstCookie)
       .expect(204);
   });
 
@@ -106,8 +164,34 @@ describe("DELETE /security/devices/:id", () => {
 
   it("get Unauthorized error", async () => {
     await request(app)
-      .delete(`/security/devices/${firstSession?.deviceId}`)
-      .set("Cookie", refreshCookie)
+      .delete(`/security/devices/${firstUserSession?.deviceId}`)
+      .set("Cookie", refreshFirstCookie)
       .expect(401);
+  });
+
+  it("again login as first user", async () => {
+    const loginFirstUserResponse = await request(app)
+      .post("/auth/login")
+      .send(loginFirstUserBody)
+      .expect(200);
+
+    let setCookie = loginFirstUserResponse.headers["set-cookie"];
+
+    let cookies = Array.isArray(setCookie)
+      ? setCookie
+      : setCookie
+        ? [setCookie]
+        : [];
+
+    refreshFirstCookie = cookies.find((cookie: string) =>
+      cookie.startsWith("refreshToken="),
+    );
+  });
+
+  it("attempting to delete another user's device", async () => {
+    await request(app)
+      .delete(`/security/devices/${secondUserSession?.deviceId}`)
+      .set("Cookie", refreshFirstCookie)
+      .expect(403);
   });
 });
