@@ -7,8 +7,7 @@ export const deleteDevicesExceptCurrent = async (
   req: Request,
   res: Response<void | APIErrorResult>,
 ) => {
-  const userId = req.userId;
-  const deviceId = req.deviceId;
+  const { userId, deviceId } = req.auth;
 
   if (!userId || !deviceId) throw new Error();
 

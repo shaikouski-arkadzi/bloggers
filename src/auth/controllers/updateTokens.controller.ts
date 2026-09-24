@@ -11,9 +11,9 @@ export const updateTokens = async (
   res: Response<LoginSuccessViewModel | APIErrorResult>,
 ) => {
   const ip = req.ip;
-  const userId = req.userId;
-  const deviceId = req.deviceId;
   const deviceName = req.get("User-Agent") ?? "Unknown device";
+
+  const { userId, deviceId } = req.auth;
 
   if (!ip || !userId || !deviceId) throw new Error();
 

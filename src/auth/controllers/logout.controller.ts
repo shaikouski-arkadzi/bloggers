@@ -9,8 +9,7 @@ export const logout = async (
   req: Request,
   res: Response<void | APIErrorResult>,
 ) => {
-  const iat = req.iat;
-  const deviceId = req.deviceId;
+  const { iat, deviceId } = req.auth;
 
   if (!deviceId || !iat) throw new Error();
 

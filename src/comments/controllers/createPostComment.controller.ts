@@ -13,7 +13,7 @@ export const createPostComment = async (
   try {
     const postId = req.params.id;
     const comment = req.body;
-    const userId = req.userId;
+    const { userId } = req.auth;
 
     if (!userId) throw new UnauthorizedException();
 

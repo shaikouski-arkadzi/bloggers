@@ -13,7 +13,7 @@ export const deleteComment = async (
 ) => {
   try {
     const commentId = req.params.id;
-    const userId = req.userId;
+    const userId = req.auth.userId;
 
     if (!userId) throw new UnauthorizedException();
 

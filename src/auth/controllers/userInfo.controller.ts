@@ -10,7 +10,7 @@ export const userInfo = async (
   res: Response<MeViewModel | APIErrorResult>,
 ) => {
   try {
-    const userId = req.userId;
+    const { userId } = req.auth;
 
     if (!userId) return new UnauthorizedException();
 

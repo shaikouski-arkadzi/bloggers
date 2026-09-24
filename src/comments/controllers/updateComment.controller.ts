@@ -15,7 +15,7 @@ export const updateComment = async (
   try {
     const comment = req.body;
     const commentId = req.params.id;
-    const userId = req.userId;
+    const userId = req.auth.userId;
 
     if (!userId) throw new UnauthorizedException();
 

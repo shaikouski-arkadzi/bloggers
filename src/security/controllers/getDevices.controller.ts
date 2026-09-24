@@ -8,8 +8,7 @@ export const getDevices = async (
   req: Request,
   res: Response<DeviceViewModel[] | APIErrorResult>,
 ) => {
-  const userId = req.userId;
-  const deviceId = req.deviceId;
+  const { userId, deviceId } = req.auth;
 
   if (!userId || !deviceId) throw new Error();
 

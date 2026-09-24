@@ -10,8 +10,7 @@ export const deleteDevice = async (
   req: Request<{ id: string }>,
   res: Response<void | APIErrorResult>,
 ) => {
-  const userId = req.userId;
-  const deviceId = req.deviceId;
+  const { userId, deviceId } = req.auth;
 
   const deviceIdToDelete = req.params.id;
 
