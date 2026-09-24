@@ -28,7 +28,7 @@ const loginUserBody = {
   password: createUserBody.password,
 };
 
-describe("DELETE /security/devices/:id", () => {
+describe("DELETE /security/devices", () => {
   beforeAll(async () => {
     await db.connect();
 
