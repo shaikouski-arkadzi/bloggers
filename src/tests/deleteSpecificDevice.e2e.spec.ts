@@ -96,10 +96,18 @@ describe("DELETE /security/devices/:id", () => {
   });
 
   it("should successfully delete device from login", async () => {
-    console.log(firstSession?.deviceId);
     await request(app)
       .delete(`/security/devices/${firstSession?.deviceId}`)
       .set("Cookie", refreshCookie)
       .expect(204);
-  }, 10000);
+  });
+
+  it("logout on previous step", async () => {});
+
+  it("get Unauthorized error", async () => {
+    await request(app)
+      .delete(`/security/devices/${firstSession?.deviceId}`)
+      .set("Cookie", refreshCookie)
+      .expect(401);
+  });
 });
