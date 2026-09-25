@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
 const WINDOW_MS = 10_000;
-const MAX_ATTEMPTS = 5;
+const MAX_ATTEMPTS = 15;
 
 let attempts: { ip: string; time: number }[] = [];
 

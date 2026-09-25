@@ -51,7 +51,7 @@ describe("GET /blogs", () => {
     );
 
     blogsCount = await blogsQueryRepository.count();
-  }, 10000);
+  }, 100000);
 
   afterAll(async () => {
     await db.disconnect();

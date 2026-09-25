@@ -122,7 +122,10 @@ export const authService = {
       TokenType.Refresh,
     );
 
-    const decodedToken = await jwtService.decodeToken(refreshToken);
+    const decodedToken = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
 
     if (
       !decodedToken ||

@@ -1,11 +1,21 @@
 import jwt from "jsonwebtoken";
 import { AC_SECRET, AC_TIME, RT_SECRET, RT_TIME } from "../../settings/config";
 
-export type JwtPayload = TokenInput & {
+export type JwtAccessPayload = {
+  uuid: string;
   tokenType: TokenType;
   iat: number;
   exp: number;
 };
+
+export type JwtRefreshPayload = TokenInput & {
+  tokenType: TokenType;
+  iat: number;
+  exp: number;
+};
+
+export type JwtPayload<T extends TokenType = TokenType.Access> =
+  T extends TokenType.Access ? JwtAccessPayload : JwtRefreshPayload;
 
 export enum TokenType {
   Access = "access",
@@ -40,32 +50,26 @@ export const jwtService = {
     return jwt.sign({ ...data, tokenType }, secret, options);
   },
 
-  async decodeToken(token: string): Promise<JwtPayload | null> {
-    try {
-      return jwt.decode(token) as JwtPayload;
-    } catch (e: unknown) {
-      console.error("Can't decode token", e);
-      return null;
-    }
-  },
-
-  async verifyToken(
+  async verifyToken<T extends TokenType = TokenType.Access>(
     token: string,
-    tokenType: TokenType = TokenType.Access,
-  ): Promise<JwtPayload | null> {
-    if (!AC_SECRET || !AC_TIME) {
-      throw new Error("AC_SECRET or AC_TIME is not defined");
-    }
-    if (!RT_SECRET || !RT_TIME) {
-      throw new Error("RT_SECRET or RT_TIME is not defined");
-    }
+    tokenType: T = TokenType.Access as T,
+  ): Promise<JwtPayload<T> | null> {
+    const secret = tokenType === TokenType.Access ? AC_SECRET : RT_SECRET;
 
-    const secret: jwt.Secret = tokenType === "access" ? AC_SECRET : RT_SECRET;
+    if (!secret) {
+      throw new Error(`Secret for ${tokenType} token is not defined`);
+    }
 
     try {
-      return jwt.verify(token, secret) as JwtPayload;
+      const payload = jwt.verify(token, secret);
+
+      if (typeof payload === "string" || payload.tokenType !== tokenType) {
+        return null;
+      }
+
+      return payload as JwtPayload<T>;
     } catch (error) {
-      console.error("Token verify some error");
+      console.error("Token verification failed");
       return null;
     }
   },

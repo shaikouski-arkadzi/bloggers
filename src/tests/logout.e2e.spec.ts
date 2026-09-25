@@ -4,7 +4,7 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import {
-  JwtPayload,
+  JwtRefreshPayload,
   jwtService,
   TokenType,
 } from "../auth/application/jwt.service";
@@ -17,7 +17,7 @@ setupApp(app);
 let createdUserId: string;
 let accessToken: string;
 let refreshCookie: string;
-let session: JwtPayload | null;
+let session: JwtRefreshPayload | null;
 
 const createUserBody = {
   login: "login",

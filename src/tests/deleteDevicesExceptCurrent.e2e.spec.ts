@@ -4,7 +4,7 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { jwtService } from "../auth/application";
-import { JwtPayload, TokenType } from "../auth/application/jwt.service";
+import { JwtRefreshPayload, TokenType } from "../auth/application/jwt.service";
 import { DeviceViewModel } from "../security/types";
 
 const app = express();
@@ -14,8 +14,8 @@ setupApp(app);
 let createdUserId: string;
 let firstRefreshCookie: string;
 let secondRefreshCookie: string;
-let firstUserSession: JwtPayload | null;
-let secondUserSession: JwtPayload | null;
+let firstUserSession: JwtRefreshPayload | null;
+let secondUserSession: JwtRefreshPayload | null;
 
 const createUserBody = {
   login: "login",
