@@ -6,6 +6,7 @@ import { db } from "../db";
 import { jwtService } from "../auth/application";
 import { JwtRefreshPayload, TokenType } from "../auth/application/jwt.service";
 import { DeviceViewModel } from "../security/types";
+import { isoToTimestamp } from "../common/utils/dates";
 
 const app = express();
 
@@ -161,7 +162,10 @@ describe("DELETE /security/devices", () => {
     expect(devices[0].deviceId === firstUserSession?.deviceId);
     expect(devices[0].title === firstUserSession?.deviceName);
     expect(devices[0].ip === firstUserSession?.ip);
-    expect(devices[0].lastActiveDate !== firstUserSession?.iat.toString());
+    expect(
+      isoToTimestamp(devices[0].lastActiveDate) !==
+        firstUserSession?.iat.toString(),
+    );
   });
 
   it("should return 401 for an invalid refresh token", async () => {

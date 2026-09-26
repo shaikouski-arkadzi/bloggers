@@ -1,4 +1,5 @@
 import { SessionsDBCollection } from "../../auth/types";
+import { timestampToIso } from "../../common/utils/dates";
 import { DeviceViewModel } from "../types";
 
 export const mapSessionsDBToDevice = (
@@ -6,6 +7,6 @@ export const mapSessionsDBToDevice = (
 ): DeviceViewModel => ({
   deviceId: sessionDB.deviceId.toString(),
   title: sessionDB.deviceName,
-  lastActiveDate: sessionDB.iat.toString(),
+  lastActiveDate: timestampToIso(sessionDB.iat),
   ip: sessionDB.ip,
 });
