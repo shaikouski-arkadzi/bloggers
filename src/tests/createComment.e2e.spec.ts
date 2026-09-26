@@ -242,7 +242,7 @@ describe("POST /posts/:postId/comments", () => {
       .expect(401);
   });
 
-  it("should return 401 while creating comment for post with not valid access token", async () => {
+  it("should return 404 while creating comment for not exist post", async () => {
     const commentBody = {
       content: "s".repeat(21),
     };

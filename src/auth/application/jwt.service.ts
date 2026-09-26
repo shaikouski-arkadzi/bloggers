@@ -76,20 +76,7 @@ export const jwtService = {
 
       return payload as JwtPayload<T>;
     } catch (error) {
-      if (error instanceof jwt.TokenExpiredError) {
-        const now = Date.now();
-        const expiredAt = error.expiredAt.getTime();
-
-        throw new Error(
-          `DEBUG: expired ${((now - expiredAt) / 1000).toFixed(3)} seconds ago`,
-        );
-      }
-
-      throw new Error(
-        error instanceof Error
-          ? `DEBUG: ${error.name}: ${error.message}`
-          : "DEBUG: Unknown verification error",
-      );
+      console.error(`Fail verify ${token} token`);
 
       return null;
     }
