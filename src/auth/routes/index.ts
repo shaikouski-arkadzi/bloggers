@@ -12,7 +12,7 @@ import {
 import { loginInputDtoValidation } from "../validation";
 import {
   jwtValidationMiddleware,
-  loginRateLimitMiddleware,
+  reqRateLimitMiddleware,
   refreshTokenValidationMiddleware,
 } from "../middleware";
 import { userInputDtoValidation } from "../../users/validation";
@@ -23,7 +23,7 @@ const router = Router();
 
 router.post(
   AUTH_ROUTES.LOGIN,
-  loginRateLimitMiddleware,
+  reqRateLimitMiddleware,
   loginInputDtoValidation,
   resultValidationMiddleware,
   loginUser,

@@ -5,6 +5,7 @@ import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { jwtService } from "../auth/application";
 import { TokenType } from "../auth/application/jwt.service";
+import { resetReqRateLimit } from "../auth/middleware";
 
 const app = express();
 
@@ -13,6 +14,10 @@ setupApp(app);
 let createdUserId: string;
 
 describe("POST /auth/login", () => {
+  beforeEach(() => {
+    resetReqRateLimit();
+  });
+
   beforeAll(async () => {
     await db.connect();
 
