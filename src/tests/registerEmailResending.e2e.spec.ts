@@ -5,12 +5,17 @@ import { db } from "../db";
 import { userQueryRepository } from "../users/repositories";
 import { nodemailerService } from "../auth/application";
 import { registerTemplateMail } from "../auth/utils";
+import { resetReqRateLimit } from "../auth/middleware";
 
 const app = express();
 
 setupApp(app);
 
 describe("POST /auth/registration-email-resending", () => {
+  beforeEach(() => {
+    resetReqRateLimit();
+  });
+
   beforeAll(async () => {
     await db.connect();
 

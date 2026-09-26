@@ -33,6 +33,7 @@ router.get(AUTH_ROUTES.ME, jwtValidationMiddleware, userInfo);
 
 router.post(
   AUTH_ROUTES.REGISTRATION,
+  reqRateLimitMiddleware,
   userInputDtoValidation,
   resultValidationMiddleware,
   registerUser,
@@ -40,6 +41,7 @@ router.post(
 
 router.post(
   AUTH_ROUTES.REGISTRATION_EMAIL_RESENDING,
+  reqRateLimitMiddleware,
   emailValidation,
   resultValidationMiddleware,
   resendRegistrationEmail,
@@ -47,6 +49,7 @@ router.post(
 
 router.post(
   AUTH_ROUTES.REGISTRATION_CONFIRMATION,
+  reqRateLimitMiddleware,
   resultValidationMiddleware,
   confirmRegistration,
 );
