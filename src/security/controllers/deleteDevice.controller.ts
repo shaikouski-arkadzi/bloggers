@@ -22,7 +22,7 @@ export const deleteDevice = async (
     return res.sendStatus(204);
   } catch (error) {
     if (error instanceof NotFoundException) {
-      return res.sendStatus(401);
+      return res.sendStatus(404);
     }
     if (error instanceof PermissionException) {
       return res.sendStatus(403);

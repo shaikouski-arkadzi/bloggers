@@ -34,18 +34,21 @@ export const jwtService = {
     data: TokenInput,
     tokenType: TokenType = TokenType.Access,
   ): Promise<string> {
-    if (!AC_SECRET || !AC_TIME) {
-      throw new Error("AC_SECRET or AC_TIME is not defined");
-    }
-    if (!RT_SECRET || !RT_TIME) {
-      throw new Error("RT_SECRET or RT_TIME is not defined");
-    }
+    const isAccess = tokenType === TokenType.Access;
 
+    const secret = isAccess ? AC_SECRET : RT_SECRET;
     const options = {
-      expiresIn: tokenType === "access" ? AC_TIME : RT_TIME,
+      expiresIn: Number(isAccess ? AC_TIME : RT_TIME),
     } as jwt.SignOptions;
+    const expiresIn = Number(isAccess ? AC_TIME : RT_TIME);
 
-    const secret: jwt.Secret = tokenType === "access" ? AC_SECRET : RT_SECRET;
+    if (!secret) {
+      throw new Error(`Secret for ${tokenType} token is not defined`);
+    }
+
+    if (!Number.isFinite(expiresIn) || expiresIn <= 0) {
+      throw new Error(`Invalid lifetime for ${tokenType} token`);
+    }
 
     return jwt.sign({ ...data, tokenType }, secret, options);
   },
@@ -63,13 +66,31 @@ export const jwtService = {
     try {
       const payload = jwt.verify(token, secret);
 
-      if (typeof payload === "string" || payload.tokenType !== tokenType) {
-        return null;
+      if (typeof payload === "string") {
+        throw new Error("Unexpected payload");
+      }
+
+      if (payload.tokenType !== tokenType) {
+        throw new Error("Token type mismatch");
       }
 
       return payload as JwtPayload<T>;
     } catch (error) {
-      console.error("Token verification failed");
+      if (error instanceof jwt.TokenExpiredError) {
+        const now = Date.now();
+        const expiredAt = error.expiredAt.getTime();
+
+        throw new Error(
+          `DEBUG: expired ${((now - expiredAt) / 1000).toFixed(3)} seconds ago`,
+        );
+      }
+
+      throw new Error(
+        error instanceof Error
+          ? `DEBUG: ${error.name}: ${error.message}`
+          : "DEBUG: Unknown verification error",
+      );
+
       return null;
     }
   },

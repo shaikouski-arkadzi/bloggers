@@ -17,10 +17,21 @@ export const refreshTokenValidationMiddleware = async (
     return;
   }
 
-  const verified = await jwtService.verifyToken(
-    refreshToken,
-    TokenType.Refresh,
-  );
+  const verified = await jwtService
+    .verifyToken(refreshToken, TokenType.Refresh)
+    .catch((error: unknown) => {
+      res
+        .status(401)
+        .send(
+          error instanceof Error ? error.message : "Unknown verification error",
+        );
+
+      return null;
+    });
+
+  if (res.headersSent) {
+    return;
+  }
 
   if (verified) {
     const userId = verified.uuid;
@@ -31,12 +42,12 @@ export const refreshTokenValidationMiddleware = async (
     });
 
     if (!user) {
-      res.sendStatus(401);
+      res.status(401).send("User not found");
       return;
     }
 
     if (!deviceId || !iat) {
-      res.sendStatus(401);
+      res.status(401).send("deviceId or iat missing");
       return;
     }
 
@@ -46,7 +57,7 @@ export const refreshTokenValidationMiddleware = async (
     );
 
     if (!session) {
-      res.sendStatus(401);
+      res.status(401).send("session not found");
       return;
     }
 
@@ -56,7 +67,7 @@ export const refreshTokenValidationMiddleware = async (
       iat: iat.toString(),
     };
   } else {
-    res.sendStatus(401);
+    res.status(401).send("Refresh token verification failed");
     return;
   }
 
