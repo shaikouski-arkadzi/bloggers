@@ -1,9 +1,9 @@
 import request from "supertest";
 import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { blogsQueryRepository } from "../blogs/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
+import { blogsQueryRepository } from "../blogs/composition-root";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;

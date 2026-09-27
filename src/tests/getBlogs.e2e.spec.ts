@@ -10,7 +10,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
-import { blogsQueryRepository } from "../blogs/repositories";
+import { blogsQueryRepository } from "../blogs/composition-root";
 
 const app = express();
 

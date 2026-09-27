@@ -1,5 +1,4 @@
 import { body } from "express-validator";
-import { blogsQueryRepository } from "../../blogs/repositories";
 
 export const titleValidation = body("title")
   .exists()

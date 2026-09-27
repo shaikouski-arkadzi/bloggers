@@ -1,2 +1,2 @@
-export { blogsCommandRepository } from "./blogs.command.repository";
-export { blogsQueryRepository } from "./blogs.query.repository";
+export { BlogsCommandRepository } from "./blogs.command.repository";
+export { BlogsQueryRepository } from "./blogs.query.repository";

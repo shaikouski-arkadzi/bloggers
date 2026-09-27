@@ -1,12 +1,11 @@
-import { ObjectId } from "mongodb";
 import { postsCommandRepository, postsQueryRepository } from "../repositories";
 import { PaginatorData } from "../../common/types";
-import { blogsQueryRepository } from "../../blogs/repositories";
-import { Post, PostDb, PostInputDto, PostsQuery, UpdatedPost } from "../types";
-import { createPostDb, mapPostDbToPost, updatePostDb } from "../utils";
+import { Post, PostInputDto, PostsQuery, UpdatedPost } from "../types";
+import { createPostDb, updatePostDb } from "../utils";
 import { blogsService } from "../../blogs/application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
+import { blogsQueryRepository } from "../../blogs/composition-root";
 
 export const postsService = {
   async findById(id: string): Promise<Post> {

@@ -1,9 +1,11 @@
-import { ObjectId } from "mongodb";
-import { blogsCommandRepository, blogsQueryRepository } from "../repositories";
-import { createBlogDb, mapBlogDbToBlog } from "../utils";
-import { Blog, BlogDb, BlogInputDto, BlogsQuery } from "../types";
+import { createBlogDb } from "../utils";
+import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
+import {
+  blogsCommandRepository,
+  blogsQueryRepository,
+} from "../composition-root";
 
 export const blogsService = {
   async findById(id: string): Promise<Blog> {

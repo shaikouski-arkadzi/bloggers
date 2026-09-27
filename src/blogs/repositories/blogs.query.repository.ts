@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { Blog, BlogDb } from "../types";
+import { Blog } from "../types";
 import { SortDirection, SortBy } from "../../common/types";
 import {
   PAGE_DAFAULT,
@@ -18,7 +18,7 @@ interface BlogsQueryParams {
   searchNameTerm?: string | null;
 }
 
-export const blogsQueryRepository = {
+export class BlogsQueryRepository {
   async find({
     page = PAGE_DAFAULT,
     pageSize = PAGE_SIZE_DAFAULT,
@@ -43,7 +43,7 @@ export const blogsQueryRepository = {
       .toArray();
 
     return result.map(mapBlogDbToBlog);
-  },
+  }
 
   async findById(id: string): Promise<Blog | null> {
     const result = await db
@@ -55,7 +55,7 @@ export const blogsQueryRepository = {
     }
 
     return mapBlogDbToBlog(result);
-  },
+  }
 
   async count(
     conditions: Partial<Record<keyof Blog, string>> = {},
@@ -72,5 +72,5 @@ export const blogsQueryRepository = {
       .blogsCollection.countDocuments(filter);
 
     return result;
-  },
-};
+  }
+}
