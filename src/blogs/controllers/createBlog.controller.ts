@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { Blog, BlogInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { blogsService } from "../application/blogs.service";
 import { SavingException } from "../exceptions";
-import { blogsQueryRepository } from "../composition-root";
+import { blogsQueryRepository, blogsService } from "../composition-root";
 
 export const createBlog = async (
   req: Request<{}, {}, BlogInputDto>,

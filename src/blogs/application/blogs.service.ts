@@ -7,7 +7,7 @@ import {
   blogsQueryRepository,
 } from "../composition-root";
 
-export const blogsService = {
+export class BlogsService {
   async findById(id: string): Promise<Blog> {
     const result = await blogsQueryRepository.findById(id);
 
@@ -16,7 +16,7 @@ export const blogsService = {
     }
 
     return result;
-  },
+  }
 
   async create(blog: BlogInputDto): Promise<string> {
     const newBlogInDb = createBlogDb(blog);
@@ -24,7 +24,7 @@ export const blogsService = {
     const blogId = await blogsCommandRepository.create(newBlogInDb);
 
     return blogId.toString();
-  },
+  }
 
   async findMany(queries: BlogsQuery): Promise<PaginatorData<Blog>> {
     const page = Number(queries.pageNumber);
@@ -56,17 +56,17 @@ export const blogsService = {
     };
 
     return returnData;
-  },
+  }
 
   async delete(id: string): Promise<void> {
-    await blogsService.findById(id);
+    await this.findById(id);
 
     await blogsCommandRepository.delete(id);
-  },
+  }
 
   async update(id: string, blog: BlogInputDto): Promise<void> {
-    await blogsService.findById(id);
+    await this.findById(id);
 
     await blogsCommandRepository.update(id, blog);
-  },
-};
+  }
+}

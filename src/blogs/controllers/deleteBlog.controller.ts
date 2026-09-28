@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { blogsService } from "../application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
+import { blogsService } from "../composition-root";
 
 export const deleteBlog = async (
   req: Request<{ id: string }>,

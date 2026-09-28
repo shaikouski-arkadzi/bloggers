@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { PaginatorData } from "../../common/types";
 import { Blog, BlogsQuery } from "../types";
-import { blogsService } from "../application/blogs.service";
+import { blogsService } from "../composition-root";
 
 export const getBlogs = async (
   req: Request<{}, {}, {}, BlogsQuery>,
