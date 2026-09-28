@@ -2,14 +2,16 @@ import { createBlogDb } from "../utils";
 import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
-import {
-  blogsCommandRepository,
-  blogsQueryRepository,
-} from "../composition-root";
+import { BlogsCommandRepository, BlogsQueryRepository } from "../repositories";
 
 export class BlogsService {
+  constructor(
+    private blogsCommandRepository: BlogsCommandRepository,
+    private blogsQueryRepository: BlogsQueryRepository,
+  ) {}
+
   async findById(id: string): Promise<Blog> {
-    const result = await blogsQueryRepository.findById(id);
+    const result = await this.blogsQueryRepository.findById(id);
 
     if (!result) {
       throw new NotFoundException();
@@ -21,7 +23,7 @@ export class BlogsService {
   async create(blog: BlogInputDto): Promise<string> {
     const newBlogInDb = createBlogDb(blog);
 
-    const blogId = await blogsCommandRepository.create(newBlogInDb);
+    const blogId = await this.blogsCommandRepository.create(newBlogInDb);
 
     return blogId.toString();
   }
@@ -33,13 +35,13 @@ export class BlogsService {
     const sortDirection = queries.sortDirection;
     const searchNameTerm = queries.searchNameTerm;
 
-    const allBlogsCount = await blogsQueryRepository.count(
+    const allBlogsCount = await this.blogsQueryRepository.count(
       searchNameTerm ? { name: searchNameTerm } : {},
     );
 
     const pagesCount = Math.ceil(allBlogsCount / pageSize);
 
-    const result = await blogsQueryRepository.find({
+    const result = await this.blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -61,12 +63,12 @@ export class BlogsService {
   async delete(id: string): Promise<void> {
     await this.findById(id);
 
-    await blogsCommandRepository.delete(id);
+    await this.blogsCommandRepository.delete(id);
   }
 
   async update(id: string, blog: BlogInputDto): Promise<void> {
     await this.findById(id);
 
-    await blogsCommandRepository.update(id, blog);
+    await this.blogsCommandRepository.update(id, blog);
   }
 }
