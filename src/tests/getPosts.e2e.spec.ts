@@ -12,7 +12,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
-import { postsQueryRepository } from "../posts/repositories";
+import { postsQueryRepository } from "../posts/composition-root";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;

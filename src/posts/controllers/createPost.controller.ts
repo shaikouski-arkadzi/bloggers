@@ -3,7 +3,7 @@ import { Post, PostInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { postsService } from "../application/posts.service";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
-import { postsQueryRepository } from "../repositories";
+import { postsQueryRepository } from "../composition-root";
 
 export const createPost = async (
   req: Request<{}, {}, PostInputDto>,

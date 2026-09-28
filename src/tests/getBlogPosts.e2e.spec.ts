@@ -3,7 +3,6 @@ import express from "express";
 import { BLOGS_PATH } from "../blogs/constants";
 import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
-import { postsQueryRepository } from "../posts/repositories";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { Post } from "../posts/types";
@@ -13,6 +12,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
+import { postsQueryRepository } from "../posts/composition-root";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;

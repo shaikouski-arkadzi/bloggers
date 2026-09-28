@@ -1,4 +1,3 @@
-import { postsCommandRepository, postsQueryRepository } from "../repositories";
 import { PaginatorData } from "../../common/types";
 import { Post, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { createPostDb, updatePostDb } from "../utils";
@@ -6,6 +5,10 @@ import { blogsService } from "../../blogs/application/blogs.service";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
 import { blogsQueryRepository } from "../../blogs/composition-root";
+import {
+  postsCommandRepository,
+  postsQueryRepository,
+} from "../composition-root";
 
 export const postsService = {
   async findById(id: string): Promise<Post> {

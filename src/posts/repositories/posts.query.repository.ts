@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { Post, PostDb } from "../types";
+import { Post } from "../types";
 import { ObjectId } from "mongodb";
 import { SortDirection, SortBy } from "../../common/types";
 import {
@@ -17,7 +17,7 @@ interface PostsQueryParams {
   sortDirection?: SortDirection;
 }
 
-export const postsQueryRepository = {
+export class PostsQueryRepository {
   async find({
     page = PAGE_DAFAULT,
     pageSize = PAGE_SIZE_DAFAULT,
@@ -35,7 +35,7 @@ export const postsQueryRepository = {
       .toArray();
 
     return result.map(mapPostDbToPost);
-  },
+  }
 
   async findById(id: string): Promise<Post | null> {
     const result = await db
@@ -47,7 +47,7 @@ export const postsQueryRepository = {
     }
 
     return mapPostDbToPost(result);
-  },
+  }
 
   async findPostsByBlog(
     blogId: string,
@@ -69,7 +69,7 @@ export const postsQueryRepository = {
       .toArray();
 
     return result.map(mapPostDbToPost);
-  },
+  }
 
   async count(
     conditions: Partial<Record<keyof Post, string>> = {},
@@ -86,5 +86,5 @@ export const postsQueryRepository = {
       .postsCollection.countDocuments(filter);
 
     return result;
-  },
-};
+  }
+}

@@ -3,8 +3,8 @@ import { APIErrorResult } from "../../common/types";
 import { Post, PostInputDto } from "../../posts/types";
 import { postsService } from "../../posts/application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
-import { postsQueryRepository } from "../../posts/repositories";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
+import { postsQueryRepository } from "../composition-root";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
