@@ -6,34 +6,39 @@ import { NotFoundException } from "../../common/exceptions";
 import { bcryptService, nodemailerService } from "../../auth/application";
 import { mapUserDbToRegisterUser } from "../utils";
 import { registerTemplateMail } from "../../auth/utils";
-import {
-  userCommandRepository,
-  userQueryRepository,
-} from "../composition-root";
+import { UserCommandRepository, UserQueryRepository } from "../repositories";
 
-export const userService = {
+export class UserService {
+  constructor(
+    private userCommandRepository: UserCommandRepository,
+    private userQueryRepository: UserQueryRepository,
+  ) {}
+
   async isEmailAvailable(email: string): Promise<boolean> {
-    const user = await userQueryRepository.findByField({ email });
-    return user ? false : true;
-  },
+    const user = await this.userQueryRepository.findByField({ email });
+    return !user;
+  }
+
   async isLoginAvailable(login: string): Promise<boolean> {
-    const user = await userQueryRepository.findByField({ login });
-    return user ? false : true;
-  },
+    const user = await this.userQueryRepository.findByField({ login });
+    return !user;
+  }
+
   async getUserById(id: ObjectId): Promise<User | null> {
-    const user = await userQueryRepository.findByField({ _id: id });
+    const user = await this.userQueryRepository.findByField({ _id: id });
     return user;
-  },
+  }
+
   async create(
     user: UserInputDto,
     register: boolean = false,
   ): Promise<ObjectId> {
     const { login, email, password } = user;
 
-    const isEmailAvailable = await userService.isEmailAvailable(email);
+    const isEmailAvailable = await this.isEmailAvailable(email);
     if (!isEmailAvailable) throw new SavingException();
 
-    const isLoginAvailable = await userService.isLoginAvailable(login);
+    const isLoginAvailable = await this.isLoginAvailable(login);
     if (!isLoginAvailable) throw new SavingException();
 
     const hashPassword = await bcryptService.generateHash(password);
@@ -53,9 +58,10 @@ export const userService = {
         .catch((e) => console.log(e));
     }
 
-    const createdUserId = await userCommandRepository.create(newUser);
+    const createdUserId = await this.userCommandRepository.create(newUser);
+
     return createdUserId;
-  },
+  }
 
   async findMany(queries: UsersQuery): Promise<PaginatorData<User>> {
     const page = Number(queries.pageNumber);
@@ -65,14 +71,14 @@ export const userService = {
     const searchLoginTerm = queries.searchLoginTerm;
     const searchEmailTerm = queries.searchEmailTerm;
 
-    const allUsersCount = await userQueryRepository.count(
+    const allUsersCount = await this.userQueryRepository.count(
       searchLoginTerm,
       searchEmailTerm,
     );
 
     const pagesCount = Math.ceil(allUsersCount / pageSize);
 
-    const result = await userQueryRepository.find({
+    const result = await this.userQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -81,21 +87,20 @@ export const userService = {
       searchEmailTerm,
     });
 
-    const returnData: PaginatorData<User> = {
+    return {
       pagesCount,
       page,
       pageSize,
       totalCount: allUsersCount,
       items: result,
     };
+  }
 
-    return returnData;
-  },
   async delete(id: string): Promise<void> {
-    const user = await userService.getUserById(new ObjectId(id));
+    const user = await this.getUserById(new ObjectId(id));
 
     if (!user) throw new NotFoundException();
 
-    await userCommandRepository.delete(id);
-  },
-};
+    await this.userCommandRepository.delete(id);
+  }
+}

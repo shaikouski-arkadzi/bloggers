@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { UserInputDto } from "../../users/types";
 import { APIErrorResult } from "../../common/types";
-import { userService } from "../../users/application";
 import { SavingException } from "../../users/exceptions";
+import { userService } from "../../users/composition-root";
 
 export const registerUser = async (
   req: Request<{}, {}, UserInputDto>,

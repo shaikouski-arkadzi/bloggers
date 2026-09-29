@@ -4,12 +4,12 @@ import { UserDbWithId } from "../../users/types";
 import {
   userCommandRepository,
   userQueryRepository,
+  userService,
 } from "../../users/composition-root";
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
-import { userService } from "../../users/application";
 import { authQueryRepository } from "../repositories";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";

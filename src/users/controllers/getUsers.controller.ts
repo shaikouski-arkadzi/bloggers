@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { PaginatorData } from "../../common/types";
 import { User, UsersQuery } from "../types";
-import { userService } from "../application";
+import { userService } from "../composition-root";
 
 export const getUsers = async (
   req: Request<{}, {}, {}, UsersQuery>,

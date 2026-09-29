@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import { User, UserInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { userService } from "../application";
 import { SavingException } from "../exceptions";
-import { userQueryRepository } from "../composition-root";
+import { userQueryRepository, userService } from "../composition-root";
 
 export const createUser = async (
   req: Request<{}, {}, UserInputDto>,

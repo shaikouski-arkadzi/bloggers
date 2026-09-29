@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { userService } from "../application";
 import { NotFoundException } from "../../common/exceptions";
+import { userService } from "../composition-root";
 
 export const deleteUser = async (
   req: Request<{ id: string }>,
