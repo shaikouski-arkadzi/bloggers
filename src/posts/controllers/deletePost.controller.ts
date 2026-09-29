@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { postsService } from "../application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
+import { postsService } from "../composition-root";
 
 export const deletePost = async (
   req: Request<{ id: string }>,

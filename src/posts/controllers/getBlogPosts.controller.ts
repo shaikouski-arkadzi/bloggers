@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { Post, PostsQuery } from "../../posts/types";
 import { PaginatorData } from "../../common/types";
 import { matchedData } from "express-validator";
-import { postsService } from "../../posts/application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
+import { postsService } from "../composition-root";
 
 export const getBlogPosts = async (
   req: Request<{ id: string }, {}, {}, PostsQuery>,

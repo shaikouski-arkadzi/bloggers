@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { PostInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { postsService } from "../application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
+import { postsService } from "../composition-root";
 
 export const updatePost = async (
   req: Request<{ id: string }, {}, PostInputDto>,

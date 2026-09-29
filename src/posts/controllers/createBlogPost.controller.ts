@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import { APIErrorResult } from "../../common/types";
 import { Post, PostInputDto } from "../../posts/types";
-import { postsService } from "../../posts/application/posts.service";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
-import { postsQueryRepository } from "../composition-root";
+import { postsQueryRepository, postsService } from "../composition-root";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 

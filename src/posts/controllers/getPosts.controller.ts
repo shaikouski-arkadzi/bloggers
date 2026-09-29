@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { PaginatorData } from "../../common/types";
-import { postsService } from "../application/posts.service";
 import { Post, PostsQuery } from "../types";
+import { postsService } from "../composition-root";
 
 export const getPosts = async (
   req: Request<{}, {}, {}, PostsQuery>,

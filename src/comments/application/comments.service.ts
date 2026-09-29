@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
-import { postsService } from "../../posts/application/posts.service";
 import { userService } from "../../users/application";
 import {
   commentsCommandRepository,
@@ -12,6 +11,7 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
+import { postsService } from "../../posts/composition-root";
 
 export const commentsService = {
   async getCommentById(id: string): Promise<Comment | null> {

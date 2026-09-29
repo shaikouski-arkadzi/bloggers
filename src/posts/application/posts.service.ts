@@ -3,37 +3,39 @@ import { Post, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { createPostDb, updatePostDb } from "../utils";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
-import {
-  blogsQueryRepository,
-  blogsService,
-} from "../../blogs/composition-root";
-import {
-  postsCommandRepository,
-  postsQueryRepository,
-} from "../composition-root";
+import { BlogsService } from "../../blogs/application/blogs.service";
+import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
+import { BlogsQueryRepository } from "../../blogs/repositories";
 
-export const postsService = {
+export class PostsService {
+  constructor(
+    private postsCommandRepository: PostsCommandRepository,
+    private postsQueryRepository: PostsQueryRepository,
+    private blogsQueryRepository: BlogsQueryRepository,
+    private blogsService: BlogsService,
+  ) {}
+
   async findById(id: string): Promise<Post> {
-    const result = await postsQueryRepository.findById(id);
+    const result = await this.postsQueryRepository.findById(id);
 
     if (!result) {
       throw new NotFoundException();
     }
 
     return result;
-  },
+  }
 
   async create(post: PostInputDto): Promise<string> {
-    const blog = await blogsQueryRepository.findById(post.blogId);
+    const blog = await this.blogsQueryRepository.findById(post.blogId);
 
     if (!blog) throw new BlogForPostNotExistException();
 
     const newPost = createPostDb(post, blog);
 
-    const createdPostId = await postsCommandRepository.create(newPost);
+    const createdPostId = await this.postsCommandRepository.create(newPost);
 
     return createdPostId.toString();
-  },
+  }
 
   async findMany(queries: PostsQuery): Promise<PaginatorData<Post>> {
     const page = Number(queries.pageNumber);
@@ -41,45 +43,43 @@ export const postsService = {
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
 
-    const allPostsCount = await postsQueryRepository.count();
+    const allPostsCount = await this.postsQueryRepository.count();
 
     const pagesCount = Math.ceil(allPostsCount / pageSize);
 
-    const result = await postsQueryRepository.find({
+    const result = await this.postsQueryRepository.find({
       page,
       pageSize,
       sortBy,
       sortDirection,
     });
 
-    const returnData: PaginatorData<Post> = {
+    return {
       pagesCount,
       page,
       pageSize,
       totalCount: allPostsCount,
       items: result,
     };
-
-    return returnData;
-  },
+  }
 
   async delete(id: string): Promise<void> {
-    await postsService.findById(id);
+    await this.findById(id);
 
-    await postsCommandRepository.delete(id);
-  },
+    await this.postsCommandRepository.delete(id);
+  }
 
   async update(id: string, post: PostInputDto): Promise<void> {
-    await postsService.findById(id);
+    await this.findById(id);
 
-    const blog = await blogsQueryRepository.findById(post.blogId);
+    const blog = await this.blogsQueryRepository.findById(post.blogId);
 
     if (!blog) throw new BlogForPostNotExistException();
 
     const updatedPost: UpdatedPost = updatePostDb(post, blog);
 
-    await postsCommandRepository.update(id, updatedPost);
-  },
+    await this.postsCommandRepository.update(id, updatedPost);
+  }
 
   async findManyByBlog(
     blogId: string,
@@ -90,29 +90,27 @@ export const postsService = {
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
 
-    await blogsService.findById(blogId);
+    await this.blogsService.findById(blogId);
 
-    const allPostsCount = await postsQueryRepository.count({
+    const allPostsCount = await this.postsQueryRepository.count({
       blogId,
     });
 
     const pagesCount = Math.ceil(allPostsCount / pageSize);
 
-    const result = await postsQueryRepository.findPostsByBlog(blogId, {
+    const result = await this.postsQueryRepository.findPostsByBlog(blogId, {
       page,
       pageSize,
       sortBy,
       sortDirection,
     });
 
-    const returnData: PaginatorData<Post> = {
+    return {
       pagesCount,
       page,
       pageSize,
       totalCount: allPostsCount,
       items: result,
     };
-
-    return returnData;
-  },
-};
+  }
+}
