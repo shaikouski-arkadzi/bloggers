@@ -1,2 +1,2 @@
-export { userQueryRepository } from "./user.query.repository";
-export { userCommandRepository } from "./user.command.repository";
+export { UserQueryRepository } from "./user.query.repository";
+export { UserCommandRepository } from "./user.command.repository";

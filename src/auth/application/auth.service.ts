@@ -4,7 +4,7 @@ import { UserDbWithId } from "../../users/types";
 import {
   userCommandRepository,
   userQueryRepository,
-} from "../../users/repositories";
+} from "../../users/composition-root";
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";

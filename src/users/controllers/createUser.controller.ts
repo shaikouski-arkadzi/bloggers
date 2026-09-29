@@ -3,7 +3,7 @@ import { User, UserInputDto } from "../types";
 import { APIErrorResult } from "../../common/types";
 import { userService } from "../application";
 import { SavingException } from "../exceptions";
-import { userQueryRepository } from "../repositories";
+import { userQueryRepository } from "../composition-root";
 
 export const createUser = async (
   req: Request<{}, {}, UserInputDto>,

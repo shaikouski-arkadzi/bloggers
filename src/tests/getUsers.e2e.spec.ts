@@ -10,7 +10,7 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../common/constants";
-import { userQueryRepository } from "../users/repositories";
+import { userQueryRepository } from "../users/composition-root";
 import { User } from "../users/types";
 
 const app = express();

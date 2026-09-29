@@ -19,7 +19,7 @@ interface UsersQueryParams {
   searchEmailTerm?: string | null;
 }
 
-export const userQueryRepository = {
+export class UserQueryRepository {
   async find({
     page = PAGE_DAFAULT,
     pageSize = PAGE_SIZE_DAFAULT,
@@ -52,7 +52,8 @@ export const userQueryRepository = {
       .toArray();
 
     return result.map(mapUserDbToUser);
-  },
+  }
+
   async findByField(filter: Partial<WithId<UserDb>>): Promise<User | null> {
     const result = await db.getCollections().usersCollection.findOne(filter);
 
@@ -61,7 +62,8 @@ export const userQueryRepository = {
     }
 
     return mapUserDbToUser(result);
-  },
+  }
+
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
     const resultUsers = await db
       .getCollections()
@@ -77,7 +79,8 @@ export const userQueryRepository = {
       createdAt: user.createdAt,
       password: user.password,
     }));
-  },
+  }
+
   async count(login?: string | null, email?: string | null): Promise<number> {
     const conditions = [];
 
@@ -96,5 +99,5 @@ export const userQueryRepository = {
     const filter = conditions.length > 0 ? { $or: conditions } : {};
 
     return db.getCollections().usersCollection.countDocuments(filter);
-  },
-};
+  }
+}

@@ -1,14 +1,15 @@
 import { ObjectId } from "mongodb";
-import { userQueryRepository } from "../repositories";
-import { userCommandRepository } from "../repositories/user.command.repository";
 import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { bcryptService, nodemailerService } from "../../auth/application";
 import { mapUserDbToRegisterUser } from "../utils";
-import { randomUUID } from "crypto";
 import { registerTemplateMail } from "../../auth/utils";
+import {
+  userCommandRepository,
+  userQueryRepository,
+} from "../composition-root";
 
 export const userService = {
   async isEmailAvailable(email: string): Promise<boolean> {

@@ -2,7 +2,7 @@ import request from "supertest";
 import express from "express";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { userQueryRepository } from "../users/repositories";
+import { userQueryRepository } from "../users/composition-root";
 import { nodemailerService } from "../auth/application";
 import { registerTemplateMail } from "../auth/utils";
 import { resetReqRateLimit } from "../auth/middleware";
