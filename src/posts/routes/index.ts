@@ -1,11 +1,4 @@
 import { Router } from "express";
-import {
-  createPost,
-  deletePost,
-  getPost,
-  getPosts,
-  updatePost,
-} from "../controllers";
 import { POST_FIELDS, POSTS_ROUTES } from "../constants";
 import {
   idValidation,
@@ -21,8 +14,12 @@ import {
 import { COMMENT_FIELDS } from "../../comments/constants";
 import { createPostComment, getPostComments } from "../../comments/controllers";
 import { contentValidation } from "../../comments/validation";
+import { postsController } from "../composition-root";
 
 const router = Router();
+
+const { createPost, deletePost, getPost, getPosts, updatePost } =
+  postsController;
 
 router.post(
   POSTS_ROUTES.ROOT,

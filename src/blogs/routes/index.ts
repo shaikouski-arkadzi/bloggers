@@ -18,12 +18,14 @@ import {
   titleValidation,
 } from "../../posts/validation/postInputDto.validation.middleware";
 import { POST_FIELDS } from "../../posts/constants";
-import { createBlogPost, getBlogPosts } from "../../posts/controllers";
+import { postsController } from "../../posts/composition-root";
 
 const router = Router();
 
 const { createBlog, deleteBlog, getBlog, getBlogs, updateBlog } =
   blogsController;
+
+const { createBlogPost, getBlogPosts } = postsController;
 
 router.post(
   BLOGS_ROUTES.ROOT,
