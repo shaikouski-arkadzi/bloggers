@@ -1,11 +1,5 @@
 import { Router } from "express";
-import {
-  createBlog,
-  deleteBlog,
-  getBlog,
-  getBlogs,
-  updateBlog,
-} from "../controllers";
+import { blogsController } from "../composition-root";
 import { BLOG_FIELDS, BLOGS_ROUTES } from "../constants";
 import {
   idValidation,
@@ -27,6 +21,9 @@ import { POST_FIELDS } from "../../posts/constants";
 import { createBlogPost, getBlogPosts } from "../../posts/controllers";
 
 const router = Router();
+
+const { createBlog, deleteBlog, getBlog, getBlogs, updateBlog } =
+  blogsController;
 
 router.post(
   BLOGS_ROUTES.ROOT,
