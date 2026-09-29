@@ -8,9 +8,11 @@ import {
   sortingValidation,
 } from "../../common/validation";
 import { searchTermValidation, userInputDtoValidation } from "../validation";
-import { createUser, deleteUser, getUsers } from "../controllers";
+import { usersController } from "../composition-root";
 
 const router = Router();
+
+const { createUser, deleteUser, getUsers } = usersController;
 
 router.post(
   USERS_ROUTES.ROOT,
