@@ -10,11 +10,13 @@ import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
-import { authQueryRepository } from "../repositories";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
-import { authCommandRepository } from "../repositories/auth.command.repository";
 import { jwtService, TokenType } from "./jwt.service";
+import {
+  authCommandRepository,
+  authQueryRepository,
+} from "../composition-root";
 
 export const authService = {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {

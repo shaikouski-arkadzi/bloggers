@@ -3,7 +3,7 @@ import { db } from "../../db";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
 import { IAuthCode, SessionModel } from "../types";
 
-export const authQueryRepository = {
+export class AuthQueryRepository {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
     const result = await db.getCollections().usersCollection.findOne({ email });
 
@@ -12,7 +12,8 @@ export const authQueryRepository = {
     }
 
     return mapUserDbToAuth(result);
-  },
+  }
+
   async getUserByCode(code: string): Promise<IAuthCode | null> {
     const result = await db
       .getCollections()
@@ -23,7 +24,8 @@ export const authQueryRepository = {
     }
 
     return mapUserDbToAuth(result);
-  },
+  }
+
   async getSessionByIATAndDeviceId(
     iat: number,
     deviceId: string,
@@ -37,7 +39,8 @@ export const authQueryRepository = {
     }
 
     return mapSessionsDBToSession(result);
-  },
+  }
+
   async getSessionByDeviceId(deviceId: string): Promise<SessionModel | null> {
     const result = await db
       .getCollections()
@@ -48,7 +51,8 @@ export const authQueryRepository = {
     }
 
     return mapSessionsDBToSession(result);
-  },
+  }
+
   async getSessionsByUserId(userId: string): Promise<SessionModel[] | null> {
     const result = await db
       .getCollections()
@@ -60,5 +64,5 @@ export const authQueryRepository = {
     }
 
     return result.map(mapSessionsDBToSession);
-  },
-};
+  }
+}

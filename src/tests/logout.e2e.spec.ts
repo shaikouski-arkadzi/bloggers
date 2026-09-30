@@ -8,7 +8,7 @@ import {
   jwtService,
   TokenType,
 } from "../auth/application/jwt.service";
-import { authQueryRepository } from "../auth/repositories";
+import { authQueryRepository } from "../auth/composition-root";
 
 const app = express();
 

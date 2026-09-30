@@ -1,7 +1,7 @@
 import {
   authCommandRepository,
   authQueryRepository,
-} from "../../auth/repositories";
+} from "../../auth/composition-root";
 import {
   NotFoundException,
   PermissionException,

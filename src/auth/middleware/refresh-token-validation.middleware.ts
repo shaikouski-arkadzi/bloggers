@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
-import { authQueryRepository } from "../repositories";
 import { userQueryRepository } from "../../users/composition-root";
+import { authQueryRepository } from "../composition-root";
 
 export const refreshTokenValidationMiddleware = async (
   req: Request,

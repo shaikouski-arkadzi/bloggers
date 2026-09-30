@@ -1,2 +1,2 @@
-export { authQueryRepository } from "./auth.query.repository";
-export { authCommandRepository } from "./auth.command.repository";
+export { AuthQueryRepository } from "./auth.query.repository";
+export { AuthCommandRepository } from "./auth.command.repository";
