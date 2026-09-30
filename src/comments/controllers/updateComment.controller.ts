@@ -5,8 +5,9 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { commentsService } from "../application";
+
 import { UnauthorizedException } from "../../auth/exceptions";
+import { commentsService } from "../composition-root";
 
 export const updateComment = async (
   req: Request<{ id: string }, {}, CommentInputModel>,

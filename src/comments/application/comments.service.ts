@@ -1,27 +1,35 @@
 import { ObjectId } from "mongodb";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
-
-import { Comment, CommentDb, CommentInputModel, CommentsQuery } from "../types";
+import { Comment, CommentInputModel, CommentsQuery } from "../types";
 import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { postsService } from "../../posts/composition-root";
-import { userService } from "../../users/composition-root";
+import { PostsService } from "../../posts/application/posts.service";
+import { UserService } from "../../users/application/user.service";
 import {
-  commentsCommandRepository,
-  commentsQueryRepository,
-} from "../composition-root";
+  CommentsCommandRepository,
+  CommentsQueryRepository,
+} from "../repositories";
 
-export const commentsService = {
+export class CommentsService {
+  constructor(
+    private commentsCommandRepository: CommentsCommandRepository,
+    private commentsQueryRepository: CommentsQueryRepository,
+    private postsService: PostsService,
+    private userService: UserService,
+  ) {}
+
   async getCommentById(id: string): Promise<Comment | null> {
     const commentObjectId = new ObjectId(id);
-    const comment = await commentsQueryRepository.findByField({
+
+    const comment = await this.commentsQueryRepository.findByField({
       _id: commentObjectId,
     });
+
     return comment;
-  },
+  }
 
   async findManyByPost(
     postId: string,
@@ -32,31 +40,32 @@ export const commentsService = {
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
 
-    await postsService.findById(postId);
+    await this.postsService.findById(postId);
 
-    const allCommentsCount = await commentsQueryRepository.count({
+    const allCommentsCount = await this.commentsQueryRepository.count({
       postId: new ObjectId(postId),
     });
 
     const pagesCount = Math.ceil(allCommentsCount / pageSize);
 
-    const result = await commentsQueryRepository.findCommentsByPost(postId, {
-      page,
-      pageSize,
-      sortBy,
-      sortDirection,
-    });
+    const result = await this.commentsQueryRepository.findCommentsByPost(
+      postId,
+      {
+        page,
+        pageSize,
+        sortBy,
+        sortDirection,
+      },
+    );
 
-    const returnData: PaginatorData<Comment> = {
+    return {
       pagesCount,
       page,
       pageSize,
       totalCount: allCommentsCount,
       items: result,
     };
-
-    return returnData;
-  },
+  }
 
   async create(
     userId: string,
@@ -65,11 +74,11 @@ export const commentsService = {
   ): Promise<ObjectId> {
     const userObjectId = new ObjectId(userId);
 
-    const user = await userService.getUserById(userObjectId);
+    const user = await this.userService.getUserById(userObjectId);
 
     if (!user) throw new UnauthorizedException();
 
-    await postsService.findById(postId);
+    await this.postsService.findById(postId);
 
     const payload: Omit<Comment, "id"> = {
       content,
@@ -80,42 +89,47 @@ export const commentsService = {
       createdAt: new Date().toISOString(),
     };
 
-    const commentId = await commentsCommandRepository.create(payload, postId);
+    const commentId = await this.commentsCommandRepository.create(
+      payload,
+      postId,
+    );
 
     return commentId;
-  },
+  }
 
   async update(
     userId: string,
     commentId: string,
     commentInput: CommentInputModel,
   ): Promise<void> {
-    const user = await userService.getUserById(new ObjectId(userId));
+    const user = await this.userService.getUserById(new ObjectId(userId));
 
     if (!user) throw new UnauthorizedException();
 
-    const comment = await commentsService.getCommentById(commentId);
+    const comment = await this.getCommentById(commentId);
 
     if (!comment) throw new NotFoundException();
 
-    if (comment.commentatorInfo.userId !== userId)
+    if (comment.commentatorInfo.userId !== userId) {
       throw new PermissionException();
+    }
 
-    await commentsCommandRepository.update(commentId, commentInput);
-  },
+    await this.commentsCommandRepository.update(commentId, commentInput);
+  }
 
-  async delete(userId: string, commentId: string): Promise<void | Error> {
-    const user = await userService.getUserById(new ObjectId(userId));
+  async delete(userId: string, commentId: string): Promise<void> {
+    const user = await this.userService.getUserById(new ObjectId(userId));
 
     if (!user) throw new UnauthorizedException();
 
-    const comment = await commentsService.getCommentById(commentId);
+    const comment = await this.getCommentById(commentId);
 
     if (!comment) throw new NotFoundException();
 
-    if (comment.commentatorInfo.userId !== userId)
+    if (comment.commentatorInfo.userId !== userId) {
       throw new PermissionException();
+    }
 
-    await commentsCommandRepository.delete(commentId);
-  },
-};
+    await this.commentsCommandRepository.delete(commentId);
+  }
+}

@@ -3,7 +3,7 @@ import { PaginatorData } from "../../common/types";
 import { matchedData } from "express-validator";
 import { NotFoundException } from "../../common/exceptions";
 import { Comment, CommentsQuery } from "../types";
-import { commentsService } from "../application";
+import { commentsService } from "../composition-root";
 
 export const getPostComments = async (
   req: Request<{ id: string }, {}, {}, CommentsQuery>,

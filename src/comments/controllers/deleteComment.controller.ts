@@ -4,7 +4,7 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { commentsService } from "../application";
+import { commentsService } from "../composition-root";
 import { UnauthorizedException } from "../../auth/exceptions";
 
 export const deleteComment = async (

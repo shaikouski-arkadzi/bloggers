@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { NotFoundException } from "../../common/exceptions";
 import { Comment } from "../types";
-import { commentsService } from "../application";
+import { commentsService } from "../composition-root";
 
 export const getComment = async (
   req: Request<{ id: string }>,

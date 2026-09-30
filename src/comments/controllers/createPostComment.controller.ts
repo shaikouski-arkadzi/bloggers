@@ -2,9 +2,8 @@ import { Request, Response } from "express";
 import { APIErrorResult } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { Comment, CommentInputModel } from "../types";
-import { commentsService } from "../application";
 import { UnauthorizedException } from "../../auth/exceptions";
-import { commentsQueryRepository } from "../composition-root";
+import { commentsQueryRepository, commentsService } from "../composition-root";
 
 export const createPostComment = async (
   req: Request<{ id: string }, {}, CommentInputModel>,
