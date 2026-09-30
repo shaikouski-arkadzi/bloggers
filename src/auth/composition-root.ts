@@ -4,6 +4,7 @@ import {
   userService,
 } from "../users/composition-root";
 import { AuthService } from "./application";
+import { AuthController } from "./controllers/auth.controllers";
 import { AuthCommandRepository, AuthQueryRepository } from "./repositories";
 
 export const authCommandRepository = new AuthCommandRepository();
@@ -16,3 +17,5 @@ export const authService = new AuthService(
   authCommandRepository,
   authQueryRepository,
 );
+
+export const authController = new AuthController(authService, userService);

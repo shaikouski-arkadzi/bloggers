@@ -1,14 +1,6 @@
 import { Router } from "express";
 import { resultValidationMiddleware } from "../../common/validation";
 import { AUTH_ROUTES } from "../constants";
-import {
-  confirmRegistration,
-  loginUser,
-  registerUser,
-  resendRegistrationEmail,
-  updateTokens,
-  userInfo,
-} from "../controllers";
 import { loginInputDtoValidation } from "../validation";
 import {
   jwtValidationMiddleware,
@@ -17,9 +9,19 @@ import {
 } from "../middleware";
 import { userInputDtoValidation } from "../../users/validation";
 import { emailValidation } from "../../users/validation/userInputDto.validation.middleware";
-import { logout } from "../controllers/logout.controller";
+import { authController } from "../composition-root";
 
 const router = Router();
+
+const {
+  loginUser,
+  userInfo,
+  updateTokens,
+  registerUser,
+  resendRegistrationEmail,
+  confirmRegistration,
+  logout,
+} = authController;
 
 router.post(
   AUTH_ROUTES.LOGIN,
