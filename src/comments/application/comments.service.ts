@@ -1,10 +1,7 @@
 import { ObjectId } from "mongodb";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
-import {
-  commentsCommandRepository,
-  commentsQueryRepository,
-} from "../repositories";
+
 import { Comment, CommentDb, CommentInputModel, CommentsQuery } from "../types";
 import {
   NotFoundException,
@@ -12,6 +9,10 @@ import {
 } from "../../common/exceptions";
 import { postsService } from "../../posts/composition-root";
 import { userService } from "../../users/composition-root";
+import {
+  commentsCommandRepository,
+  commentsQueryRepository,
+} from "../composition-root";
 
 export const commentsService = {
   async getCommentById(id: string): Promise<Comment | null> {

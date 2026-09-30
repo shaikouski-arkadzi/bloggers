@@ -1,9 +1,9 @@
 import { ObjectId } from "mongodb";
 import { db } from "../../db";
-import { Comment, CommentDb, CommentInputModel } from "../types";
+import { Comment, CommentInputModel } from "../types";
 import { mapCommentToCommentDB } from "../utils";
 
-export const commentsCommandRepository = {
+export class CommentsCommandRepository {
   async create(
     comment: Omit<Comment, "id">,
     postId: string,
@@ -15,7 +15,7 @@ export const commentsCommandRepository = {
       .commentsCollection.insertOne(commentDB);
 
     return result.insertedId;
-  },
+  }
 
   async update(id: string, comment: CommentInputModel): Promise<void> {
     await db.getCollections().commentsCollection.updateOne(
@@ -24,11 +24,11 @@ export const commentsCommandRepository = {
         $set: comment,
       },
     );
-  },
+  }
 
   async delete(id: string): Promise<void> {
     await db
       .getCollections()
       .commentsCollection.deleteOne({ _id: new ObjectId(id) });
-  },
-};
+  }
+}

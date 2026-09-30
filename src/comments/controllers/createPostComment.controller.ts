@@ -4,7 +4,7 @@ import { NotFoundException } from "../../common/exceptions";
 import { Comment, CommentInputModel } from "../types";
 import { commentsService } from "../application";
 import { UnauthorizedException } from "../../auth/exceptions";
-import { commentsQueryRepository } from "../repositories";
+import { commentsQueryRepository } from "../composition-root";
 
 export const createPostComment = async (
   req: Request<{ id: string }, {}, CommentInputModel>,

@@ -10,7 +10,7 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
-import { commentsQueryRepository } from "../comments/repositories";
+import { commentsQueryRepository } from "../comments/composition-root";
 import { ObjectId } from "mongodb";
 import { Comment } from "../comments/types";
 

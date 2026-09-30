@@ -17,7 +17,7 @@ interface CommentsQueryParams {
   sortDirection?: SortDirection;
 }
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
   async findCommentsByPost(
     postId: string,
     {
@@ -28,6 +28,7 @@ export const commentsQueryRepository = {
     }: CommentsQueryParams = {},
   ): Promise<Comment[]> {
     const postObjectId = new ObjectId(postId);
+
     const result = await db
       .getCollections()
       .commentsCollection.find({ postId: postObjectId })
@@ -39,7 +40,8 @@ export const commentsQueryRepository = {
       .toArray();
 
     return result.map(mapCommentDbToComment);
-  },
+  }
+
   async findByField(
     filter: Partial<WithId<CommentDb>>,
   ): Promise<Comment | null> {
@@ -50,7 +52,8 @@ export const commentsQueryRepository = {
     }
 
     return mapCommentDbToComment(result);
-  },
+  }
+
   async count(
     conditions: Partial<Record<keyof CommentDb, string | ObjectId>> = {},
   ): Promise<number> {
@@ -68,5 +71,5 @@ export const commentsQueryRepository = {
       .commentsCollection.countDocuments(filter);
 
     return result;
-  },
-};
+  }
+}
