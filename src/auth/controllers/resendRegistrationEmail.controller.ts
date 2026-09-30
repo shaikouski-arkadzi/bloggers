@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { RegistrationEmailResending } from "../types";
 import { APIErrorResult } from "../../common/types";
-import { authService } from "../application";
+import { authService } from "../composition-root";
 import { NotFoundException } from "../../common/exceptions";
 
 export const resendRegistrationEmail = async (

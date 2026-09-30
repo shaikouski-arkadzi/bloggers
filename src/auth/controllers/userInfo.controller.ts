@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { MeViewModel } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { APIErrorResult } from "../../common/types";
-import { authService } from "../application";
+import { authService } from "../composition-root";
 import { UnauthorizedException } from "../exceptions";
 
 export const userInfo = async (

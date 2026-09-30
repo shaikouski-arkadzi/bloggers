@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { NotFoundException } from "../../common/exceptions";
 import { APIErrorResult } from "../../common/types";
-import { authService } from "../application";
+import { authService } from "../composition-root";
 import { RefreshTokenExistInBlackListException } from "../exceptions";
 import { REFRESH_TOKEN_COOKIE_OPTIONS } from "../constants";
 

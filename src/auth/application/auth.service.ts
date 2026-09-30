@@ -2,10 +2,11 @@ import { randomUUID } from "node:crypto";
 import { ObjectId } from "mongodb";
 import { UserDbWithId } from "../../users/types";
 import {
-  userCommandRepository,
-  userQueryRepository,
-  userService,
-} from "../../users/composition-root";
+  UserCommandRepository,
+  UserQueryRepository,
+} from "../../users/repositories";
+import { UserService } from "../../users/application/user.service";
+import { AuthCommandRepository, AuthQueryRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
 import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
@@ -13,22 +14,27 @@ import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
 import { registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
-import {
-  authCommandRepository,
-  authQueryRepository,
-} from "../composition-root";
 
-export const authService = {
+export class AuthService {
+  constructor(
+    private userCommandRepository: UserCommandRepository,
+    private userQueryRepository: UserQueryRepository,
+    private userService: UserService,
+    private authCommandRepository: AuthCommandRepository,
+    private authQueryRepository: AuthQueryRepository,
+  ) {}
+
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
     const findedUsers =
-      await userQueryRepository.findByLoginOrEmail(loginOrEmail);
+      await this.userQueryRepository.findByLoginOrEmail(loginOrEmail);
 
     if (!findedUsers) {
       throw new NotFoundException();
     }
 
     return findedUsers;
-  },
+  }
+
   async login(credentials: LoginInputDto): Promise<UserDbWithId> {
     const findedUsers: UserDbWithId[] = [];
     const users = await this.findByLoginOrEmail(credentials.loginOrEmail);
@@ -55,9 +61,10 @@ export const authService = {
     if (findedUsers.length === 0) throw new NotFoundException();
 
     return findedUsers[0];
-  },
+  }
+
   async userInfo(userId: string): Promise<MeViewModel> {
-    const findedUser = await userService.getUserById(new ObjectId(userId));
+    const findedUser = await this.userService.getUserById(new ObjectId(userId));
 
     if (!findedUser) throw new NotFoundException();
 
@@ -66,16 +73,17 @@ export const authService = {
       login: findedUser.login,
       userId: findedUser.id,
     };
-  },
+  }
+
   async resendEmail(email: string): Promise<void> {
-    const userCode = await authQueryRepository.getUserAuthCode(email);
+    const userCode = await this.authQueryRepository.getUserAuthCode(email);
 
     if (!userCode) throw new NotFoundException();
     if (!userCode.confirmaionCode) throw new NotFoundException();
 
     const newCode = randomUUID();
 
-    await userCommandRepository.update(userCode.id, {
+    await this.userCommandRepository.update(userCode.id, {
       confirmaionCode: newCode,
       confirmationCodeExpiration: new Date(
         Date.now() + 24 * 60 * 60 * 1000,
@@ -85,22 +93,29 @@ export const authService = {
     nodemailerService
       .sendEmail(email, newCode, registerTemplateMail)
       .catch((e) => console.log(e));
-  },
+  }
+
   async confirmUser(code: string): Promise<void> {
-    const user = await authQueryRepository.getUserByCode(code);
+    const user = await this.authQueryRepository.getUserByCode(code);
 
     if (!user) throw new NotFoundException();
 
-    await userCommandRepository.update(user.id, {
+    await this.userCommandRepository.update(user.id, {
       isConfirmed: true,
       confirmaionCode: undefined,
       confirmationCodeExpiration: undefined,
     });
-  },
-  async updateTokens(): Promise<void> {},
+  }
+
+  async updateTokens(): Promise<void> {}
+
   async logout(iat: string, deviceId: string): Promise<void> {
-    await authCommandRepository.deleteSessionByIATAndDeviceId(iat, deviceId);
-  },
+    await this.authCommandRepository.deleteSessionByIATAndDeviceId(
+      iat,
+      deviceId,
+    );
+  }
+
   async createTokens(
     userId: string,
     ip: string,
@@ -108,12 +123,14 @@ export const authService = {
     deviceId?: string,
   ): Promise<Tokens> {
     const mode: "create" | "update" = deviceId ? "update" : "create";
+
     if (mode === "create") deviceId = new ObjectId().toString();
 
     const accessToken = await jwtService.createToken(
       { uuid: userId },
       TokenType.Access,
     );
+
     const refreshToken = await jwtService.createToken(
       {
         uuid: userId,
@@ -141,7 +158,7 @@ export const authService = {
     }
 
     if (mode === "create") {
-      await authCommandRepository.createSession({
+      await this.authCommandRepository.createSession({
         deviceId: decodedToken.deviceId,
         deviceName: decodedToken.deviceName,
         ip: decodedToken.ip,
@@ -149,8 +166,9 @@ export const authService = {
         userId: decodedToken.uuid,
       });
     }
+
     if (mode === "update") {
-      await authCommandRepository.updateSession({
+      await this.authCommandRepository.updateSession({
         deviceId: decodedToken.deviceId,
         deviceName: decodedToken.deviceName,
         ip: decodedToken.ip,
@@ -160,5 +178,5 @@ export const authService = {
     }
 
     return { accessToken, refreshToken };
-  },
-};
+  }
+}
