@@ -1,6 +1,7 @@
 import { postsService } from "../posts/composition-root";
 import { userService } from "../users/composition-root";
 import { CommentsService } from "./application/comments.service";
+import { CommentsController } from "./controllers/comments.controllers";
 import {
   CommentsCommandRepository,
   CommentsQueryRepository,
@@ -14,4 +15,9 @@ export const commentsService = new CommentsService(
   commentsQueryRepository,
   postsService,
   userService,
+);
+
+export const commentsController = new CommentsController(
+  commentsService,
+  commentsQueryRepository,
 );

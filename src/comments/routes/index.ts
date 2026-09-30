@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { COMMENTS_ROUTES } from "../constants";
-import { deleteComment, getComment, updateComment } from "../controllers";
+import { commentsController } from "../composition-root";
 import { jwtValidationMiddleware } from "../../auth/middleware";
 import { contentValidation } from "../validation";
 import { resultValidationMiddleware } from "../../common/validation";
 
 const router = Router();
+
+const { getComment, updateComment, deleteComment } = commentsController;
 
 router.get(COMMENTS_ROUTES.BY_ID, getComment);
 router.put(

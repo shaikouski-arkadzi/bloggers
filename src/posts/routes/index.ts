@@ -12,7 +12,7 @@ import {
   superAdminGuardMiddleware,
 } from "../../auth/middleware";
 import { COMMENT_FIELDS } from "../../comments/constants";
-import { createPostComment, getPostComments } from "../../comments/controllers";
+import { commentsController } from "../../comments/composition-root";
 import { contentValidation } from "../../comments/validation";
 import { postsController } from "../composition-root";
 
@@ -20,6 +20,8 @@ const router = Router();
 
 const { createPost, deletePost, getPost, getPosts, updatePost } =
   postsController;
+
+const { createPostComment, getPostComments } = commentsController;
 
 router.post(
   POSTS_ROUTES.ROOT,
