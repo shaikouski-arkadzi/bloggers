@@ -1,12 +1,16 @@
 import { Request, Response } from "express";
-import { db } from "../../db";
+import { TestingService } from "../application/testing.service";
 
-export const clearDB = async (_req: Request, res: Response<null>) => {
-  await db.getCollections().blogsCollection.deleteMany({});
-  await db.getCollections().postsCollection.deleteMany({});
-  await db.getCollections().usersCollection.deleteMany({});
-  await db.getCollections().commentsCollection.deleteMany({});
-  await db.getCollections().sessionsCollection.deleteMany({});
+export class TestingController {
+  constructor(private testingService: TestingService) {}
 
-  res.sendStatus(204);
-};
+  clearDB = async (req: Request, res: Response) => {
+    try {
+      await this.testingService.clearDB();
+
+      return res.sendStatus(204);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
+  };
+}
