@@ -21,6 +21,7 @@ const {
   resendRegistrationEmail,
   confirmRegistration,
   logout,
+  resetPassword,
 } = authController;
 
 router.post(
@@ -68,6 +69,14 @@ router.post(
   refreshTokenValidationMiddleware,
   resultValidationMiddleware,
   logout,
+);
+
+router.post(
+  AUTH_ROUTES.PASSWORD_RECOVERY,
+  reqRateLimitMiddleware,
+  emailValidation,
+  resultValidationMiddleware,
+  resetPassword,
 );
 
 export default router;

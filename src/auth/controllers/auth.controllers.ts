@@ -3,6 +3,7 @@ import {
   LoginInputDto,
   LoginSuccessViewModel,
   MeViewModel,
+  PasswordRecoveryInputModel,
   RegistrationConfirmationCodeModel,
   RegistrationEmailResending,
 } from "../types";
@@ -215,6 +216,32 @@ export class AuthController {
         error instanceof RefreshTokenExistInBlackListException
       ) {
         return res.sendStatus(401);
+      }
+
+      return res.sendStatus(500);
+    }
+  };
+
+  resetPassword = async (
+    req: Request<{}, {}, PasswordRecoveryInputModel>,
+    res: Response<void | APIErrorResult>,
+  ) => {
+    const { email } = req.body;
+
+    try {
+      await this.authService.resetPassword(email);
+
+      return res.sendStatus(204);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return res.status(400).json({
+          errorsMessages: [
+            {
+              message: "Ошибка при сбросе пароля",
+              field: "email",
+            },
+          ],
+        });
       }
 
       return res.sendStatus(500);

@@ -12,7 +12,7 @@ import { LoginInputDto, MeViewModel, Tokens } from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
-import { registerTemplateMail } from "../utils";
+import { recoveryPasswordTemplateMail, registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
 
 export class AuthService {
@@ -178,5 +178,25 @@ export class AuthService {
     }
 
     return { accessToken, refreshToken };
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    const user = await this.userQueryRepository.findByField({ email });
+    console.log(user);
+
+    if (!user) throw new NotFoundException();
+
+    const recoveryCode = randomUUID();
+
+    await this.userCommandRepository.update(user.id, {
+      recoveryCode,
+      recoveryCodeExpiration: new Date(
+        Date.now() + 24 * 60 * 60 * 1000,
+      ).toISOString(),
+    });
+
+    nodemailerService
+      .sendEmail(email, recoveryCode, recoveryPasswordTemplateMail)
+      .catch((e) => console.log(e));
   }
 }

@@ -11,6 +11,8 @@ export interface UserDb extends UserInputDto {
   confirmaionCode?: string;
   confirmationCodeExpiration?: string;
   isConfirmed?: boolean;
+  recoveryCode?: string;
+  recoveryCodeExpiration?: string;
 }
 
 export interface UserDbWithId extends UserDb {
