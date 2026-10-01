@@ -4,7 +4,7 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { securityService } from "../application";
+import { securityService } from "../composition-root";
 
 export const deleteDevice = async (
   req: Request<{ id: string }>,

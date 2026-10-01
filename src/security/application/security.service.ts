@@ -1,28 +1,35 @@
 import {
-  authCommandRepository,
-  authQueryRepository,
-} from "../../auth/composition-root";
+  AuthCommandRepository,
+  AuthQueryRepository,
+} from "../../auth/repositories";
 import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
 
-export const securityService = {
+export class SecurityService {
+  constructor(
+    private authCommandRepository: AuthCommandRepository,
+    private authQueryRepository: AuthQueryRepository,
+  ) {}
+
   async deleteDevice(userId: string, deviceId: string): Promise<void> {
     const sessionToDelete =
-      await authQueryRepository.getSessionByDeviceId(deviceId);
+      await this.authQueryRepository.getSessionByDeviceId(deviceId);
 
     if (!sessionToDelete) throw new NotFoundException();
 
     if (sessionToDelete.userId !== userId) throw new PermissionException();
 
-    await authCommandRepository.deleteSessionByDeviceId(deviceId);
-  },
+    await this.authCommandRepository.deleteSessionByDeviceId(deviceId);
+  }
+
   async deleteDevicesExceptCurrent(
     userId: string,
     deviceId: string,
   ): Promise<void> {
-    const userSessions = await authQueryRepository.getSessionsByUserId(userId);
+    const userSessions =
+      await this.authQueryRepository.getSessionsByUserId(userId);
 
     if (!userSessions) throw new NotFoundException();
 
@@ -32,8 +39,8 @@ export const securityService = {
 
     await Promise.all(
       sessionsForDelete.map((session) =>
-        authCommandRepository.deleteSessionByDeviceId(session.deviceId),
+        this.authCommandRepository.deleteSessionByDeviceId(session.deviceId),
       ),
     );
-  },
-};
+  }
+}
