@@ -8,6 +8,7 @@ export const AUTH_ROUTES = {
   REGISTRATION_EMAIL_RESENDING: "/registration-email-resending",
   REGISTRATION_CONFIRMATION: "/registration-confirmation",
   PASSWORD_RECOVERY: "/password-recovery",
+  NEW_PASSWORD: "/new-password",
   REFRESH_TOKEN: "/refresh-token",
   LOGOUT: "/logout",
 } as const;

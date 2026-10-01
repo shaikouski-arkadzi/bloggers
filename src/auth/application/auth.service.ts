@@ -8,7 +8,12 @@ import {
 import { UserService } from "../../users/application/user.service";
 import { AuthCommandRepository, AuthQueryRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
-import { LoginInputDto, MeViewModel, Tokens } from "../types";
+import {
+  LoginInputDto,
+  MeViewModel,
+  NewPasswordRecoveryDto,
+  Tokens,
+} from "../types";
 import { bcryptService } from "./bcrypt.service";
 import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
@@ -96,7 +101,7 @@ export class AuthService {
   }
 
   async confirmUser(code: string): Promise<void> {
-    const user = await this.authQueryRepository.getUserByCode(code);
+    const user = await this.authQueryRepository.getUserByConfirmaionCode(code);
 
     if (!user) throw new NotFoundException();
 
@@ -198,5 +203,23 @@ export class AuthService {
     nodemailerService
       .sendEmail(email, recoveryCode, recoveryPasswordTemplateMail)
       .catch((e) => console.log(e));
+  }
+
+  async setNewPassword(newPasswordDto: NewPasswordRecoveryDto): Promise<void> {
+    const user = await this.authQueryRepository.getUserByRecoveryCode(
+      newPasswordDto.recoveryCode,
+    );
+
+    if (!user) throw new NotFoundException();
+
+    const hashPassword = await bcryptService.generateHash(
+      newPasswordDto.newPassword,
+    );
+
+    await this.userCommandRepository.update(user.id, {
+      password: hashPassword,
+      recoveryCode: undefined,
+      recoveryCodeExpiration: undefined,
+    });
   }
 }

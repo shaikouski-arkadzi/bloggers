@@ -14,10 +14,22 @@ export class AuthQueryRepository {
     return mapUserDbToAuth(result);
   }
 
-  async getUserByCode(code: string): Promise<IAuthCode | null> {
+  async getUserByConfirmaionCode(code: string): Promise<IAuthCode | null> {
     const result = await db
       .getCollections()
       .usersCollection.findOne({ confirmaionCode: code });
+
+    if (!result) {
+      return null;
+    }
+
+    return mapUserDbToAuth(result);
+  }
+
+  async getUserByRecoveryCode(code: string): Promise<IAuthCode | null> {
+    const result = await db
+      .getCollections()
+      .usersCollection.findOne({ recoveryCode: code });
 
     if (!result) {
       return null;

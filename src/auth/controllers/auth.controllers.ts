@@ -3,6 +3,7 @@ import {
   LoginInputDto,
   LoginSuccessViewModel,
   MeViewModel,
+  NewPasswordRecoveryInputModel,
   PasswordRecoveryInputModel,
   RegistrationConfirmationCodeModel,
   RegistrationEmailResending,
@@ -239,6 +240,32 @@ export class AuthController {
             {
               message: "Ошибка при сбросе пароля",
               field: "email",
+            },
+          ],
+        });
+      }
+
+      return res.sendStatus(500);
+    }
+  };
+
+  newPassword = async (
+    req: Request<{}, {}, NewPasswordRecoveryInputModel>,
+    res: Response<void | APIErrorResult>,
+  ) => {
+    const { body } = req;
+
+    try {
+      await this.authService.setNewPassword(body);
+
+      return res.sendStatus(204);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return res.status(400).json({
+          errorsMessages: [
+            {
+              message: "Ошибка при сбросе пароля",
+              field: "recoveryCode",
             },
           ],
         });

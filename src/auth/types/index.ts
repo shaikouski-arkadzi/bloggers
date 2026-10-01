@@ -61,3 +61,13 @@ export interface Tokens {
 export interface PasswordRecoveryInputModel {
   email: string;
 }
+
+export interface NewPasswordRecoveryInputModel {
+  newPassword: string;
+  recoveryCode: string;
+}
+
+export interface NewPasswordRecoveryDto {
+  newPassword: string;
+  recoveryCode: string;
+}
