@@ -4,14 +4,14 @@ import {
   idValidation,
   resultValidationMiddleware,
 } from "../../common/validation";
-import {
-  deleteDevice,
-  deleteDevicesExceptCurrent,
-  getDevices,
-} from "../controllers";
+
 import { refreshTokenValidationMiddleware } from "../../auth/middleware";
+import { securityController } from "../composition-root";
 
 const router = Router();
+
+const { getDevices, deleteDevice, deleteDevicesExceptCurrent } =
+  securityController;
 
 router.get(
   SECURITY_ROUTES.DEVICES,
