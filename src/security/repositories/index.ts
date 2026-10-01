@@ -1,2 +1,2 @@
-export { securityQueryRepository } from "./security.query.repository";
-export { securityCommandRepository } from "./security.command.repository";
+export { SecurityQueryRepository } from "./security.query.repository";
+export { SecurityCommandRepository } from "./security.command.repository";

@@ -1,1 +1,3 @@
-export const securityCommandRepository = {};
+export class SecurityCommandRepository {
+  constructor() {}
+}

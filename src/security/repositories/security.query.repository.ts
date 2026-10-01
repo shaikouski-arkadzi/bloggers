@@ -3,7 +3,7 @@ import { db } from "../../db";
 import { mapSessionsDBToDevice } from "../utils";
 import { DeviceViewModel } from "../types";
 
-export const securityQueryRepository = {
+export class SecurityQueryRepository {
   async getUserDevices(userId: string): Promise<DeviceViewModel[] | null> {
     const result = await db
       .getCollections()
@@ -15,5 +15,5 @@ export const securityQueryRepository = {
     }
 
     return result.map(mapSessionsDBToDevice);
-  },
-};
+  }
+}

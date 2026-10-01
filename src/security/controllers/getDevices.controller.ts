@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { APIErrorResult } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
-import { securityQueryRepository } from "../repositories";
+import { securityQueryRepository } from "../composition-root";
 import { DeviceViewModel } from "../types";
 
 export const getDevices = async (
