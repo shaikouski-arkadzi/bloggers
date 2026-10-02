@@ -5,9 +5,8 @@ export const newPasswordValidation = body("newPassword")
   .withMessage("Поле обязательное")
   .isString()
   .withMessage("Поле должно быть типом string")
-  .trim()
-  .notEmpty()
-  .withMessage("Поле не должно быть пустым");
+  .isLength({ min: 6, max: 20 })
+  .withMessage("Пароль должен содержать от 6 до 20 символов");
 
 export const recoveryCodeValidation = body("recoveryCode")
   .exists()
