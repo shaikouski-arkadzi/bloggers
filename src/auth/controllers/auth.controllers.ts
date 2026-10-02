@@ -234,17 +234,6 @@ export class AuthController {
 
       return res.sendStatus(204);
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        return res.status(400).json({
-          errorsMessages: [
-            {
-              message: "Ошибка при сбросе пароля",
-              field: "email",
-            },
-          ],
-        });
-      }
-
       return res.sendStatus(500);
     }
   };

@@ -1,2 +1,2 @@
 export const recoveryPasswordTemplateMail = (code: string): string =>
-  `<a href='https://somesite.com/confirm-email?code=${code}'>recover password</a>`;
+  `<a href='https://somesite.com/password-recovery?code=${code}'>recover password</a>`;

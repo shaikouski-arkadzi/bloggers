@@ -187,9 +187,8 @@ export class AuthService {
 
   async resetPassword(email: string): Promise<void> {
     const user = await this.userQueryRepository.findByField({ email });
-    console.log(user);
 
-    if (!user) throw new NotFoundException();
+    if (!user) return;
 
     const recoveryCode = randomUUID();
 
