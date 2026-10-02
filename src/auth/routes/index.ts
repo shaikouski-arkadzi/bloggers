@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { resultValidationMiddleware } from "../../common/validation";
 import { AUTH_ROUTES } from "../constants";
-import { loginInputDtoValidation, newPasswordValidation } from "../validation";
+import {
+  loginInputDtoValidation,
+  newPasswordRecoveryInputModelValidation,
+} from "../validation";
 import {
   jwtValidationMiddleware,
   reqRateLimitMiddleware,
@@ -10,7 +13,6 @@ import {
 import { userInputDtoValidation } from "../../users/validation";
 import { emailValidation } from "../../users/validation/userInputDto.validation.middleware";
 import { authController } from "../composition-root";
-import { passwordValidation } from "../validation/loginInputDto.validation.middleware";
 
 const router = Router();
 
@@ -23,6 +25,7 @@ const {
   confirmRegistration,
   logout,
   resetPassword,
+  newPassword,
 } = authController;
 
 router.post(
@@ -83,9 +86,9 @@ router.post(
 router.post(
   AUTH_ROUTES.NEW_PASSWORD,
   reqRateLimitMiddleware,
-  newPasswordValidation,
+  newPasswordRecoveryInputModelValidation,
   resultValidationMiddleware,
-  resetPassword,
+  newPassword,
 );
 
 export default router;

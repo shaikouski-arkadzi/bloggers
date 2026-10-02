@@ -1,2 +1,2 @@
 export { loginInputDtoValidation } from "./loginInputDto.validation.middleware";
-export { newPasswordValidation } from "./newPassword.validation.middleware";
+export { newPasswordRecoveryInputModelValidation } from "./newPasswordRecoveryInputModel.validation.middleware";
