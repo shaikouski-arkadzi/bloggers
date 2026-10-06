@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import { PaginatorData } from "../../common/types";
 import { Post, PostInputDto, PostsQuery, UpdatedPost } from "../types";
 import { createPostDb, updatePostDb } from "../utils";
@@ -7,11 +8,19 @@ import { BlogsService } from "../../blogs/application/blogs.service";
 import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
 import { BlogsQueryRepository } from "../../blogs/repositories";
 
+@injectable()
 export class PostsService {
   constructor(
+    @inject(PostsCommandRepository)
     private postsCommandRepository: PostsCommandRepository,
+
+    @inject(PostsQueryRepository)
     private postsQueryRepository: PostsQueryRepository,
+
+    @inject(BlogsQueryRepository)
     private blogsQueryRepository: BlogsQueryRepository,
+
+    @inject(BlogsService)
     private blogsService: BlogsService,
   ) {}
 

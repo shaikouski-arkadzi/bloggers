@@ -12,7 +12,8 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
-import { postsQueryRepository } from "../posts/composition-root";
+import { container } from "../settings/container";
+import { PostsQueryRepository } from "../posts/repositories";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -68,7 +69,7 @@ describe("GET /posts", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    postsCount = await postsQueryRepository.count();
+    postsCount = await container.get(PostsQueryRepository).count();
   }, 30000);
 
   afterAll(async () => {
@@ -92,7 +93,9 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allPosts = await postsQueryRepository.find({ page, pageSize });
+    const allPosts = await container
+      .get(PostsQueryRepository)
+      .find({ page, pageSize });
     expect(allPosts.length).toBe(response.body.items.length);
   });
 
@@ -116,7 +119,9 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postsQueryRepository.find({ page, pageSize });
+    const allBlogs = await container
+      .get(PostsQueryRepository)
+      .find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -139,7 +144,9 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postsQueryRepository.find({ page, pageSize });
+    const allBlogs = await container
+      .get(PostsQueryRepository)
+      .find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -163,7 +170,9 @@ describe("GET /posts", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postsQueryRepository.find({ page, pageSize });
+    const allBlogs = await container
+      .get(PostsQueryRepository)
+      .find({ page, pageSize });
     expect(allBlogs.length).toBe(response.body.items.length);
   });
 
@@ -192,7 +201,7 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postsQueryRepository.find({
+    const allBlogs = await container.get(PostsQueryRepository).find({
       page,
       pageSize,
       sortBy,
@@ -226,7 +235,7 @@ describe("GET /posts", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await postsQueryRepository.find({
+    const allBlogs = await container.get(PostsQueryRepository).find({
       page,
       pageSize,
       sortBy,

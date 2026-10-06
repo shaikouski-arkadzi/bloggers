@@ -1,6 +1,7 @@
+import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { Post } from "../types";
-import { ObjectId } from "mongodb";
 import { SortDirection, SortBy } from "../../common/types";
 import {
   PAGE_DAFAULT,
@@ -17,6 +18,7 @@ interface PostsQueryParams {
   sortDirection?: SortDirection;
 }
 
+@injectable()
 export class PostsQueryRepository {
   async find({
     page = PAGE_DAFAULT,

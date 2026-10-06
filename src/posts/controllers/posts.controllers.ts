@@ -1,17 +1,22 @@
 import { Request, Response } from "express";
+import { inject, injectable } from "inversify";
+import { matchedData } from "express-validator";
 import { APIErrorResult, PaginatorData } from "../../common/types";
 import { Post, PostInputDto, PostsQuery } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
 import { PostsService } from "../application/posts.service";
 import { PostsQueryRepository } from "../repositories";
-import { matchedData } from "express-validator";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
+@injectable()
 export class PostsController {
   constructor(
+    @inject(PostsService)
     private postsService: PostsService,
+
+    @inject(PostsQueryRepository)
     private postsQueryRepository: PostsQueryRepository,
   ) {}
 

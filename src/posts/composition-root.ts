@@ -1,24 +1,13 @@
-import { BlogsService } from "../blogs/application/blogs.service";
-import { BlogsQueryRepository } from "../blogs/repositories";
 import { container } from "../settings/container";
 import { PostsService } from "./application/posts.service";
 import { PostsController } from "./controllers/posts.controllers";
 import { PostsCommandRepository, PostsQueryRepository } from "./repositories";
 
-const blogsQueryRepository = container.get(BlogsQueryRepository);
-const blogsService = container.get(BlogsService);
+container.bind(PostsCommandRepository).to(PostsCommandRepository);
+container.bind(PostsQueryRepository).to(PostsQueryRepository);
 
-export const postsCommandRepository = new PostsCommandRepository();
-export const postsQueryRepository = new PostsQueryRepository();
+container.bind(PostsService).to(PostsService);
 
-export const postsService = new PostsService(
-  postsCommandRepository,
-  postsQueryRepository,
-  blogsQueryRepository,
-  blogsService,
-);
+container.bind(PostsController).to(PostsController);
 
-export const postsController = new PostsController(
-  postsService,
-  postsQueryRepository,
-);
+export const postsController = container.get(PostsController);

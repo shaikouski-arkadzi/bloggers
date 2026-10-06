@@ -1,4 +1,5 @@
-import { postsService } from "../posts/composition-root";
+import { PostsService } from "../posts/application/posts.service";
+import { container } from "../settings/container";
 import { userService } from "../users/composition-root";
 import { CommentsService } from "./application/comments.service";
 import { CommentsController } from "./controllers/comments.controllers";
@@ -13,7 +14,7 @@ export const commentsQueryRepository = new CommentsQueryRepository();
 export const commentsService = new CommentsService(
   commentsCommandRepository,
   commentsQueryRepository,
-  postsService,
+  container.get(PostsService),
   userService,
 );
 
