@@ -1,9 +1,10 @@
 import request from "supertest";
 import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
+import { container } from "../settings/container";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { blogsQueryRepository } from "../blogs/composition-root";
+import { BlogsQueryRepository } from "../blogs/repositories";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -52,7 +53,7 @@ describe("POST /blogs", () => {
       ),
     });
 
-    const allBlogs = await blogsQueryRepository.find();
+    const allBlogs = await container.get(BlogsQueryRepository).find();
     expect(allBlogs.length).toBe(1);
   });
 

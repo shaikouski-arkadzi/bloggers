@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { Blog } from "../types";
 import { SortDirection, SortBy } from "../../common/types";
@@ -18,6 +19,7 @@ interface BlogsQueryParams {
   searchNameTerm?: string | null;
 }
 
+@injectable()
 export class BlogsQueryRepository {
   async find({
     page = PAGE_DAFAULT,

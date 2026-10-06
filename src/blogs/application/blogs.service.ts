@@ -1,12 +1,17 @@
+import { injectable, inject } from "inversify";
 import { createBlogDb } from "../utils";
 import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogsCommandRepository, BlogsQueryRepository } from "../repositories";
 
+@injectable()
 export class BlogsService {
   constructor(
+    @inject(BlogsCommandRepository)
     private blogsCommandRepository: BlogsCommandRepository,
+
+    @inject(BlogsQueryRepository)
     private blogsQueryRepository: BlogsQueryRepository,
   ) {}
 

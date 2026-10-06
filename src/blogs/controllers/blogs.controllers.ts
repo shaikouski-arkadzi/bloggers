@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { injectable, inject } from "inversify";
 import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { APIErrorResult, PaginatorData } from "../../common/types";
 import { SavingException } from "../exceptions";
@@ -7,9 +8,13 @@ import { BlogsQueryRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
 import { matchedData } from "express-validator";
 
+@injectable()
 export class BlogsController {
   constructor(
+    @inject(BlogsService)
     private blogsService: BlogsService,
+
+    @inject(BlogsQueryRepository)
     private blogsQueryRepository: BlogsQueryRepository,
   ) {}
 
