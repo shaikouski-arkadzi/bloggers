@@ -8,7 +8,8 @@ import {
   jwtService,
   TokenType,
 } from "../auth/application/jwt.service";
-import { authQueryRepository } from "../auth/composition-root";
+import { container } from "../settings/container";
+import { AuthQueryRepository } from "../auth/repositories";
 
 const app = express();
 
@@ -92,10 +93,9 @@ describe("POST /auth/logout", () => {
       .set("Cookie", refreshCookie)
       .expect(204);
 
-    const oldSession = await authQueryRepository.getSessionByIATAndDeviceId(
-      iat,
-      deviceId,
-    );
+    const oldSession = await container
+      .get(AuthQueryRepository)
+      .getSessionByIATAndDeviceId(iat, deviceId);
 
     expect(oldSession).toBeNull();
   });

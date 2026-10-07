@@ -3,7 +3,8 @@ import { ObjectId } from "mongodb";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
 import { userQueryRepository } from "../../users/composition-root";
-import { authQueryRepository } from "../composition-root";
+import { container } from "../../settings/container";
+import { AuthQueryRepository } from "../repositories";
 
 export const refreshTokenValidationMiddleware = async (
   req: Request,
@@ -51,10 +52,9 @@ export const refreshTokenValidationMiddleware = async (
       return;
     }
 
-    const session = await authQueryRepository.getSessionByIATAndDeviceId(
-      iat,
-      deviceId,
-    );
+    const session = await container
+      .get(AuthQueryRepository)
+      .getSessionByIATAndDeviceId(iat, deviceId);
 
     if (!session) {
       res.status(401).send("session not found");

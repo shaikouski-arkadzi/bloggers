@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { injectable, inject } from "inversify";
 import {
   LoginInputDto,
   LoginSuccessViewModel,
@@ -21,9 +22,13 @@ import { UserService } from "../../users/application/user.service";
 import { UserInputDto } from "../../users/types";
 import { SavingException } from "../../users/exceptions";
 
+@injectable()
 export class AuthController {
   constructor(
+    @inject(AuthService)
     private authService: AuthService,
+
+    @inject(UserService)
     private userService: UserService,
   ) {}
 

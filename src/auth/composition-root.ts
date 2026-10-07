@@ -1,21 +1,13 @@
-import {
-  userCommandRepository,
-  userQueryRepository,
-  userService,
-} from "../users/composition-root";
+import { container } from "../settings/container";
 import { AuthService } from "./application";
 import { AuthController } from "./controllers/auth.controllers";
 import { AuthCommandRepository, AuthQueryRepository } from "./repositories";
 
-export const authCommandRepository = new AuthCommandRepository();
-export const authQueryRepository = new AuthQueryRepository();
+container.bind(AuthCommandRepository).to(AuthCommandRepository);
+container.bind(AuthQueryRepository).to(AuthQueryRepository);
 
-export const authService = new AuthService(
-  userCommandRepository,
-  userQueryRepository,
-  userService,
-  authCommandRepository,
-  authQueryRepository,
-);
+container.bind(AuthService).to(AuthService);
 
-export const authController = new AuthController(authService, userService);
+container.bind(AuthController).to(AuthController);
+
+export const authController = container.get(AuthController);

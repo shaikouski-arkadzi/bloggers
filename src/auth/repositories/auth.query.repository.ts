@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
 import { IAuthCode, SessionModel } from "../types";
 
+@injectable()
 export class AuthQueryRepository {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
     const result = await db.getCollections().usersCollection.findOne({ email });

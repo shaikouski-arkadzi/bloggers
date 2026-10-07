@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { ObjectId } from "mongodb";
+import { inject, injectable } from "inversify";
 import { UserDbWithId } from "../../users/types";
 import {
   UserCommandRepository,
@@ -20,12 +21,22 @@ import { nodemailerService } from "./nodemailer.service";
 import { recoveryPasswordTemplateMail, registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
 
+@injectable()
 export class AuthService {
   constructor(
+    @inject(UserCommandRepository)
     private userCommandRepository: UserCommandRepository,
+
+    @inject(UserQueryRepository)
     private userQueryRepository: UserQueryRepository,
+
+    @inject(UserService)
     private userService: UserService,
+
+    @inject(AuthCommandRepository)
     private authCommandRepository: AuthCommandRepository,
+
+    @inject(AuthQueryRepository)
     private authQueryRepository: AuthQueryRepository,
   ) {}
 
