@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { inject, injectable } from "inversify";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
 import { Comment, CommentInputModel, CommentsQuery } from "../types";
@@ -13,11 +14,19 @@ import {
   CommentsQueryRepository,
 } from "../repositories";
 
+@injectable()
 export class CommentsService {
   constructor(
+    @inject(CommentsCommandRepository)
     private commentsCommandRepository: CommentsCommandRepository,
+
+    @inject(CommentsQueryRepository)
     private commentsQueryRepository: CommentsQueryRepository,
+
+    @inject(PostsService)
     private postsService: PostsService,
+
+    @inject(UserService)
     private userService: UserService,
   ) {}
 

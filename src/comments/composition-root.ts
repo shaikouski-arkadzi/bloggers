@@ -1,6 +1,4 @@
-import { PostsService } from "../posts/application/posts.service";
 import { container } from "../settings/container";
-import { UserService } from "../users/application/user.service";
 import { CommentsService } from "./application/comments.service";
 import { CommentsController } from "./controllers/comments.controllers";
 import {
@@ -8,17 +6,11 @@ import {
   CommentsQueryRepository,
 } from "./repositories";
 
-export const commentsCommandRepository = new CommentsCommandRepository();
-export const commentsQueryRepository = new CommentsQueryRepository();
+container.bind(CommentsCommandRepository).to(CommentsCommandRepository);
+container.bind(CommentsQueryRepository).to(CommentsQueryRepository);
 
-export const commentsService = new CommentsService(
-  commentsCommandRepository,
-  commentsQueryRepository,
-  container.get(PostsService),
-  container.get(UserService),
-);
+container.bind(CommentsService).to(CommentsService);
 
-export const commentsController = new CommentsController(
-  commentsService,
-  commentsQueryRepository,
-);
+container.bind(CommentsController).to(CommentsController);
+
+export const commentsController = container.get(CommentsController);

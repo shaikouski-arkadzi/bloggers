@@ -10,9 +10,10 @@ import {
   PAGE_SIZE_DAFAULT,
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
-import { commentsQueryRepository } from "../comments/composition-root";
+import { CommentsQueryRepository } from "../comments/repositories";
 import { ObjectId } from "mongodb";
 import { Comment } from "../comments/types";
+import { container } from "../settings/container";
 
 const app = express();
 
@@ -111,7 +112,7 @@ describe("GET /posts/:postId/comments", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    commentsCount = await commentsQueryRepository.count({
+    commentsCount = await container.get(CommentsQueryRepository).count({
       postId: new ObjectId(createdPostId),
     });
   }, 100000);
@@ -139,10 +140,9 @@ describe("GET /posts/:postId/comments", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      { page, pageSize },
-    );
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, { page, pageSize });
     expect(allComments.length).toBe(response.body.items.length);
   });
 
@@ -166,10 +166,9 @@ describe("GET /posts/:postId/comments", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      { page, pageSize },
-    );
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, { page, pageSize });
     expect(allComments.length).toBe(response.body.items.length);
   });
 
@@ -193,10 +192,9 @@ describe("GET /posts/:postId/comments", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      { page, pageSize },
-    );
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, { page, pageSize });
     expect(allComments.length).toBe(response.body.items.length);
   });
 
@@ -222,10 +220,9 @@ describe("GET /posts/:postId/comments", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      { page, pageSize },
-    );
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, { page, pageSize });
     expect(allComments.length).toBe(response.body.items.length);
   });
 
@@ -254,15 +251,14 @@ describe("GET /posts/:postId/comments", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      {
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, {
         page,
         pageSize,
         sortBy,
         sortDirection,
-      },
-    );
+      });
     expect(allComments.length).toBe(response.body.items.length);
   });
 
@@ -291,15 +287,14 @@ describe("GET /posts/:postId/comments", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allComments = await commentsQueryRepository.findCommentsByPost(
-      createdPostId,
-      {
+    const allComments = await container
+      .get(CommentsQueryRepository)
+      .findCommentsByPost(createdPostId, {
         page,
         pageSize,
         sortBy,
         sortDirection,
-      },
-    );
+      });
     expect(allComments.length).toBe(response.body.items.length);
   });
 

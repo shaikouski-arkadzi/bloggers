@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { inject, injectable } from "inversify";
 import { matchedData } from "express-validator";
 import { APIErrorResult, PaginatorData } from "../../common/types";
 import {
@@ -10,9 +11,13 @@ import { UnauthorizedException } from "../../auth/exceptions";
 import { CommentsService } from "../application/comments.service";
 import { CommentsQueryRepository } from "../repositories";
 
+@injectable()
 export class CommentsController {
   constructor(
+    @inject(CommentsService)
     private commentsService: CommentsService,
+
+    @inject(CommentsQueryRepository)
     private commentsQueryRepository: CommentsQueryRepository,
   ) {}
 

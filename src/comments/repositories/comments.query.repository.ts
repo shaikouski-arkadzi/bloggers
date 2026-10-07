@@ -1,4 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
+import { injectable } from "inversify";
 import {
   PAGE_DAFAULT,
   PAGE_SIZE_DAFAULT,
@@ -17,6 +18,7 @@ interface CommentsQueryParams {
   sortDirection?: SortDirection;
 }
 
+@injectable()
 export class CommentsQueryRepository {
   async findCommentsByPost(
     postId: string,

@@ -1,8 +1,10 @@
 import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { Comment, CommentInputModel } from "../types";
 import { mapCommentToCommentDB } from "../utils";
 
+@injectable()
 export class CommentsCommandRepository {
   async create(
     comment: Omit<Comment, "id">,
