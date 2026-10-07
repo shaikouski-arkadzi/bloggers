@@ -1,7 +1,9 @@
 import { ObjectId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { UserDb } from "../types";
 
+@injectable()
 export class UserCommandRepository {
   async create(user: UserDb): Promise<ObjectId> {
     const result = await db.getCollections().usersCollection.insertOne(user);

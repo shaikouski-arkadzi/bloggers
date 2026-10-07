@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { inject, injectable } from "inversify";
 import { matchedData } from "express-validator";
 import { User, UserInputDto, UsersQuery } from "../types";
 import { APIErrorResult, PaginatorData } from "../../common/types";
@@ -7,9 +8,13 @@ import { UserService } from "../application/user.service";
 import { UserQueryRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
 
+@injectable()
 export class UsersController {
   constructor(
+    @inject(UserService)
     private userService: UserService,
+
+    @inject(UserQueryRepository)
     private userQueryRepository: UserQueryRepository,
   ) {}
 

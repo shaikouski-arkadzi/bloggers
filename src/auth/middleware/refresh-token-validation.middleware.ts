@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
+import { container } from "../../settings/container";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
-import { userQueryRepository } from "../../users/composition-root";
-import { container } from "../../settings/container";
+import { UserQueryRepository } from "../../users/repositories";
 import { AuthQueryRepository } from "../repositories";
 
 export const refreshTokenValidationMiddleware = async (
@@ -38,7 +38,7 @@ export const refreshTokenValidationMiddleware = async (
     const userId = verified.uuid;
     const { iat, deviceId } = verified;
 
-    const user = await userQueryRepository.findByField({
+    const user = await container.get(UserQueryRepository).findByField({
       _id: new ObjectId(userId),
     });
 

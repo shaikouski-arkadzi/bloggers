@@ -1,4 +1,5 @@
 import { WithId } from "mongodb";
+import { injectable } from "inversify";
 import { db } from "../../db";
 import { User, UserDb, UserDbWithId } from "../types";
 import { mapUserDbToUser } from "../utils";
@@ -19,6 +20,7 @@ interface UsersQueryParams {
   searchEmailTerm?: string | null;
 }
 
+@injectable()
 export class UserQueryRepository {
   async find({
     page = PAGE_DAFAULT,

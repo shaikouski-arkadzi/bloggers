@@ -10,8 +10,9 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../common/constants";
-import { userQueryRepository } from "../users/composition-root";
 import { User } from "../users/types";
+import { container } from "../settings/container";
+import { UserQueryRepository } from "../users/repositories";
 
 const app = express();
 
@@ -50,7 +51,7 @@ describe("GET /users", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    usersCount = await userQueryRepository.count();
+    usersCount = await container.get(UserQueryRepository).count();
   }, 30000);
 
   afterAll(async () => {
@@ -74,7 +75,9 @@ describe("GET /users", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({ page, pageSize });
+    const allUsers = await container
+      .get(UserQueryRepository)
+      .find({ page, pageSize });
     expect(allUsers.length).toBe(response.body.items.length);
   });
 
@@ -98,7 +101,9 @@ describe("GET /users", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({ page, pageSize });
+    const allUsers = await container
+      .get(UserQueryRepository)
+      .find({ page, pageSize });
     expect(allUsers.length).toBe(response.body.items.length);
   });
 
@@ -121,7 +126,9 @@ describe("GET /users", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({ page, pageSize });
+    const allUsers = await container
+      .get(UserQueryRepository)
+      .find({ page, pageSize });
     expect(allUsers.length).toBe(response.body.items.length);
   });
 
@@ -145,7 +152,9 @@ describe("GET /users", () => {
       items: responseCreateData.slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({ page, pageSize });
+    const allUsers = await container
+      .get(UserQueryRepository)
+      .find({ page, pageSize });
     expect(allUsers.length).toBe(response.body.items.length);
   });
 
@@ -174,7 +183,7 @@ describe("GET /users", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({
+    const allUsers = await container.get(UserQueryRepository).find({
       page,
       pageSize,
       sortBy,
@@ -208,7 +217,7 @@ describe("GET /users", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await userQueryRepository.find({
+    const allUsers = await container.get(UserQueryRepository).find({
       page,
       pageSize,
       sortBy,
@@ -227,7 +236,9 @@ describe("GET /users", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    usersCount = await userQueryRepository.count(searchLoginTerm);
+    usersCount = await container
+      .get(UserQueryRepository)
+      .count(searchLoginTerm);
 
     const pagesCount = Math.ceil(usersCount / pageSize);
 
@@ -252,7 +263,9 @@ describe("GET /users", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    usersCount = await userQueryRepository.count(null, searchEmailTerm);
+    usersCount = await container
+      .get(UserQueryRepository)
+      .count(null, searchEmailTerm);
 
     const pagesCount = Math.ceil(usersCount / pageSize);
 
@@ -280,10 +293,9 @@ describe("GET /users", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    usersCount = await userQueryRepository.count(
-      searchLoginTerm,
-      searchEmailTerm,
-    );
+    usersCount = await container
+      .get(UserQueryRepository)
+      .count(searchLoginTerm, searchEmailTerm);
 
     const pagesCount = Math.ceil(usersCount / pageSize);
 

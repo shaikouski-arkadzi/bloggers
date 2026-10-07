@@ -2,10 +2,11 @@ import request from "supertest";
 import express from "express";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { userQueryRepository } from "../users/composition-root";
 import { nodemailerService } from "../auth/application";
 import { registerTemplateMail } from "../auth/utils";
 import { resetReqRateLimit } from "../auth/middleware";
+import { container } from "../settings/container";
+import { UserQueryRepository } from "../users/repositories";
 
 const app = express();
 
@@ -39,7 +40,7 @@ describe("POST /auth/registration-email-resending", () => {
 
     await request(app).post("/auth/registration").send(userBody).expect(204);
 
-    const allUsers = await userQueryRepository.find();
+    const allUsers = await container.get(UserQueryRepository).find();
     expect(allUsers.length).toBe(1);
 
     const body = {

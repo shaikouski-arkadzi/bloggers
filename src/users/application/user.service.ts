@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { inject, injectable } from "inversify";
 import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { PaginatorData } from "../../common/types";
@@ -8,9 +9,13 @@ import { mapUserDbToRegisterUser } from "../utils";
 import { registerTemplateMail } from "../../auth/utils";
 import { UserCommandRepository, UserQueryRepository } from "../repositories";
 
+@injectable()
 export class UserService {
   constructor(
+    @inject(UserCommandRepository)
     private userCommandRepository: UserCommandRepository,
+
+    @inject(UserQueryRepository)
     private userQueryRepository: UserQueryRepository,
   ) {}
 
