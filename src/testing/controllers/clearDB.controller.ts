@@ -1,8 +1,13 @@
 import { Request, Response } from "express";
 import { TestingService } from "../application/testing.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class TestingController {
-  constructor(private testingService: TestingService) {}
+  constructor(
+    @inject(TestingService)
+    private testingService: TestingService,
+  ) {}
 
   clearDB = async (req: Request, res: Response) => {
     try {

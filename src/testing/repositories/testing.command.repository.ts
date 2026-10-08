@@ -1,5 +1,7 @@
+import { injectable } from "inversify";
 import { db } from "../../db";
 
+@injectable()
 export class TestingCommandRepository {
   constructor() {}
 

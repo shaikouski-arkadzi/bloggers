@@ -1,3 +1,4 @@
+import { container } from "../settings/container";
 import { TestingService } from "./application/testing.service";
 import { TestingController } from "./controllers/clearDB.controller";
 import {
@@ -5,9 +6,11 @@ import {
   TestingQueryRepository,
 } from "./repositories";
 
-export const testingCommandRepository = new TestingCommandRepository();
-export const testingQueryRepository = new TestingQueryRepository();
+container.bind(TestingCommandRepository).to(TestingCommandRepository);
+container.bind(TestingQueryRepository).to(TestingQueryRepository);
 
-export const testingService = new TestingService(testingCommandRepository);
+container.bind(TestingService).to(TestingService);
 
-export const testingController = new TestingController(testingService);
+container.bind(TestingController).to(TestingController);
+
+export const testingController = container.get(TestingController);
