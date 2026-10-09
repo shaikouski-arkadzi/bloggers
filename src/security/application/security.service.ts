@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import {
   AuthCommandRepository,
   AuthQueryRepository,
@@ -7,9 +8,13 @@ import {
   PermissionException,
 } from "../../common/exceptions";
 
+@injectable()
 export class SecurityService {
   constructor(
+    @inject(AuthCommandRepository)
     private authCommandRepository: AuthCommandRepository,
+
+    @inject(AuthQueryRepository)
     private authQueryRepository: AuthQueryRepository,
   ) {}
 

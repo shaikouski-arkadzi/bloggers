@@ -7,10 +7,15 @@ import {
 import { DeviceViewModel } from "../types";
 import { SecurityService } from "../application/security.service";
 import { SecurityQueryRepository } from "../repositories";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class SecurityController {
   constructor(
+    @inject(SecurityService)
     private securityService: SecurityService,
+
+    @inject(SecurityQueryRepository)
     private securityQueryRepository: SecurityQueryRepository,
   ) {}
 
