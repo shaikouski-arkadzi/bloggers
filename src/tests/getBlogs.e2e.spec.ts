@@ -12,6 +12,7 @@ import {
   SORT_DIRECTION_DAFAULT,
 } from "../common/constants";
 import { BlogsQueryRepository } from "../blogs/repositories";
+import { blogsQueryRepository } from "../blogs/composition-root";
 
 const app = express();
 
@@ -51,7 +52,7 @@ describe("GET /blogs", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    blogsCount = await container.get(BlogsQueryRepository).count();
+    blogsCount = await blogsQueryRepository.count();
   }, 100000);
 
   afterAll(async () => {
@@ -183,7 +184,7 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await container.get(BlogsQueryRepository).find({
+    const allBlogs = await blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -217,7 +218,7 @@ describe("GET /blogs", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allBlogs = await container.get(BlogsQueryRepository).find({
+    const allBlogs = await blogsQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -236,7 +237,7 @@ describe("GET /blogs", () => {
     const page = PAGE_DAFAULT;
     const pageSize = PAGE_SIZE_DAFAULT;
 
-    blogsCount = await container.get(BlogsQueryRepository).count({
+    blogsCount = await blogsQueryRepository.count({
       name: searchNameTerm,
     });
 

@@ -11,3 +11,5 @@ container.bind(PostsService).to(PostsService);
 container.bind(PostsController).to(PostsController);
 
 export const postsController = container.get(PostsController);
+
+export const postsQueryRepository = container.get(PostsQueryRepository);

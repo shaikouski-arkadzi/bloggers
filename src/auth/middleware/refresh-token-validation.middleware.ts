@@ -3,8 +3,9 @@ import { ObjectId } from "mongodb";
 import { container } from "../../settings/container";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
-import { UserQueryRepository } from "../../users/repositories";
+import {} from "../../users/repositories";
 import { AuthQueryRepository } from "../repositories";
+import { userQueryRepository } from "../../users/composition-root";
 
 export const refreshTokenValidationMiddleware = async (
   req: Request,
@@ -38,7 +39,7 @@ export const refreshTokenValidationMiddleware = async (
     const userId = verified.uuid;
     const { iat, deviceId } = verified;
 
-    const user = await container.get(UserQueryRepository).findByField({
+    const user = await userQueryRepository.findByField({
       _id: new ObjectId(userId),
     });
 

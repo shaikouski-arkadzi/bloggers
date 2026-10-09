@@ -5,8 +5,7 @@ import { db } from "../db";
 import { nodemailerService } from "../auth/application";
 import { registerTemplateMail } from "../auth/utils";
 import { resetReqRateLimit } from "../auth/middleware";
-import { container } from "../settings/container";
-import { UserQueryRepository } from "../users/repositories";
+import { userQueryRepository } from "../users/composition-root";
 
 const app = express();
 
@@ -40,7 +39,7 @@ describe("POST /auth/registration", () => {
 
     await request(app).post("/auth/registration").send(body).expect(204);
 
-    const allUsers = await container.get(UserQueryRepository).find();
+    const allUsers = await userQueryRepository.find();
     expect(allUsers.length).toBe(1);
 
     expect(nodemailerService.sendEmail).toHaveBeenCalledTimes(1);

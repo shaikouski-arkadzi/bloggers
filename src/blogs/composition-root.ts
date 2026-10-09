@@ -11,3 +11,5 @@ container.bind(BlogsService).to(BlogsService);
 container.bind(BlogsController).to(BlogsController);
 
 export const blogsController = container.get(BlogsController);
+
+export const blogsQueryRepository = container.get(BlogsQueryRepository);

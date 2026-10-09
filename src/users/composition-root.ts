@@ -11,3 +11,5 @@ container.bind(UserService).to(UserService);
 container.bind(UsersController).to(UsersController);
 
 export const usersController = container.get(UsersController);
+
+export const userQueryRepository = container.get(UserQueryRepository);

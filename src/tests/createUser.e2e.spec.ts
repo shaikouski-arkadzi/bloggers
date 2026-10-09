@@ -3,8 +3,7 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { container } from "../settings/container";
-import { UserQueryRepository } from "../users/repositories";
+import { userQueryRepository } from "../users/composition-root";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -49,7 +48,7 @@ describe("POST /users", () => {
       ),
     });
 
-    const allUsers = await container.get(UserQueryRepository).find();
+    const allUsers = await userQueryRepository.find();
     expect(allUsers.length).toBe(1);
   });
 

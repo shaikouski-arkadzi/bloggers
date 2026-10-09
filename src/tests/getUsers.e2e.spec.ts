@@ -13,6 +13,7 @@ import {
 import { User } from "../users/types";
 import { container } from "../settings/container";
 import { UserQueryRepository } from "../users/repositories";
+import { userQueryRepository } from "../users/composition-root";
 
 const app = express();
 
@@ -51,7 +52,7 @@ describe("GET /users", () => {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
 
-    usersCount = await container.get(UserQueryRepository).count();
+    usersCount = await userQueryRepository.count();
   }, 30000);
 
   afterAll(async () => {
@@ -183,7 +184,7 @@ describe("GET /users", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await container.get(UserQueryRepository).find({
+    const allUsers = await userQueryRepository.find({
       page,
       pageSize,
       sortBy,
@@ -217,7 +218,7 @@ describe("GET /users", () => {
         .slice(startIndex, startIndex + pageSize),
     });
 
-    const allUsers = await container.get(UserQueryRepository).find({
+    const allUsers = await userQueryRepository.find({
       page,
       pageSize,
       sortBy,

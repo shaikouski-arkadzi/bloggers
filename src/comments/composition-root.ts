@@ -14,3 +14,5 @@ container.bind(CommentsService).to(CommentsService);
 container.bind(CommentsController).to(CommentsController);
 
 export const commentsController = container.get(CommentsController);
+
+export const commentsQueryRepository = container.get(CommentsQueryRepository);

@@ -5,8 +5,7 @@ import { POSTS_PATH } from "../posts/constants";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { db } from "../db";
 import { setupApp } from "../setup-app";
-import { container } from "../settings/container";
-import { PostsQueryRepository } from "../posts/repositories";
+import { postsQueryRepository } from "../posts/composition-root";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -70,7 +69,7 @@ describe("POST /posts", () => {
       ),
     });
 
-    const allPosts = await container.get(PostsQueryRepository).find();
+    const allPosts = await postsQueryRepository.find();
     expect(allPosts.length).toBe(1);
   });
 
