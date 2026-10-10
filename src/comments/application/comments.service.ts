@@ -13,6 +13,7 @@ import {
   CommentsCommandRepository,
   CommentsQueryRepository,
 } from "../repositories";
+import { INITIAL_LIKES_INFO } from "../constants";
 
 @injectable()
 export class CommentsService {
@@ -96,6 +97,7 @@ export class CommentsService {
         userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
+      likesInfo: INITIAL_LIKES_INFO,
     };
 
     const commentId = await this.commentsCommandRepository.create(

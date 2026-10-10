@@ -11,4 +11,9 @@ export const mapCommentDbToComment = (
     userLogin: commentDb.commentatorInfo.userLogin,
   },
   createdAt: commentDb.createdAt,
+  likesInfo: {
+    likesCount: commentDb.likesInfo.likesCount,
+    dislikesCount: commentDb.likesInfo.dislikesCount,
+    myStatus: commentDb.likesInfo.myStatus,
+  },
 });

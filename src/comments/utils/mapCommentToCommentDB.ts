@@ -12,4 +12,9 @@ export const mapCommentToCommentDB = (
   },
   createdAt: comment.createdAt,
   postId: new ObjectId(postId),
+  likesInfo: {
+    likesCount: comment.likesInfo.likesCount,
+    dislikesCount: comment.likesInfo.dislikesCount,
+    myStatus: comment.likesInfo.myStatus,
+  },
 });

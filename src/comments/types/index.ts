@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { SortBy, SortDirection } from "../../common/types";
+import { LikeStatus } from "../constants";
 
 export interface CommentInputModel {
   content: string;
@@ -10,6 +11,7 @@ export interface CommentDb {
   createdAt: string;
   postId: ObjectId;
   commentatorInfo: CommentatorInfoDB;
+  likesInfo: LikesInfoViewModel;
 }
 
 export interface Comment {
@@ -17,6 +19,7 @@ export interface Comment {
   content: string;
   createdAt: string;
   commentatorInfo: CommentatorInfo;
+  likesInfo: LikesInfoViewModel;
 }
 
 export interface CommentatorInfo {
@@ -40,3 +43,11 @@ export interface CommentsQuery {
   sortBy?: SortBy<Comment>;
   sortDirection?: SortDirection;
 }
+
+export interface LikesInfoViewModel {
+  likesCount: number;
+  dislikesCount: number;
+  myStatus: LikeStatus;
+}
+
+export type LikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];
