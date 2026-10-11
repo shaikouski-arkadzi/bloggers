@@ -3,7 +3,7 @@ import { MONGO_URI } from "../settings/config";
 import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
 import { UserDb } from "../users/types";
-import { CommentDb } from "../comments/types";
+import { CommentDb, LikeDb } from "../comments/types";
 import { RefreshTokensDBCollection, SessionsDBCollection } from "../auth/types";
 
 if (!MONGO_URI) console.error("Not found mongo uri");
@@ -41,6 +41,7 @@ export const db = {
       commentsCollection: this.getDbName().collection<CommentDb>("comments"),
       sessionsCollection:
         this.getDbName().collection<SessionsDBCollection>("sessions"),
+      likesCollection: this.getDbName().collection<LikeDb>("likes"),
     };
   },
 };

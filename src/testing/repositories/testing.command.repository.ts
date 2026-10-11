@@ -13,5 +13,6 @@ export class TestingCommandRepository {
     await collections.usersCollection.deleteMany({});
     await collections.commentsCollection.deleteMany({});
     await collections.sessionsCollection.deleteMany({});
+    await collections.likesCollection.deleteMany({});
   }
 }
