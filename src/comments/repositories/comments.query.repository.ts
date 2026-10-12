@@ -8,8 +8,8 @@ import {
 } from "../../common/constants";
 import { SortBy, SortDirection } from "../../common/types";
 import { db } from "../../db";
-import { Comment, CommentDb } from "../types";
-import { mapCommentDbToComment } from "../utils";
+import { Comment, CommentDb, TLikeStatus } from "../types";
+import { booleanToLikeStatus, mapCommentDbToComment } from "../utils";
 
 interface CommentsQueryParams {
   page?: number;
@@ -73,5 +73,21 @@ export class CommentsQueryRepository {
       .commentsCollection.countDocuments(filter);
 
     return result;
+  }
+
+  async findLikeByUserAndComment(
+    userId: string,
+    commentId: string,
+  ): Promise<TLikeStatus | null> {
+    const result = await db.getCollections().likesCollection.findOne({
+      userId: new ObjectId(userId),
+      commentId: new ObjectId(commentId),
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return booleanToLikeStatus(result.like);
   }
 }

@@ -153,5 +153,13 @@ export class CommentsService {
     userId: string,
     commentId: string,
     likeStatus: TLikeStatus,
-  ): Promise<void> {}
+  ): Promise<void> {
+    const previousLike =
+      await this.commentsQueryRepository.findLikeByUserAndComment(
+        userId,
+        commentId,
+      );
+
+    console.log(previousLike);
+  }
 }
