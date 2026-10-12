@@ -2,7 +2,12 @@ import { ObjectId } from "mongodb";
 import { inject, injectable } from "inversify";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { PaginatorData } from "../../common/types";
-import { Comment, CommentInputModel, CommentsQuery } from "../types";
+import {
+  Comment,
+  CommentInputModel,
+  CommentsQuery,
+  TLikeStatus,
+} from "../types";
 import {
   NotFoundException,
   PermissionException,
@@ -143,4 +148,10 @@ export class CommentsService {
 
     await this.commentsCommandRepository.delete(commentId);
   }
+
+  async setLike(
+    userId: string,
+    commentId: string,
+    likeStatus: TLikeStatus,
+  ): Promise<void> {}
 }

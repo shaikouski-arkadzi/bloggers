@@ -6,7 +6,12 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { Comment, CommentInputModel, CommentsQuery } from "../types";
+import {
+  Comment,
+  CommentInputModel,
+  CommentsQuery,
+  LikeInputModel,
+} from "../types";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { CommentsService } from "../application/comments.service";
 import { CommentsQueryRepository } from "../repositories";
@@ -150,6 +155,29 @@ export class CommentsController {
     } catch (error) {
       if (error instanceof NotFoundException) {
         return res.sendStatus(404);
+      }
+
+      return res.sendStatus(500);
+    }
+  };
+
+  setLikeStatus = async (
+    req: Request<{ id: string }, {}, LikeInputModel>,
+    res: Response<PaginatorData<Comment>>,
+  ) => {
+    try {
+      const { likeStatus } = req.body;
+      const commentId = req.params.id;
+      const userId = req.auth.userId;
+
+      if (!userId) throw new UnauthorizedException();
+
+      await this.commentsService.setLike(userId, commentId, likeStatus);
+
+      return res.sendStatus(204);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        return res.sendStatus(401);
       }
 
       return res.sendStatus(500);

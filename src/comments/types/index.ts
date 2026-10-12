@@ -47,7 +47,23 @@ export interface CommentsQuery {
 export interface LikesInfoViewModel {
   likesCount: number;
   dislikesCount: number;
-  myStatus: LikeStatus;
+  myStatus: TLikeStatus;
 }
 
-export type LikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];
+export type TLikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];
+
+export interface LikeInputModel {
+  likeStatus: TLikeStatus;
+}
+
+export interface LikeDb {
+  userId: ObjectId;
+  commentId: ObjectId;
+  like: boolean;
+}
+
+export interface LikeModel {
+  userId: string;
+  commentId: string;
+  like: TLikeStatus;
+}
