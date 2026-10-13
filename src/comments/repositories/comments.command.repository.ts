@@ -51,4 +51,40 @@ export class CommentsCommandRepository {
 
     return result.insertedId;
   }
+
+  async increaseLike(id: string): Promise<void> {
+    await db
+      .getCollections()
+      .commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $inc: { "likesInfo.likesCount": 1 } },
+      );
+  }
+
+  async increaseDislike(id: string): Promise<void> {
+    await db
+      .getCollections()
+      .commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $inc: { "likesInfo.dislikesCount": 1 } },
+      );
+  }
+
+  async decreaseLike(id: string): Promise<void> {
+    await db
+      .getCollections()
+      .commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $inc: { "likesInfo.likesCount": -1 } },
+      );
+  }
+
+  async decreaseDislike(id: string): Promise<void> {
+    await db
+      .getCollections()
+      .commentsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $inc: { "likesInfo.dislikesCount": -1 } },
+      );
+  }
 }
