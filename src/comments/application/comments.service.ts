@@ -170,6 +170,12 @@ export class CommentsService {
         commentId,
         likeStatus,
       );
+
+      if (likeStatus === "Like")
+        await this.commentsCommandRepository.increaseLike(commentId);
+
+      if (likeStatus === "Dislike")
+        await this.commentsCommandRepository.increaseDislike(commentId);
     }
   }
 }
