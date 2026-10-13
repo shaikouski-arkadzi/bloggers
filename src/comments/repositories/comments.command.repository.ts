@@ -1,8 +1,8 @@
 import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { db } from "../../db";
-import { Comment, CommentInputModel } from "../types";
-import { mapCommentToCommentDB } from "../utils";
+import { Comment, CommentInputModel, TLikeStatus } from "../types";
+import { mapCommentToCommentDB, mapLikeModelToLikeDB } from "../utils";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -32,5 +32,23 @@ export class CommentsCommandRepository {
     await db
       .getCollections()
       .commentsCollection.deleteOne({ _id: new ObjectId(id) });
+  }
+
+  async createLike(
+    userId: string,
+    commentId: string,
+    likeStatus: TLikeStatus,
+  ): Promise<ObjectId> {
+    const commentDB = mapLikeModelToLikeDB({
+      userId,
+      commentId,
+      like: likeStatus,
+    });
+
+    const result = await db
+      .getCollections()
+      .likesCollection.insertOne(commentDB);
+
+    return result.insertedId;
   }
 }

@@ -1,24 +1,26 @@
 import { ObjectId } from "mongodb";
 import { inject, injectable } from "inversify";
+
 import { UnauthorizedException } from "../../auth/exceptions";
+import {
+  NotFoundException,
+  PermissionException,
+} from "../../common/exceptions";
 import { PaginatorData } from "../../common/types";
+import { PostsService } from "../../posts/application/posts.service";
+import { UserService } from "../../users/application/user.service";
+
+import { INITIAL_LIKES_INFO } from "../constants";
+import {
+  CommentsCommandRepository,
+  CommentsQueryRepository,
+} from "../repositories";
 import {
   Comment,
   CommentInputModel,
   CommentsQuery,
   TLikeStatus,
 } from "../types";
-import {
-  NotFoundException,
-  PermissionException,
-} from "../../common/exceptions";
-import { PostsService } from "../../posts/application/posts.service";
-import { UserService } from "../../users/application/user.service";
-import {
-  CommentsCommandRepository,
-  CommentsQueryRepository,
-} from "../repositories";
-import { INITIAL_LIKES_INFO } from "../constants";
 
 @injectable()
 export class CommentsService {
@@ -161,5 +163,13 @@ export class CommentsService {
       );
 
     console.log(previousLike);
+
+    if (!previousLike && (likeStatus === "Like" || likeStatus === "Dislike")) {
+      await this.commentsCommandRepository.createLike(
+        userId,
+        commentId,
+        likeStatus,
+      );
+    }
   }
 }
