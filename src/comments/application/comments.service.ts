@@ -177,5 +177,23 @@ export class CommentsService {
       if (likeStatus === "Dislike")
         await this.commentsCommandRepository.increaseDislike(commentId);
     }
+
+    if (previousLike && likeStatus !== previousLike) {
+      await this.commentsCommandRepository.updateLikeStatus(
+        userId,
+        commentId,
+        likeStatus,
+      );
+
+      if (likeStatus === "Like" && previousLike === "Dislike") {
+        await this.commentsCommandRepository.decreaseDislike(commentId);
+        await this.commentsCommandRepository.increaseLike(commentId);
+      }
+
+      if (likeStatus === "Dislike" && previousLike === "Like") {
+        await this.commentsCommandRepository.decreaseLike(commentId);
+        await this.commentsCommandRepository.increaseDislike(commentId);
+      }
+    }
   }
 }

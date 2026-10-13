@@ -2,7 +2,11 @@ import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { db } from "../../db";
 import { Comment, CommentInputModel, TLikeStatus } from "../types";
-import { mapCommentToCommentDB, mapLikeModelToLikeDB } from "../utils";
+import {
+  likeStatusToBoolean,
+  mapCommentToCommentDB,
+  mapLikeModelToLikeDB,
+} from "../utils";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -50,6 +54,22 @@ export class CommentsCommandRepository {
       .likesCollection.insertOne(commentDB);
 
     return result.insertedId;
+  }
+
+  async updateLikeStatus(
+    userId: string,
+    commentId: string,
+    likeStatus: TLikeStatus,
+  ): Promise<void> {
+    await db.getCollections().likesCollection.updateOne(
+      {
+        userId: new ObjectId(userId),
+        commentId: new ObjectId(commentId),
+      },
+      {
+        $set: { like: likeStatusToBoolean(likeStatus) },
+      },
+    );
   }
 
   async increaseLike(id: string): Promise<void> {
