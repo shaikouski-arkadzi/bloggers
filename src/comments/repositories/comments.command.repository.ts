@@ -72,6 +72,13 @@ export class CommentsCommandRepository {
     );
   }
 
+  async deleteLikeStatus(userId: string, commentId: string): Promise<void> {
+    await db.getCollections().likesCollection.deleteOne({
+      userId: new ObjectId(userId),
+      commentId: new ObjectId(commentId),
+    });
+  }
+
   async increaseLike(id: string): Promise<void> {
     await db
       .getCollections()
