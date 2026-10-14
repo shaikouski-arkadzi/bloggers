@@ -15,6 +15,5 @@ export const mapCommentToCommentDB = (
   likesInfo: {
     likesCount: comment.likesInfo.likesCount,
     dislikesCount: comment.likesInfo.dislikesCount,
-    myStatus: comment.likesInfo.myStatus,
   },
 });

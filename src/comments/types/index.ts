@@ -11,7 +11,7 @@ export interface CommentDb {
   createdAt: string;
   postId: ObjectId;
   commentatorInfo: CommentatorInfoDB;
-  likesInfo: LikesInfoViewModel;
+  likesInfo: LikesInfoDB;
 }
 
 export interface Comment {
@@ -48,6 +48,11 @@ export interface LikesInfoViewModel {
   likesCount: number;
   dislikesCount: number;
   myStatus: TLikeStatus;
+}
+
+export interface LikesInfoDB {
+  likesCount: number;
+  dislikesCount: number;
 }
 
 export type TLikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];

@@ -1,5 +1,6 @@
 import { WithId } from "mongodb";
 import { Comment, CommentDb } from "../types";
+import { INITIAL_LIKES_INFO } from "../constants";
 
 export const mapCommentDbToComment = (
   commentDb: WithId<CommentDb>,
@@ -14,6 +15,6 @@ export const mapCommentDbToComment = (
   likesInfo: {
     likesCount: commentDb.likesInfo.likesCount,
     dislikesCount: commentDb.likesInfo.dislikesCount,
-    myStatus: commentDb.likesInfo.myStatus,
+    myStatus: INITIAL_LIKES_INFO.myStatus,
   },
 });
