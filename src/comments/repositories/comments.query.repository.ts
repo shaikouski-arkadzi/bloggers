@@ -28,7 +28,7 @@ export class CommentsQueryRepository {
       sortBy = SORT_FIELD_DAFAULT,
       sortDirection = SORT_DIRECTION_DAFAULT,
     }: CommentsQueryParams = {},
-  ): Promise<Comment[]> {
+  ): Promise<WithId<CommentDb>[]> {
     const postObjectId = new ObjectId(postId);
 
     const result = await db
@@ -41,7 +41,7 @@ export class CommentsQueryRepository {
       .limit(pageSize)
       .toArray();
 
-    return result.map(mapCommentDbToComment);
+    return result;
   }
 
   async findByField(

@@ -76,11 +76,26 @@ export class CommentsService {
   async findManyByPost(
     postId: string,
     queries: CommentsQuery,
+    auth?: string,
   ): Promise<PaginatorData<Comment>> {
     const page = Number(queries.pageNumber);
     const pageSize = Number(queries.pageSize);
     const sortBy = queries.sortBy;
     const sortDirection = queries.sortDirection;
+
+    let userId: string | undefined;
+
+    if (auth) {
+      const [authType, token] = auth.split(" ");
+
+      if (authType === "Bearer" && token) {
+        const verified = await jwtService.verifyToken(token, TokenType.Access);
+
+        if (verified) {
+          userId = verified.uuid;
+        }
+      }
+    }
 
     await this.postsService.findById(postId);
 
@@ -100,12 +115,21 @@ export class CommentsService {
       },
     );
 
+    if (!userId)
+      return {
+        pagesCount,
+        page,
+        pageSize,
+        totalCount: allCommentsCount,
+        items: result.map(mapCommentDbToComment),
+      };
+
     return {
       pagesCount,
       page,
       pageSize,
       totalCount: allCommentsCount,
-      items: result,
+      items: result.map(mapCommentDbToComment),
     };
   }
 
