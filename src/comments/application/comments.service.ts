@@ -21,6 +21,8 @@ import {
   CommentsQuery,
   TLikeStatus,
 } from "../types";
+import { jwtService, TokenType } from "../../auth/application/jwt.service";
+import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
 
 @injectable()
 export class CommentsService {
@@ -38,14 +40,37 @@ export class CommentsService {
     private userService: UserService,
   ) {}
 
-  async getCommentById(id: string): Promise<Comment | null> {
-    const commentObjectId = new ObjectId(id);
+  async getCommentById(id: string, auth?: string): Promise<Comment | null> {
+    let userId: string | undefined;
 
-    const comment = await this.commentsQueryRepository.findByField({
-      _id: commentObjectId,
+    if (auth) {
+      const [authType, token] = auth.split(" ");
+
+      if (authType === "Bearer" && token) {
+        const verified = await jwtService.verifyToken(token, TokenType.Access);
+
+        if (verified) {
+          userId = verified.uuid;
+        }
+      }
+    }
+
+    const commentDb = await this.commentsQueryRepository.findByField({
+      _id: new ObjectId(id),
     });
 
-    return comment;
+    if (!commentDb) {
+      return null;
+    }
+
+    if (!userId) return mapCommentDbToComment(commentDb);
+
+    const userCommentStatus =
+      await this.commentsQueryRepository.findLikeByUserAndComment(userId, id);
+
+    if (!userCommentStatus) return mapCommentDbToComment(commentDb);
+
+    return mapCommentWithMyStatus(commentDb, userCommentStatus);
   }
 
   async findManyByPost(

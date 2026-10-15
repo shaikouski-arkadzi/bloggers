@@ -46,14 +46,14 @@ export class CommentsQueryRepository {
 
   async findByField(
     filter: Partial<WithId<CommentDb>>,
-  ): Promise<Comment | null> {
+  ): Promise<WithId<CommentDb> | null> {
     const result = await db.getCollections().commentsCollection.findOne(filter);
 
     if (!result) {
       return null;
     }
 
-    return mapCommentDbToComment(result);
+    return result;
   }
 
   async count(

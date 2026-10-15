@@ -15,6 +15,7 @@ import {
 import { UnauthorizedException } from "../../auth/exceptions";
 import { CommentsService } from "../application/comments.service";
 import { CommentsQueryRepository } from "../repositories";
+import { mapCommentDbToComment } from "../utils";
 
 @injectable()
 export class CommentsController {
@@ -49,7 +50,7 @@ export class CommentsController {
 
       if (!newComment) throw new Error();
 
-      return res.status(201).json(newComment);
+      return res.status(201).json(mapCommentDbToComment(newComment));
     } catch (error) {
       if (error instanceof NotFoundException) {
         return res.sendStatus(404);
@@ -121,9 +122,11 @@ export class CommentsController {
 
   getComment = async (req: Request<{ id: string }>, res: Response<Comment>) => {
     try {
+      const auth = req.headers.authorization;
+
       const { id } = req.params;
 
-      const result = await this.commentsService.getCommentById(id);
+      const result = await this.commentsService.getCommentById(id, auth);
 
       if (!result) throw new NotFoundException();
 
