@@ -4,6 +4,7 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
 import { Comment } from "../comments/types";
+import { INITIAL_LIKES_INFO } from "../comments/constants";
 
 const app = express();
 
@@ -143,6 +144,7 @@ describe("DELETE /comments/:id", () => {
         userLogin: createdComment.commentatorInfo.userLogin,
       },
       createdAt: createdComment.createdAt,
+      likesInfo: INITIAL_LIKES_INFO,
     });
   });
 

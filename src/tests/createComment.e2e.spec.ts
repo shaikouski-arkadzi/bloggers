@@ -3,7 +3,7 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { LikeStatus } from "../comments/constants";
+import { INITIAL_LIKES_INFO, LikeStatus } from "../comments/constants";
 
 const app = express();
 
@@ -106,11 +106,7 @@ describe("POST /posts/:postId/comments", () => {
       createdAt: expect.stringMatching(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
       ),
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.NONE,
-      },
+      likesInfo: INITIAL_LIKES_INFO,
     });
   });
 
