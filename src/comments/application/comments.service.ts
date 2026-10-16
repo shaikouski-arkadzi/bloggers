@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { inject, injectable } from "inversify";
 
 import { UnauthorizedException } from "../../auth/exceptions";
@@ -115,21 +115,34 @@ export class CommentsService {
       },
     );
 
-    if (!userId)
-      return {
-        pagesCount,
-        page,
-        pageSize,
-        totalCount: allCommentsCount,
-        items: result.map(mapCommentDbToComment),
-      };
+    const items: Comment[] = [];
+
+    for (const commentDb of result) {
+      if (!userId) {
+        items.push(mapCommentDbToComment(commentDb));
+        continue;
+      }
+
+      const userCommentStatus =
+        await this.commentsQueryRepository.findLikeByUserAndComment(
+          userId,
+          commentDb._id.toString(),
+        );
+
+      if (!userCommentStatus) {
+        items.push(mapCommentDbToComment(commentDb));
+        continue;
+      }
+
+      items.push(mapCommentWithMyStatus(commentDb, userCommentStatus));
+    }
 
     return {
       pagesCount,
       page,
       pageSize,
       totalCount: allCommentsCount,
-      items: result.map(mapCommentDbToComment),
+      items,
     };
   }
 
