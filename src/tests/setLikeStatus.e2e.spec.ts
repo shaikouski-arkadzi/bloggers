@@ -135,6 +135,40 @@ describe("GET /comments/:id", () => {
     });
   });
 
+  it("should return 200 and comment by id with DisLike", async () => {
+    const likeStatusBody: LikeInputModel = {
+      likeStatus: "Dislike",
+    };
+
+    await request(app)
+      .put(`/comments/${createdCommentId}/like-status`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(likeStatusBody)
+      .expect(204);
+
+    const response = await request(app)
+      .get(`/comments/${createdCommentId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(response.body).toEqual<Comment>({
+      id: createdCommentId,
+      content: commentBody.content,
+      commentatorInfo: {
+        userId: createdUserId,
+        userLogin: userLogin,
+      },
+      createdAt: expect.stringMatching(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      ),
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 1,
+        myStatus: "Dislike",
+      },
+    });
+  });
+
   it("should return 404 if id not exist", async () => {
     await request(app)
       .get(`/comments/66d1f5a8c3e7429b8f1a6d30/like-status`)
