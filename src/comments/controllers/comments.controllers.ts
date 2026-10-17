@@ -185,6 +185,9 @@ export class CommentsController {
       if (error instanceof UnauthorizedException) {
         return res.sendStatus(401);
       }
+      if (error instanceof NotFoundException) {
+        return res.sendStatus(404);
+      }
 
       return res.sendStatus(500);
     }

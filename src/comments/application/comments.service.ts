@@ -218,6 +218,10 @@ export class CommentsService {
     commentId: string,
     likeStatus: TLikeStatus,
   ): Promise<void> {
+    const comment = await this.getCommentById(commentId);
+
+    if (!comment) throw new NotFoundException();
+
     const previousLike =
       await this.commentsQueryRepository.findLikeByUserAndComment(
         userId,
