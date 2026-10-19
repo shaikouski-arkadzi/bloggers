@@ -218,7 +218,9 @@ export class CommentsService {
     commentId: string,
     likeStatus: TLikeStatus,
   ): Promise<void> {
-    const comment = await this.getCommentById(commentId);
+    const comment = await this.commentsQueryRepository.findByField({
+      _id: new ObjectId(commentId),
+    });
 
     if (!comment) throw new NotFoundException();
 

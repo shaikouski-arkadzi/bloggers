@@ -22,15 +22,15 @@ describe("GET /comments/:id", () => {
     content: "stringstringstringstring",
   };
 
+  const ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
+  const ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString(
+    "base64",
+  );
+
   beforeAll(async () => {
     await db.connect();
 
     await request(app).delete("/testing/all-data").expect(204);
-
-    const ADMIN_LOGIN_PASSWORD = `${ADMIN_LOGIN}:${ADMIN_PASSWORD}`;
-    const ADMIN_TOKEN = Buffer.from(ADMIN_LOGIN_PASSWORD, "utf-8").toString(
-      "base64",
-    );
 
     const createUserBody = {
       login: userLogin,
@@ -202,6 +202,69 @@ describe("GET /comments/:id", () => {
       },
     });
   });
+
+  it("should return 200 and comment by id with 2 likeStatus", async () => {
+    const secondCreateUserBody = {
+      login: "user2",
+      password: "password",
+      email: "example2@example.dev",
+    };
+
+    await request(app)
+      .post("/users")
+      .set("Authorization", `Basic ${ADMIN_TOKEN}`)
+      .send(secondCreateUserBody)
+      .expect(201);
+
+    const loginSecondUserBody = {
+      loginOrEmail: secondCreateUserBody.login,
+      password: secondCreateUserBody.password,
+    };
+
+    const loginSecondUserResponse = await request(app)
+      .post("/auth/login")
+      .send(loginSecondUserBody)
+      .expect(200);
+
+    const accessToken2 = loginSecondUserResponse.body.accessToken;
+
+    const likeStatusBody: LikeInputModel = {
+      likeStatus: "Like",
+    };
+
+    await request(app)
+      .put(`/comments/${createdCommentId}/like-status`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send(likeStatusBody)
+      .expect(204);
+
+    await request(app)
+      .put(`/comments/${createdCommentId}/like-status`)
+      .set("Authorization", `Bearer ${accessToken2}`)
+      .send(likeStatusBody)
+      .expect(204);
+
+    const response = await request(app)
+      .get(`/comments/${createdCommentId}`)
+      .expect(200);
+
+    expect(response.body).toEqual<Comment>({
+      id: createdCommentId,
+      content: commentBody.content,
+      commentatorInfo: {
+        userId: createdUserId,
+        userLogin: userLogin,
+      },
+      createdAt: expect.stringMatching(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      ),
+      likesInfo: {
+        likesCount: 2,
+        dislikesCount: 0,
+        myStatus: "None",
+      },
+    });
+  }, 10000);
 
   it("should return 404 if id not exist", async () => {
     await request(app)
