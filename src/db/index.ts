@@ -1,4 +1,5 @@
 import { Db, MongoClient } from "mongodb";
+import mongoose from "mongoose";
 import { MONGO_URI } from "../settings/config";
 import { BlogDb } from "../blogs/types";
 import { PostDb } from "../posts/types";
@@ -9,39 +10,26 @@ import { RefreshTokensDBCollection, SessionsDBCollection } from "../auth/types";
 if (!MONGO_URI) console.error("Not found mongo uri");
 
 export const db = {
-  client: {} as MongoClient,
+  async connect(url: string | undefined = MONGO_URI): Promise<boolean> {
+    if (!url) {
+      console.error("Not found mongo uri");
+      return false;
+    }
 
-  getDbName(): Db {
-    return this.client.db();
-  },
-
-  async connect(url: string = MONGO_URI!): Promise<boolean> {
     try {
-      this.client = new MongoClient(url);
-      await this.client.connect();
+      await mongoose.connect(url);
+
       console.log("Connected successfully to mongo server");
       return true;
-    } catch (e: unknown) {
-      console.error("Can't connect to mongo server", e);
-      await this.client.close();
+    } catch (error: unknown) {
+      console.error("Can't connect to mongo server", error);
       return false;
     }
   },
 
-  async disconnect() {
-    await this.client.close();
-    console.log("Connection successful closed");
-  },
+  async disconnect(): Promise<void> {
+    await mongoose.disconnect();
 
-  getCollections() {
-    return {
-      blogsCollection: this.getDbName().collection<BlogDb>("blogs"),
-      postsCollection: this.getDbName().collection<PostDb>("posts"),
-      usersCollection: this.getDbName().collection<UserDb>("users"),
-      commentsCollection: this.getDbName().collection<CommentDb>("comments"),
-      sessionsCollection:
-        this.getDbName().collection<SessionsDBCollection>("sessions"),
-      likesCollection: this.getDbName().collection<LikeDb>("likes"),
-    };
+    console.log("Connection successfully closed");
   },
 };
