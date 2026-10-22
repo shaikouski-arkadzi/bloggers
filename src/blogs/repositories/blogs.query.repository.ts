@@ -1,6 +1,5 @@
-import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
-import { db } from "../../db";
+import { BlogModel } from "../db/blog.model";
 import { Blog } from "../types";
 import { SortDirection, SortBy } from "../../common/types";
 import {
@@ -28,29 +27,23 @@ export class BlogsQueryRepository {
     sortDirection = SORT_DIRECTION_DAFAULT,
     searchNameTerm = null,
   }: BlogsQueryParams = {}): Promise<Blog[]> {
-    const result = await db
-      .getCollections()
-      .blogsCollection.find(
-        searchNameTerm
-          ? {
-              name: { $regex: searchNameTerm, $options: "i" },
-            }
-          : {},
-      )
+    const result = await BlogModel.find(
+      searchNameTerm
+        ? {
+            name: { $regex: searchNameTerm, $options: "i" },
+          }
+        : {},
+    )
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
       .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
-
+      .limit(pageSize);
     return result.map(mapBlogDbToBlog);
   }
 
   async findById(id: string): Promise<Blog | null> {
-    const result = await db
-      .getCollections()
-      .blogsCollection.findOne({ _id: new ObjectId(id) });
+    const result = await BlogModel.findById(id);
 
     if (!result) {
       return null;
@@ -69,10 +62,7 @@ export class BlogsQueryRepository {
       ]),
     );
 
-    const result = await db
-      .getCollections()
-      .blogsCollection.countDocuments(filter);
-
+    const result = await BlogModel.countDocuments(filter);
     return result;
   }
 }
