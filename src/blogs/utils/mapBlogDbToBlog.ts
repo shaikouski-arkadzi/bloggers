@@ -1,7 +1,9 @@
-import { WithId } from "mongodb";
+import { Types } from "mongoose";
 import { Blog, BlogDb } from "../types";
 
-export const mapBlogDbToBlog = (blogDb: WithId<BlogDb>): Blog => ({
+export const mapBlogDbToBlog = (
+  blogDb: BlogDb & { _id: Types.ObjectId },
+): Blog => ({
   id: blogDb._id.toString(),
   name: blogDb.name,
   description: blogDb.description,
