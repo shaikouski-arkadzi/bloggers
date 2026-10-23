@@ -1,4 +1,5 @@
 import { injectable, inject } from "inversify";
+import { BlogModel } from "../db/blog.model";
 import { createBlogDb } from "../utils";
 import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
@@ -26,11 +27,11 @@ export class BlogsService {
   }
 
   async create(blog: BlogInputDto): Promise<string> {
-    const newBlogInDb = createBlogDb(blog);
+    const newBlog = new BlogModel(createBlogDb(blog));
 
-    const blogId = await this.blogsCommandRepository.create(newBlogInDb);
+    const newBlogId = await this.blogsCommandRepository.save(newBlog);
 
-    return blogId.toString();
+    return newBlogId;
   }
 
   async findMany(queries: BlogsQuery): Promise<PaginatorData<Blog>> {
@@ -72,8 +73,16 @@ export class BlogsService {
   }
 
   async update(id: string, blog: BlogInputDto): Promise<void> {
-    await this.findById(id);
+    const existingBlog = await BlogModel.findById(id);
 
-    await this.blogsCommandRepository.update(id, blog);
+    if (!existingBlog) {
+      throw new NotFoundException();
+    }
+
+    existingBlog.name = blog.name;
+    existingBlog.description = blog.description;
+    existingBlog.websiteUrl = blog.websiteUrl;
+
+    await this.blogsCommandRepository.save(existingBlog);
   }
 }
