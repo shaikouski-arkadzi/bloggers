@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { db } from "../../db";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
-import { IAuthCode, SessionModel } from "../types";
+import { IAuthCode, Session } from "../types";
 
 @injectable()
 export class AuthQueryRepository {
@@ -43,7 +43,7 @@ export class AuthQueryRepository {
   async getSessionByIATAndDeviceId(
     iat: number,
     deviceId: string,
-  ): Promise<SessionModel | null> {
+  ): Promise<Session | null> {
     const result = await db
       .getCollections()
       .sessionsCollection.findOne({ iat, deviceId: new ObjectId(deviceId) });
@@ -55,7 +55,7 @@ export class AuthQueryRepository {
     return mapSessionsDBToSession(result);
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<SessionModel | null> {
+  async getSessionByDeviceId(deviceId: string): Promise<Session | null> {
     const result = await db
       .getCollections()
       .sessionsCollection.findOne({ deviceId: new ObjectId(deviceId) });
@@ -67,7 +67,7 @@ export class AuthQueryRepository {
     return mapSessionsDBToSession(result);
   }
 
-  async getSessionsByUserId(userId: string): Promise<SessionModel[] | null> {
+  async getSessionsByUserId(userId: string): Promise<Session[] | null> {
     const result = await db
       .getCollections()
       .sessionsCollection.find({ userId: new ObjectId(userId) })

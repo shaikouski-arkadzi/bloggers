@@ -1,18 +1,18 @@
 import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { db } from "../../db";
-import { SessionModel } from "../types";
+import { Session } from "../types";
 import { mapSessionToSessionDB } from "../utils";
 
 @injectable()
 export class AuthCommandRepository {
-  async createSession(session: SessionModel): Promise<void> {
+  async createSession(session: Session): Promise<void> {
     const sessionDB = mapSessionToSessionDB(session);
 
     await db.getCollections().sessionsCollection.insertOne(sessionDB);
   }
 
-  async updateSession(session: SessionModel): Promise<void> {
+  async updateSession(session: Session): Promise<void> {
     const sessionDB = mapSessionToSessionDB(session);
 
     await db

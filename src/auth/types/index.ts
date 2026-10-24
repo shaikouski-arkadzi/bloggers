@@ -45,7 +45,7 @@ export interface SessionsDB {
   deviceName: string;
 }
 
-export interface SessionModel {
+export interface Session {
   userId: string;
   iat: number;
   ip: string;

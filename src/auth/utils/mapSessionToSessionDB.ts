@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { SessionModel, SessionsDB } from "../types";
+import { Session, SessionsDB } from "../types";
 
-export const mapSessionToSessionDB = (session: SessionModel): SessionsDB => ({
+export const mapSessionToSessionDB = (session: Session): SessionsDB => ({
   deviceId: new ObjectId(session.deviceId),
   deviceName: session.deviceName,
   iat: session.iat,

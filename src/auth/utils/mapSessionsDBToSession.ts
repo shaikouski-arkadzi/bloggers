@@ -1,8 +1,6 @@
-import { SessionModel, SessionsDB } from "../types";
+import { Session, SessionsDB } from "../types";
 
-export const mapSessionsDBToSession = (
-  sessionDB: SessionsDB,
-): SessionModel => ({
+export const mapSessionsDBToSession = (sessionDB: SessionsDB): Session => ({
   deviceId: sessionDB.deviceId.toString(),
   userId: sessionDB.userId.toString(),
   deviceName: sessionDB.deviceName,
