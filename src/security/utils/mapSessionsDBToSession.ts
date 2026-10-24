@@ -1,9 +1,9 @@
-import { SessionsDBCollection } from "../../auth/types";
+import { SessionsDB } from "../../auth/types";
 import { timestampToIso } from "../../common/utils/dates";
 import { DeviceViewModel } from "../types";
 
 export const mapSessionsDBToDevice = (
-  sessionDB: SessionsDBCollection,
+  sessionDB: SessionsDB,
 ): DeviceViewModel => ({
   deviceId: sessionDB.deviceId.toString(),
   title: sessionDB.deviceName,

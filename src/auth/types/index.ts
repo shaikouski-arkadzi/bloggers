@@ -37,7 +37,7 @@ export interface RefreshTokensCollection {
   refreshToken: string;
 }
 
-export interface SessionsDBCollection {
+export interface SessionsDB {
   userId: ObjectId;
   iat: number;
   ip: string;

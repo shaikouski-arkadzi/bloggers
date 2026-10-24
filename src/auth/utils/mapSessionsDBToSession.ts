@@ -1,7 +1,7 @@
-import { SessionsDBCollection, SessionModel } from "../types";
+import { SessionModel, SessionsDB } from "../types";
 
 export const mapSessionsDBToSession = (
-  sessionDB: SessionsDBCollection,
+  sessionDB: SessionsDB,
 ): SessionModel => ({
   deviceId: sessionDB.deviceId.toString(),
   userId: sessionDB.userId.toString(),
