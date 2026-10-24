@@ -1,28 +1,15 @@
-import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
-import { db } from "../../db";
-import { PostDb, UpdatedPost } from "../types";
+import { PostModel } from "../db/post.model";
 
 @injectable()
 export class PostsCommandRepository {
-  async create(post: PostDb): Promise<ObjectId> {
-    const result = await db.getCollections().postsCollection.insertOne(post);
+  async save(post: any): Promise<string> {
+    const savedPost = await post.save();
 
-    return result.insertedId;
-  }
-
-  async update(id: string, post: UpdatedPost): Promise<void> {
-    await db.getCollections().postsCollection.updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $set: post,
-      },
-    );
+    return savedPost._id.toString();
   }
 
   async delete(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .postsCollection.deleteOne({ _id: new ObjectId(id) });
+    await PostModel.findByIdAndDelete(id);
   }
 }
