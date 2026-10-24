@@ -10,6 +10,7 @@ import {
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
 import { mapPostDbToPost } from "../utils";
+import { PostModel } from "../db/post.model";
 
 interface PostsQueryParams {
   page?: number;
@@ -26,23 +27,18 @@ export class PostsQueryRepository {
     sortBy = SORT_FIELD_DAFAULT,
     sortDirection = SORT_DIRECTION_DAFAULT,
   }: PostsQueryParams = {}): Promise<Post[]> {
-    const result = await db
-      .getCollections()
-      .postsCollection.find({})
+    const result = await PostModel.find({})
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
       .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
     return result.map(mapPostDbToPost);
   }
 
   async findById(id: string): Promise<Post | null> {
-    const result = await db
-      .getCollections()
-      .postsCollection.findOne({ _id: new ObjectId(id) });
+    const result = await PostModel.findById(id);
 
     if (!result) {
       return null;
@@ -60,15 +56,12 @@ export class PostsQueryRepository {
       sortDirection = SORT_DIRECTION_DAFAULT,
     }: PostsQueryParams = {},
   ): Promise<Post[]> {
-    const result = await db
-      .getCollections()
-      .postsCollection.find({ blogId })
+    const result = await PostModel.find({ blogId })
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
       .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
     return result.map(mapPostDbToPost);
   }
@@ -83,9 +76,7 @@ export class PostsQueryRepository {
       ]),
     );
 
-    const result = await db
-      .getCollections()
-      .postsCollection.countDocuments(filter);
+    const result = await PostModel.countDocuments(filter);
 
     return result;
   }
