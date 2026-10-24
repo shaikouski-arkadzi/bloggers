@@ -7,6 +7,7 @@ import { BlogForPostNotExistException } from "../exceptions";
 import { BlogsService } from "../../blogs/application/blogs.service";
 import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
 import { BlogsQueryRepository } from "../../blogs/repositories";
+import { PostModel } from "../db/post.model";
 
 @injectable()
 export class PostsService {
@@ -39,9 +40,9 @@ export class PostsService {
 
     if (!blog) throw new BlogForPostNotExistException();
 
-    const newPost = createPostDb(post, blog);
+    const newPost = new PostModel(createPostDb(post, blog));
 
-    const createdPostId = await this.postsCommandRepository.create(newPost);
+    const createdPostId = await this.postsCommandRepository.save(newPost);
 
     return createdPostId.toString();
   }
@@ -85,9 +86,15 @@ export class PostsService {
 
     if (!blog) throw new BlogForPostNotExistException();
 
-    const updatedPost: UpdatedPost = updatePostDb(post, blog);
+    const existingPost = await PostModel.findById(id);
 
-    await this.postsCommandRepository.update(id, updatedPost);
+    if (!existingPost) throw new NotFoundException();
+
+    existingPost.title = post.title;
+    existingPost.shortDescription = post.shortDescription;
+    existingPost.content = post.content;
+
+    await this.postsCommandRepository.save(existingPost);
   }
 
   async findManyByBlog(
