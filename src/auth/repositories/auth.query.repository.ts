@@ -1,13 +1,14 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { injectable } from "inversify";
-import { db } from "../../db";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
 import { IAuthCode, Session } from "../types";
+import { UserModel } from "../../users/db/user.model";
+import { SessionModel } from "../db/session.model";
 
 @injectable()
 export class AuthQueryRepository {
   async getUserAuthCode(email: string): Promise<IAuthCode | null> {
-    const result = await db.getCollections().usersCollection.findOne({ email });
+    const result = await UserModel.findOne({ email });
 
     if (!result) {
       return null;
@@ -17,9 +18,7 @@ export class AuthQueryRepository {
   }
 
   async getUserByConfirmaionCode(code: string): Promise<IAuthCode | null> {
-    const result = await db
-      .getCollections()
-      .usersCollection.findOne({ confirmaionCode: code });
+    const result = await UserModel.findOne({ confirmaionCode: code });
 
     if (!result) {
       return null;
@@ -29,9 +28,7 @@ export class AuthQueryRepository {
   }
 
   async getUserByRecoveryCode(code: string): Promise<IAuthCode | null> {
-    const result = await db
-      .getCollections()
-      .usersCollection.findOne({ recoveryCode: code });
+    const result = await UserModel.findOne({ recoveryCode: code });
 
     if (!result) {
       return null;
@@ -44,9 +41,10 @@ export class AuthQueryRepository {
     iat: number,
     deviceId: string,
   ): Promise<Session | null> {
-    const result = await db
-      .getCollections()
-      .sessionsCollection.findOne({ iat, deviceId: new ObjectId(deviceId) });
+    const result = await SessionModel.findOne({
+      iat,
+      deviceId: new Types.ObjectId(deviceId),
+    });
 
     if (!result) {
       return null;
@@ -56,9 +54,9 @@ export class AuthQueryRepository {
   }
 
   async getSessionByDeviceId(deviceId: string): Promise<Session | null> {
-    const result = await db
-      .getCollections()
-      .sessionsCollection.findOne({ deviceId: new ObjectId(deviceId) });
+    const result = await SessionModel.findOne({
+      deviceId: new Types.ObjectId(deviceId),
+    });
 
     if (!result) {
       return null;
@@ -68,10 +66,9 @@ export class AuthQueryRepository {
   }
 
   async getSessionsByUserId(userId: string): Promise<Session[] | null> {
-    const result = await db
-      .getCollections()
-      .sessionsCollection.find({ userId: new ObjectId(userId) })
-      .toArray();
+    const result = await SessionModel.find({
+      userId: new Types.ObjectId(userId),
+    });
 
     if (!result.length) {
       return null;
