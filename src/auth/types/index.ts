@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 
 export interface LoginInputDto {
   loginOrEmail: string;
@@ -38,10 +38,10 @@ export interface RefreshTokensCollection {
 }
 
 export interface SessionsDB {
-  userId: ObjectId;
+  userId: Types.ObjectId;
   iat: number;
   ip: string;
-  deviceId: ObjectId;
+  deviceId: Types.ObjectId;
   deviceName: string;
 }
 

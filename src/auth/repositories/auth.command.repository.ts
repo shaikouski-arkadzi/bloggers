@@ -1,41 +1,34 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { injectable } from "inversify";
-import { db } from "../../db";
+import { SessionModel } from "../db/session.model";
 import { Session } from "../types";
 import { mapSessionToSessionDB } from "../utils";
 
 @injectable()
 export class AuthCommandRepository {
-  async createSession(session: Session): Promise<void> {
+  async save(session: Session): Promise<string> {
     const sessionDB = mapSessionToSessionDB(session);
 
-    await db.getCollections().sessionsCollection.insertOne(sessionDB);
-  }
+    const sessionModel = new SessionModel(sessionDB);
 
-  async updateSession(session: Session): Promise<void> {
-    const sessionDB = mapSessionToSessionDB(session);
+    const savedSession = await sessionModel.save();
 
-    await db
-      .getCollections()
-      .sessionsCollection.updateOne(
-        { deviceId: sessionDB.deviceId, userId: sessionDB.userId },
-        { $set: sessionDB },
-      );
+    return savedSession._id.toString();
   }
 
   async deleteSessionByIATAndDeviceId(
     iat: string,
     deviceId: string,
   ): Promise<void> {
-    await db.getCollections().sessionsCollection.deleteOne({
+    await SessionModel.deleteOne({
       iat: Number(iat),
-      deviceId: new ObjectId(deviceId),
+      deviceId: new Types.ObjectId(deviceId),
     });
   }
 
   async deleteSessionByDeviceId(deviceId: string): Promise<void> {
-    await db.getCollections().sessionsCollection.deleteOne({
-      deviceId: new ObjectId(deviceId),
+    await SessionModel.deleteOne({
+      deviceId: new Types.ObjectId(deviceId),
     });
   }
 }
