@@ -1,27 +1,15 @@
-import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
-import { db } from "../../db";
-import { UserDb } from "../types";
+import { UserModel } from "../db/user.model";
 
 @injectable()
 export class UserCommandRepository {
-  async create(user: UserDb): Promise<ObjectId> {
-    const result = await db.getCollections().usersCollection.insertOne(user);
-    return result.insertedId;
+  async save(user: any): Promise<string> {
+    const result = await user.save();
+
+    return result._id.toString();
   }
 
   async delete(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .usersCollection.deleteOne({ _id: new ObjectId(id) });
-  }
-
-  async update(id: string, user: Partial<UserDb>): Promise<void> {
-    await db.getCollections().usersCollection.updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $set: user,
-      },
-    );
+    await UserModel.findByIdAndDelete(id);
   }
 }
