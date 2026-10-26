@@ -1,6 +1,6 @@
 import { WithId } from "mongodb";
 import { injectable } from "inversify";
-import { db } from "../../db";
+import { UserModel } from "../db/user.model";
 import { User, UserDb, UserDbWithId } from "../types";
 import { mapUserDbToUser } from "../utils";
 import { SortBy, SortDirection } from "../../common/types";
@@ -30,34 +30,31 @@ export class UserQueryRepository {
     searchLoginTerm = null,
     searchEmailTerm = null,
   }: UsersQueryParams = {}): Promise<User[]> {
-    const result = await db
-      .getCollections()
-      .usersCollection.find(
-        searchLoginTerm || searchEmailTerm
-          ? {
-              $or: [
-                ...(searchLoginTerm
-                  ? [{ login: { $regex: searchLoginTerm, $options: "i" } }]
-                  : []),
-                ...(searchEmailTerm
-                  ? [{ email: { $regex: searchEmailTerm, $options: "i" } }]
-                  : []),
-              ],
-            }
-          : {},
-      )
+    const result = await UserModel.find(
+      searchLoginTerm || searchEmailTerm
+        ? {
+            $or: [
+              ...(searchLoginTerm
+                ? [{ login: { $regex: searchLoginTerm, $options: "i" } }]
+                : []),
+              ...(searchEmailTerm
+                ? [{ email: { $regex: searchEmailTerm, $options: "i" } }]
+                : []),
+            ],
+          }
+        : {},
+    )
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
       .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
     return result.map(mapUserDbToUser);
   }
 
   async findByField(filter: Partial<WithId<UserDb>>): Promise<User | null> {
-    const result = await db.getCollections().usersCollection.findOne(filter);
+    const result = await UserModel.findOne(filter);
 
     if (!result) {
       return null;
@@ -67,12 +64,9 @@ export class UserQueryRepository {
   }
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
-    const resultUsers = await db
-      .getCollections()
-      .usersCollection.find({
-        $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
-      })
-      .toArray();
+    const resultUsers = await UserModel.find({
+      $or: [{ email: loginOrEmail }, { login: loginOrEmail }],
+    });
 
     return resultUsers.map((user) => ({
       id: user._id.toString(),
@@ -100,6 +94,6 @@ export class UserQueryRepository {
 
     const filter = conditions.length > 0 ? { $or: conditions } : {};
 
-    return db.getCollections().usersCollection.countDocuments(filter);
+    return UserModel.countDocuments(filter);
   }
 }
