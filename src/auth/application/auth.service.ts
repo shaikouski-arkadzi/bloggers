@@ -174,7 +174,7 @@ export class AuthService {
     }
 
     if (mode === "create") {
-      await this.authCommandRepository.createSession({
+      await this.authCommandRepository.save({
         deviceId: decodedToken.deviceId,
         deviceName: decodedToken.deviceName,
         ip: decodedToken.ip,
@@ -184,7 +184,7 @@ export class AuthService {
     }
 
     if (mode === "update") {
-      await this.authCommandRepository.updateSession({
+      await this.authCommandRepository.save({
         deviceId: decodedToken.deviceId,
         deviceName: decodedToken.deviceName,
         ip: decodedToken.ip,
