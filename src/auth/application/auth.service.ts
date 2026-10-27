@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { inject, injectable } from "inversify";
 import { UserDbWithId } from "../../users/types";
 import {
@@ -80,7 +81,9 @@ export class AuthService {
   }
 
   async userInfo(userId: string): Promise<MeViewModel> {
-    const findedUser = await this.userService.getUserById(new ObjectId(userId));
+    const findedUser = await this.userService.getUserById(
+      new Types.ObjectId(userId),
+    );
 
     if (!findedUser) throw new NotFoundException();
 
@@ -97,14 +100,21 @@ export class AuthService {
     if (!userCode) throw new NotFoundException();
     if (!userCode.confirmaionCode) throw new NotFoundException();
 
-    const newCode = randomUUID();
-
-    await this.userCommandRepository.update(userCode.id, {
-      confirmaionCode: newCode,
-      confirmationCodeExpiration: new Date(
-        Date.now() + 24 * 60 * 60 * 1000,
-      ).toISOString(),
+    const userDb = await this.userQueryRepository.findByFieldInDb({
+      _id: new Types.ObjectId(userCode.id),
     });
+
+    if (!userDb) throw new NotFoundException();
+
+    const newCode = randomUUID();
+    const newConfirmationCodeExpiration = new Date(
+      Date.now() + 24 * 60 * 60 * 1000,
+    ).toISOString();
+
+    userDb.confirmaionCode = newCode;
+    userDb.confirmationCodeExpiration = newConfirmationCodeExpiration;
+
+    await this.userCommandRepository.save(userDb);
 
     nodemailerService
       .sendEmail(email, newCode, registerTemplateMail)
@@ -116,11 +126,17 @@ export class AuthService {
 
     if (!user) throw new NotFoundException();
 
-    await this.userCommandRepository.update(user.id, {
-      isConfirmed: true,
-      confirmaionCode: undefined,
-      confirmationCodeExpiration: undefined,
+    const userDb = await this.userQueryRepository.findByFieldInDb({
+      _id: new Types.ObjectId(user.id),
     });
+
+    if (!userDb) throw new NotFoundException();
+
+    userDb.isConfirmed = true;
+    userDb.confirmaionCode = undefined;
+    userDb.confirmationCodeExpiration = undefined;
+
+    await this.userCommandRepository.save(userDb);
   }
 
   async updateTokens(): Promise<void> {}
@@ -197,18 +213,19 @@ export class AuthService {
   }
 
   async resetPassword(email: string): Promise<void> {
-    const user = await this.userQueryRepository.findByField({ email });
+    const user = await this.userQueryRepository.findByFieldInDb({ email });
 
     if (!user) return;
 
     const recoveryCode = randomUUID();
+    const recoveryCodeExpiration = new Date(
+      Date.now() + 24 * 60 * 60 * 1000,
+    ).toISOString();
 
-    await this.userCommandRepository.update(user.id, {
-      recoveryCode,
-      recoveryCodeExpiration: new Date(
-        Date.now() + 24 * 60 * 60 * 1000,
-      ).toISOString(),
-    });
+    user.recoveryCode = recoveryCode;
+    user.recoveryCodeExpiration = recoveryCodeExpiration;
+
+    await this.userCommandRepository.save(user);
 
     nodemailerService
       .sendEmail(email, recoveryCode, recoveryPasswordTemplateMail)
@@ -222,14 +239,20 @@ export class AuthService {
 
     if (!user) throw new NotFoundException();
 
+    const userDb = await this.userQueryRepository.findByFieldInDb({
+      _id: new Types.ObjectId(user.id),
+    });
+
+    if (!userDb) throw new NotFoundException();
+
     const hashPassword = await bcryptService.generateHash(
       newPasswordDto.newPassword,
     );
 
-    await this.userCommandRepository.update(user.id, {
-      password: hashPassword,
-      recoveryCode: undefined,
-      recoveryCodeExpiration: undefined,
-    });
+    userDb.password = hashPassword;
+    userDb.recoveryCode = undefined;
+    userDb.recoveryCodeExpiration = undefined;
+
+    await this.userCommandRepository.save(userDb);
   }
 }
