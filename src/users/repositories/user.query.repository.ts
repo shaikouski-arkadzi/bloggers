@@ -1,4 +1,4 @@
-import { WithId } from "mongodb";
+import { Types } from "mongoose";
 import { injectable } from "inversify";
 import { UserModel } from "../db/user.model";
 import { User, UserDb, UserDbWithId } from "../types";
@@ -53,7 +53,9 @@ export class UserQueryRepository {
     return result.map(mapUserDbToUser);
   }
 
-  async findByField(filter: Partial<WithId<UserDb>>): Promise<User | null> {
+  async findByField(
+    filter: Partial<UserDb & { _id: Types.ObjectId }>,
+  ): Promise<User | null> {
     const result = await UserModel.findOne(filter);
 
     if (!result) {
@@ -61,6 +63,18 @@ export class UserQueryRepository {
     }
 
     return mapUserDbToUser(result);
+  }
+
+  async findByFieldInDb(
+    filter: Partial<UserDb & { _id: Types.ObjectId }>,
+  ): Promise<UserDb | null> {
+    const result = await UserModel.findOne(filter);
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
   }
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
