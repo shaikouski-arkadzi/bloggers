@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { inject, injectable } from "inversify";
 import { User, UserDb, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
@@ -29,15 +29,12 @@ export class UserService {
     return !user;
   }
 
-  async getUserById(id: ObjectId): Promise<User | null> {
+  async getUserById(id: Types.ObjectId): Promise<User | null> {
     const user = await this.userQueryRepository.findByField({ _id: id });
     return user;
   }
 
-  async create(
-    user: UserInputDto,
-    register: boolean = false,
-  ): Promise<ObjectId> {
+  async create(user: UserInputDto, register: boolean = false): Promise<string> {
     const { login, email, password } = user;
 
     const isEmailAvailable = await this.isEmailAvailable(email);
@@ -63,7 +60,7 @@ export class UserService {
         .catch((e) => console.log(e));
     }
 
-    const createdUserId = await this.userCommandRepository.create(newUser);
+    const createdUserId = await this.userCommandRepository.save(newUser);
 
     return createdUserId;
   }
@@ -102,7 +99,7 @@ export class UserService {
   }
 
   async delete(id: string): Promise<void> {
-    const user = await this.getUserById(new ObjectId(id));
+    const user = await this.getUserById(new Types.ObjectId(id));
 
     if (!user) throw new NotFoundException();
 
