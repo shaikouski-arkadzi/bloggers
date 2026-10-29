@@ -1,6 +1,8 @@
 import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
+import { Types } from "mongoose";
 import { db } from "../../db";
+import { CommentModel } from "../db/comment.model";
 import { Comment, CommentInputModel, TLikeStatus } from "../types";
 import {
   likeStatusToBoolean,
@@ -13,29 +15,28 @@ export class CommentsCommandRepository {
   async create(
     comment: Omit<Comment, "id">,
     postId: string,
-  ): Promise<ObjectId> {
+  ): Promise<Types.ObjectId> {
     const commentDB = mapCommentToCommentDB(comment, postId);
 
-    const result = await db
-      .getCollections()
-      .commentsCollection.insertOne(commentDB);
+    const commentModel = new CommentModel(commentDB);
 
-    return result.insertedId;
+    const result = await commentModel.save();
+
+    return result._id;
   }
 
-  async update(id: string, comment: CommentInputModel): Promise<void> {
-    await db.getCollections().commentsCollection.updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $set: comment,
-      },
-    );
+  async update(comment: any): Promise<void> {
+    await comment.save();
+  }
+
+  async save(comment: any): Promise<Types.ObjectId> {
+    const result = await comment.save();
+
+    return result._id;
   }
 
   async delete(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .commentsCollection.deleteOne({ _id: new ObjectId(id) });
+    await CommentModel.findByIdAndDelete(id);
   }
 
   async createLike(
