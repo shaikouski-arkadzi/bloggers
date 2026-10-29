@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { SortBy, SortDirection } from "../../common/types";
 import { LikeStatus } from "../constants";
 
@@ -9,7 +9,7 @@ export interface CommentInputModel {
 export interface CommentDb {
   content: string;
   createdAt: string;
-  postId: ObjectId;
+  postId: Types.ObjectId;
   commentatorInfo: CommentatorInfoDB;
   likesInfo: LikesInfoDB;
 }
@@ -28,7 +28,7 @@ export interface CommentatorInfo {
 }
 
 export interface CommentatorInfoDB {
-  userId: ObjectId;
+  userId: Types.ObjectId;
   userLogin: string;
 }
 
@@ -62,8 +62,8 @@ export interface LikeInputModel {
 }
 
 export interface LikeDb {
-  userId: ObjectId;
-  commentId: ObjectId;
+  userId: Types.ObjectId;
+  commentId: Types.ObjectId;
   like: boolean;
 }
 

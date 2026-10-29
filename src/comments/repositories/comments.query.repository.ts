@@ -1,4 +1,5 @@
 import { ObjectId, WithId } from "mongodb";
+import { Types } from "mongoose";
 import { injectable } from "inversify";
 import {
   PAGE_DAFAULT,
@@ -8,6 +9,7 @@ import {
 } from "../../common/constants";
 import { SortBy, SortDirection } from "../../common/types";
 import { db } from "../../db";
+import { CommentModel } from "../db/comment.model";
 import { Comment, CommentDb, TLikeStatus } from "../types";
 import { booleanToLikeStatus, mapCommentDbToComment } from "../utils";
 
@@ -28,26 +30,23 @@ export class CommentsQueryRepository {
       sortBy = SORT_FIELD_DAFAULT,
       sortDirection = SORT_DIRECTION_DAFAULT,
     }: CommentsQueryParams = {},
-  ): Promise<WithId<CommentDb>[]> {
-    const postObjectId = new ObjectId(postId);
+  ): Promise<Array<CommentDb & { _id: Types.ObjectId }>> {
+    const postObjectId = new Types.ObjectId(postId);
 
-    const result = await db
-      .getCollections()
-      .commentsCollection.find({ postId: postObjectId })
+    const result = await CommentModel.find({ postId: postObjectId })
       .sort({
         [sortBy]: sortDirection === "asc" ? 1 : -1,
       })
       .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
+      .limit(pageSize);
 
     return result;
   }
 
   async findByField(
     filter: Partial<WithId<CommentDb>>,
-  ): Promise<WithId<CommentDb> | null> {
-    const result = await db.getCollections().commentsCollection.findOne(filter);
+  ): Promise<(CommentDb & { _id: Types.ObjectId }) | null> {
+    const result = await CommentModel.findOne(filter);
 
     if (!result) {
       return null;
