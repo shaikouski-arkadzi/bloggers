@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { Types } from "mongoose";
-import { db } from "../../db";
+import { LikeModel } from "../db/like.model";
 import { CommentModel } from "../db/comment.model";
 import { Comment, CommentInputModel, TLikeStatus } from "../types";
 import {
@@ -43,18 +43,18 @@ export class CommentsCommandRepository {
     userId: string,
     commentId: string,
     likeStatus: TLikeStatus,
-  ): Promise<ObjectId> {
-    const commentDB = mapLikeModelToLikeDB({
+  ): Promise<Types.ObjectId> {
+    const likeDB = mapLikeModelToLikeDB({
       userId,
       commentId,
       like: likeStatus,
     });
 
-    const result = await db
-      .getCollections()
-      .likesCollection.insertOne(commentDB);
+    const likeModel = new LikeModel(likeDB);
 
-    return result.insertedId;
+    const result = await likeModel.save();
+
+    return result._id;
   }
 
   async updateLikeStatus(
@@ -62,10 +62,10 @@ export class CommentsCommandRepository {
     commentId: string,
     likeStatus: TLikeStatus,
   ): Promise<void> {
-    await db.getCollections().likesCollection.updateOne(
+    await LikeModel.updateOne(
       {
-        userId: new ObjectId(userId),
-        commentId: new ObjectId(commentId),
+        userId: new Types.ObjectId(userId),
+        commentId: new Types.ObjectId(commentId),
       },
       {
         $set: { like: likeStatusToBoolean(likeStatus) },
@@ -74,45 +74,37 @@ export class CommentsCommandRepository {
   }
 
   async deleteLikeStatus(userId: string, commentId: string): Promise<void> {
-    await db.getCollections().likesCollection.deleteOne({
-      userId: new ObjectId(userId),
-      commentId: new ObjectId(commentId),
+    await LikeModel.deleteOne({
+      userId: new Types.ObjectId(userId),
+      commentId: new Types.ObjectId(commentId),
     });
   }
 
   async increaseLike(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .commentsCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $inc: { "likesInfo.likesCount": 1 } },
-      );
+    await LikeModel.updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { "likesInfo.likesCount": 1 } },
+    );
   }
 
   async increaseDislike(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .commentsCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $inc: { "likesInfo.dislikesCount": 1 } },
-      );
+    await LikeModel.updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { "likesInfo.dislikesCount": 1 } },
+    );
   }
 
   async decreaseLike(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .commentsCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $inc: { "likesInfo.likesCount": -1 } },
-      );
+    await LikeModel.updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { "likesInfo.likesCount": -1 } },
+    );
   }
 
   async decreaseDislike(id: string): Promise<void> {
-    await db
-      .getCollections()
-      .commentsCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $inc: { "likesInfo.dislikesCount": -1 } },
-      );
+    await LikeModel.updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { "likesInfo.dislikesCount": -1 } },
+    );
   }
 }
