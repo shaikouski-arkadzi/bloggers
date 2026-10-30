@@ -1,4 +1,3 @@
-import { ObjectId, WithId } from "mongodb";
 import { Types } from "mongoose";
 import { injectable } from "inversify";
 import {
@@ -8,10 +7,10 @@ import {
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
 import { SortBy, SortDirection } from "../../common/types";
-import { db } from "../../db";
+import { LikeModel } from "../db/like.model";
 import { CommentModel } from "../db/comment.model";
 import { Comment, CommentDb, TLikeStatus } from "../types";
-import { booleanToLikeStatus, mapCommentDbToComment } from "../utils";
+import { booleanToLikeStatus } from "../utils";
 
 interface CommentsQueryParams {
   page?: number;
@@ -44,7 +43,7 @@ export class CommentsQueryRepository {
   }
 
   async findByField(
-    filter: Partial<WithId<CommentDb>>,
+    filter: Partial<CommentDb & { _id: Types.ObjectId }>,
   ): Promise<(CommentDb & { _id: Types.ObjectId }) | null> {
     const result = await CommentModel.findOne(filter);
 
@@ -56,20 +55,18 @@ export class CommentsQueryRepository {
   }
 
   async count(
-    conditions: Partial<Record<keyof CommentDb, string | ObjectId>> = {},
+    conditions: Partial<Record<keyof CommentDb, string | Types.ObjectId>> = {},
   ): Promise<number> {
     const filter = Object.fromEntries(
       Object.entries(conditions).map(([field, condition]) => [
         field,
-        condition instanceof ObjectId
+        condition instanceof Types.ObjectId
           ? condition
           : { $regex: condition, $options: "i" },
       ]),
     );
 
-    const result = await db
-      .getCollections()
-      .commentsCollection.countDocuments(filter);
+    const result = await LikeModel.countDocuments(filter);
 
     return result;
   }
@@ -78,9 +75,9 @@ export class CommentsQueryRepository {
     userId: string,
     commentId: string,
   ): Promise<TLikeStatus | null> {
-    const result = await db.getCollections().likesCollection.findOne({
-      userId: new ObjectId(userId),
-      commentId: new ObjectId(commentId),
+    const result = await LikeModel.findOne({
+      userId: new Types.ObjectId(userId),
+      commentId: new Types.ObjectId(commentId),
     });
 
     if (!result) {
