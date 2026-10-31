@@ -1,6 +1,6 @@
 import request from "supertest";
 import express from "express";
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
@@ -112,7 +112,7 @@ describe("GET /posts/:postId/comments", () => {
     );
 
     commentsCount = await commentsQueryRepository.count({
-      postId: new ObjectId(createdPostId),
+      postId: new Types.ObjectId(createdPostId),
     });
   }, 100000);
 

@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { Comment, CommentDb } from "../types";
 
 export const mapCommentToCommentDB = (
@@ -7,11 +7,11 @@ export const mapCommentToCommentDB = (
 ): CommentDb => ({
   content: comment.content,
   commentatorInfo: {
-    userId: new ObjectId(comment.commentatorInfo.userId),
+    userId: new Types.ObjectId(comment.commentatorInfo.userId),
     userLogin: comment.commentatorInfo.userLogin,
   },
   createdAt: comment.createdAt,
-  postId: new ObjectId(postId),
+  postId: new Types.ObjectId(postId),
   likesInfo: {
     likesCount: comment.likesInfo.likesCount,
     dislikesCount: comment.likesInfo.dislikesCount,

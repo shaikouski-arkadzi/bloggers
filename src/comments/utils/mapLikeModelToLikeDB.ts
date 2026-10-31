@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { LikeDb, LikeModel } from "../types";
 import { likeStatusToBoolean } from "./likeStatusToBoolean";
 
@@ -7,7 +7,7 @@ export const mapLikeModelToLikeDB = ({
   commentId,
   like,
 }: LikeModel): LikeDb => ({
-  userId: new ObjectId(userId),
-  commentId: new ObjectId(commentId),
+  userId: new Types.ObjectId(userId),
+  commentId: new Types.ObjectId(commentId),
   like: likeStatusToBoolean(like),
 });

@@ -7,6 +7,7 @@ import { SavingException } from "../exceptions";
 import { UserService } from "../application/user.service";
 import { UserQueryRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
+import { Types } from "mongoose";
 
 @injectable()
 export class UsersController {
@@ -27,8 +28,10 @@ export class UsersController {
     try {
       const createdUserId = await this.userService.create(user);
 
+      const createdUserObjectId = new Types.ObjectId(createdUserId);
+
       const newUser = await this.userQueryRepository.findByField({
-        _id: createdUserId,
+        _id: createdUserObjectId,
       });
 
       if (!newUser) throw new SavingException();

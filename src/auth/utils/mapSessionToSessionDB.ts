@@ -1,10 +1,10 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { Session, SessionsDB } from "../types";
 
 export const mapSessionToSessionDB = (session: Session): SessionsDB => ({
-  deviceId: new ObjectId(session.deviceId),
+  deviceId: new Types.ObjectId(session.deviceId),
   deviceName: session.deviceName,
   iat: session.iat,
   ip: session.ip,
-  userId: new ObjectId(session.userId),
+  userId: new Types.ObjectId(session.userId),
 });

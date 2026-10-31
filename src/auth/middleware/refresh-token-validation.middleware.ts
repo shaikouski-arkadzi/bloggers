@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { container } from "../../settings/container";
 import { jwtService } from "../application";
 import { TokenType } from "../application/jwt.service";
@@ -40,7 +40,7 @@ export const refreshTokenValidationMiddleware = async (
     const { iat, deviceId } = verified;
 
     const user = await userQueryRepository.findByField({
-      _id: new ObjectId(userId),
+      _id: new Types.ObjectId(userId),
     });
 
     if (!user) {
