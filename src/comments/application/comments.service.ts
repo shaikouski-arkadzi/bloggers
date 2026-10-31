@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from "mongodb";
+import { Types } from "mongoose";
 import { inject, injectable } from "inversify";
-
 import { UnauthorizedException } from "../../auth/exceptions";
 import {
   NotFoundException,
@@ -56,7 +56,7 @@ export class CommentsService {
     }
 
     const commentDb = await this.commentsQueryRepository.findByField({
-      _id: new ObjectId(id),
+      _id: new Types.ObjectId(id),
     });
 
     if (!commentDb) {
@@ -100,7 +100,7 @@ export class CommentsService {
     await this.postsService.findById(postId);
 
     const allCommentsCount = await this.commentsQueryRepository.count({
-      postId: new ObjectId(postId),
+      postId: new Types.ObjectId(postId),
     });
 
     const pagesCount = Math.ceil(allCommentsCount / pageSize);
@@ -150,8 +150,8 @@ export class CommentsService {
     userId: string,
     postId: string,
     content: string,
-  ): Promise<ObjectId> {
-    const userObjectId = new ObjectId(userId);
+  ): Promise<Types.ObjectId> {
+    const userObjectId = new Types.ObjectId(userId);
 
     const user = await this.userService.getUserById(userObjectId);
 
@@ -182,7 +182,9 @@ export class CommentsService {
     commentId: string,
     commentInput: CommentInputModel,
   ): Promise<void> {
-    const user = await this.userService.getUserById(new ObjectId(userId));
+    const userObjectId = new Types.ObjectId(userId);
+
+    const user = await this.userService.getUserById(userObjectId);
 
     if (!user) throw new UnauthorizedException();
 
@@ -194,11 +196,13 @@ export class CommentsService {
       throw new PermissionException();
     }
 
-    await this.commentsCommandRepository.update(commentId, commentInput);
+    await this.commentsCommandRepository.update(commentInput);
   }
 
   async delete(userId: string, commentId: string): Promise<void> {
-    const user = await this.userService.getUserById(new ObjectId(userId));
+    const userObjectId = new Types.ObjectId(userId);
+
+    const user = await this.userService.getUserById(userObjectId);
 
     if (!user) throw new UnauthorizedException();
 
@@ -219,7 +223,7 @@ export class CommentsService {
     likeStatus: TLikeStatus,
   ): Promise<void> {
     const comment = await this.commentsQueryRepository.findByField({
-      _id: new ObjectId(commentId),
+      _id: new Types.ObjectId(commentId),
     });
 
     if (!comment) throw new NotFoundException();

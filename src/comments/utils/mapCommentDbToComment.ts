@@ -1,9 +1,9 @@
-import { WithId } from "mongodb";
+import { Types } from "mongoose";
 import { Comment, CommentDb } from "../types";
 import { INITIAL_LIKES_INFO } from "../constants";
 
 export const mapCommentDbToComment = (
-  commentDb: WithId<CommentDb>,
+  commentDb: CommentDb & { _id: Types.ObjectId },
 ): Comment => ({
   id: commentDb._id.toString(),
   content: commentDb.content,

@@ -1,8 +1,8 @@
-import { WithId } from "mongodb";
+import { Types } from "mongoose";
 import { Comment, CommentDb, TLikeStatus } from "../types";
 
 export const mapCommentWithMyStatus = (
-  comment: WithId<CommentDb>,
+  comment: CommentDb & { _id: Types.ObjectId },
   myLikeStatus: TLikeStatus,
 ): Comment => ({
   id: comment._id.toString(),
