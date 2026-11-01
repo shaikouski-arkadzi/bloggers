@@ -1,11 +1,25 @@
 import { Types } from "mongoose";
 import { injectable } from "inversify";
 import { SessionModel } from "../db/session.model";
-import { Session, SessionsDB } from "../types";
+import { UserModel } from "../../users/db/user.model";
+import { Session } from "../types";
+import { UserDb } from "../../users/types";
 import { mapSessionToSessionDB } from "../utils";
 
 @injectable()
 export class AuthCommandRepository {
+  async getUserAuthCode(
+    email: string,
+  ): Promise<(UserDb & { _id: Types.ObjectId }) | null> {
+    const result = await UserModel.findOne({ email });
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  }
+
   async save(session: Session): Promise<string> {
     const sessionDB = mapSessionToSessionDB(session);
 

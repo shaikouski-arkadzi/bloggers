@@ -21,7 +21,6 @@ import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
 import { recoveryPasswordTemplateMail, registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
-import { SessionModel } from "../db/session.model";
 
 @injectable()
 export class AuthService {
@@ -96,14 +95,12 @@ export class AuthService {
   }
 
   async resendEmail(email: string): Promise<void> {
-    const userCode = await this.authQueryRepository.getUserAuthCode(email);
+    const userCode = await this.authCommandRepository.getUserAuthCode(email);
 
     if (!userCode) throw new NotFoundException();
     if (!userCode.confirmaionCode) throw new NotFoundException();
 
-    const userDb = await this.userQueryRepository.findByFieldInDb({
-      _id: new Types.ObjectId(userCode.id),
-    });
+    const userDb = await this.userCommandRepository.findById(userCode._id);
 
     if (!userDb) throw new NotFoundException();
 
