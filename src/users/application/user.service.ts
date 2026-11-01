@@ -8,6 +8,7 @@ import { bcryptService, nodemailerService } from "../../auth/application";
 import { mapUserDbToRegisterUser } from "../utils";
 import { registerTemplateMail } from "../../auth/utils";
 import { UserCommandRepository, UserQueryRepository } from "../repositories";
+import { UserModel } from "../db/user.model";
 
 @injectable()
 export class UserService {
@@ -60,7 +61,9 @@ export class UserService {
         .catch((e) => console.log(e));
     }
 
-    const createdUserId = await this.userCommandRepository.save(newUser);
+    const userModel = new UserModel(newUser);
+
+    const createdUserId = await this.userCommandRepository.save(userModel);
 
     return createdUserId;
   }

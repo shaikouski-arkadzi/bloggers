@@ -27,7 +27,7 @@ export class UsersController {
 
     try {
       const createdUserId = await this.userService.create(user);
-
+      console.log(createdUserId);
       const createdUserObjectId = new Types.ObjectId(createdUserId);
 
       const newUser = await this.userQueryRepository.findByField({
