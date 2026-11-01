@@ -1,7 +1,7 @@
-import { Blog } from "../../blogs/types";
+import { BlogDb } from "../../blogs/types";
 import { PostDb, PostInputDto } from "../types";
 
-export const createPostDb = (post: PostInputDto, blog: Blog): PostDb => ({
+export const createPostDb = (post: PostInputDto, blog: BlogDb): PostDb => ({
   title: post.title,
   content: post.content,
   shortDescription: post.shortDescription,

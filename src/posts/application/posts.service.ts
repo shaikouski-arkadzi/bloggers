@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
 import { PaginatorData } from "../../common/types";
-import { Post, PostInputDto, PostsQuery, UpdatedPost } from "../types";
-import { createPostDb, updatePostDb } from "../utils";
+import { Post, PostInputDto, PostsQuery } from "../types";
+import { createPostDb } from "../utils";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
 import { BlogsService } from "../../blogs/application/blogs.service";
 import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
-import { BlogsQueryRepository } from "../../blogs/repositories";
+import { BlogsCommandRepository } from "../../blogs/repositories";
 import { PostModel } from "../db/post.model";
 
 @injectable()
@@ -18,8 +18,8 @@ export class PostsService {
     @inject(PostsQueryRepository)
     private postsQueryRepository: PostsQueryRepository,
 
-    @inject(BlogsQueryRepository)
-    private blogsQueryRepository: BlogsQueryRepository,
+    @inject(BlogsCommandRepository)
+    private blogsCommandRepository: BlogsCommandRepository,
 
     @inject(BlogsService)
     private blogsService: BlogsService,
@@ -36,7 +36,7 @@ export class PostsService {
   }
 
   async create(post: PostInputDto): Promise<string> {
-    const blog = await this.blogsQueryRepository.findById(post.blogId);
+    const blog = await this.blogsCommandRepository.findById(post.blogId);
 
     if (!blog) throw new BlogForPostNotExistException();
 
@@ -82,7 +82,7 @@ export class PostsService {
   async update(id: string, post: PostInputDto): Promise<void> {
     await this.findById(id);
 
-    const blog = await this.blogsQueryRepository.findById(post.blogId);
+    const blog = await this.blogsCommandRepository.findById(post.blogId);
 
     if (!blog) throw new BlogForPostNotExistException();
 
