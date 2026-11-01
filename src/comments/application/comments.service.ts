@@ -1,4 +1,3 @@
-import { ObjectId, WithId } from "mongodb";
 import { Types } from "mongoose";
 import { inject, injectable } from "inversify";
 import { UnauthorizedException } from "../../auth/exceptions";
@@ -23,6 +22,7 @@ import {
 } from "../types";
 import { jwtService, TokenType } from "../../auth/application/jwt.service";
 import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
+import { CommentModel } from "../db/comment.model";
 
 @injectable()
 export class CommentsService {
@@ -224,9 +224,9 @@ export class CommentsService {
     commentId: string,
     likeStatus: TLikeStatus,
   ): Promise<void> {
-    const comment = await this.commentsQueryRepository.findByField({
-      _id: new Types.ObjectId(commentId),
-    });
+    //TODO: check
+
+    const comment = await this.commentsCommandRepository.findById(commentId);
 
     if (!comment) throw new NotFoundException();
 
@@ -236,8 +236,6 @@ export class CommentsService {
         commentId,
       );
 
-    console.log(previousLike);
-
     if (!previousLike && (likeStatus === "Like" || likeStatus === "Dislike")) {
       await this.commentsCommandRepository.createLike(
         userId,
@@ -245,11 +243,13 @@ export class CommentsService {
         likeStatus,
       );
 
-      if (likeStatus === "Like")
-        await this.commentsCommandRepository.increaseLike(commentId);
+      if (likeStatus === "Like") {
+        comment.likesInfo.likesCount += 1;
+      }
 
-      if (likeStatus === "Dislike")
-        await this.commentsCommandRepository.increaseDislike(commentId);
+      if (likeStatus === "Dislike") {
+        comment.likesInfo.dislikesCount += 1;
+      }
     }
 
     if (previousLike && likeStatus !== previousLike) {
@@ -269,23 +269,24 @@ export class CommentsService {
       }
 
       if (likeStatus === "Like" && previousLike === "Dislike") {
-        await this.commentsCommandRepository.decreaseDislike(commentId);
-        await this.commentsCommandRepository.increaseLike(commentId);
+        comment.likesInfo.dislikesCount -= 1;
+        comment.likesInfo.likesCount += 1;
       }
 
       if (likeStatus === "Dislike" && previousLike === "Like") {
-        await this.commentsCommandRepository.decreaseLike(commentId);
-        await this.commentsCommandRepository.increaseDislike(commentId);
+        comment.likesInfo.likesCount -= 1;
+        comment.likesInfo.dislikesCount += 1;
       }
 
       if (likeStatus === "None") {
         if (previousLike === "Like") {
-          await this.commentsCommandRepository.decreaseLike(commentId);
+          comment.likesInfo.likesCount -= 1;
         }
         if (previousLike === "Dislike") {
-          await this.commentsCommandRepository.decreaseDislike(commentId);
+          comment.likesInfo.dislikesCount -= 1;
         }
       }
     }
+    await this.commentsCommandRepository.save(comment);
   }
 }

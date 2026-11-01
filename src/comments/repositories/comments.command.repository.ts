@@ -9,6 +9,7 @@ import {
   mapCommentToCommentDB,
   mapLikeModelToLikeDB,
 } from "../utils";
+import { NotFoundException } from "../../common/exceptions";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -41,6 +42,22 @@ export class CommentsCommandRepository {
 
   async findById(id: string): Promise<any | null> {
     const result = await CommentModel.findById(id);
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  }
+
+  async findLikeByUserAndComment(
+    userId: string,
+    commentId: string,
+  ): Promise<any | null> {
+    const result = await LikeModel.findOne({
+      userId: new Types.ObjectId(userId),
+      commentId: new Types.ObjectId(commentId),
+    });
 
     if (!result) {
       return null;
@@ -88,33 +105,5 @@ export class CommentsCommandRepository {
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
     });
-  }
-
-  async increaseLike(id: string): Promise<void> {
-    await LikeModel.updateOne(
-      { _id: new ObjectId(id) },
-      { $inc: { "likesInfo.likesCount": 1 } },
-    );
-  }
-
-  async increaseDislike(id: string): Promise<void> {
-    await LikeModel.updateOne(
-      { _id: new ObjectId(id) },
-      { $inc: { "likesInfo.dislikesCount": 1 } },
-    );
-  }
-
-  async decreaseLike(id: string): Promise<void> {
-    await LikeModel.updateOne(
-      { _id: new ObjectId(id) },
-      { $inc: { "likesInfo.likesCount": -1 } },
-    );
-  }
-
-  async decreaseDislike(id: string): Promise<void> {
-    await LikeModel.updateOne(
-      { _id: new ObjectId(id) },
-      { $inc: { "likesInfo.dislikesCount": -1 } },
-    );
   }
 }
