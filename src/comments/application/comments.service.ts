@@ -188,15 +188,17 @@ export class CommentsService {
 
     if (!user) throw new UnauthorizedException();
 
-    const comment = await this.getCommentById(commentId);
+    const comment = await this.commentsCommandRepository.findById(commentId);
 
     if (!comment) throw new NotFoundException();
 
-    if (comment.commentatorInfo.userId !== userId) {
+    if (comment.commentatorInfo.userId.toString() !== userId) {
       throw new PermissionException();
     }
 
-    await this.commentsCommandRepository.update(commentInput);
+    comment.content = commentInput.content;
+
+    await this.commentsCommandRepository.update(comment);
   }
 
   async delete(userId: string, commentId: string): Promise<void> {

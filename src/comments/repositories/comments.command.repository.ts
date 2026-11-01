@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import { Types } from "mongoose";
 import { LikeModel } from "../db/like.model";
 import { CommentModel } from "../db/comment.model";
-import { Comment, CommentInputModel, TLikeStatus } from "../types";
+import { Comment, CommentDb, CommentInputModel, TLikeStatus } from "../types";
 import {
   likeStatusToBoolean,
   mapCommentToCommentDB,
@@ -37,6 +37,16 @@ export class CommentsCommandRepository {
 
   async delete(id: string): Promise<void> {
     await CommentModel.findByIdAndDelete(id);
+  }
+
+  async findById(id: string): Promise<any | null> {
+    const result = await CommentModel.findById(id);
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
   }
 
   async createLike(
