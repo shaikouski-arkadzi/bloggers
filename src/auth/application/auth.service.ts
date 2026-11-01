@@ -21,6 +21,7 @@ import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
 import { recoveryPasswordTemplateMail, registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
+import { SessionModel } from "../db/session.model";
 
 @injectable()
 export class AuthService {
@@ -200,13 +201,16 @@ export class AuthService {
     }
 
     if (mode === "update") {
-      await this.authCommandRepository.save({
-        deviceId: decodedToken.deviceId,
-        deviceName: decodedToken.deviceName,
-        ip: decodedToken.ip,
-        iat: decodedToken.iat,
-        userId: decodedToken.uuid,
-      });
+      //TODO: check
+
+      const currentSession =
+        await this.authCommandRepository.getSessionByDeviceId(
+          decodedToken.deviceId,
+        );
+
+      currentSession.iat = decodedToken.iat;
+
+      await this.authCommandRepository.update(currentSession);
     }
 
     return { accessToken, refreshToken };

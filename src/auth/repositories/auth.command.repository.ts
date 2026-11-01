@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { injectable } from "inversify";
 import { SessionModel } from "../db/session.model";
-import { Session } from "../types";
+import { Session, SessionsDB } from "../types";
 import { mapSessionToSessionDB } from "../utils";
 
 @injectable()
@@ -12,6 +12,12 @@ export class AuthCommandRepository {
     const sessionModel = new SessionModel(sessionDB);
 
     const savedSession = await sessionModel.save();
+
+    return savedSession._id.toString();
+  }
+
+  async update(session: any): Promise<string> {
+    const savedSession = await session.save();
 
     return savedSession._id.toString();
   }
@@ -30,5 +36,17 @@ export class AuthCommandRepository {
     await SessionModel.deleteOne({
       deviceId: new Types.ObjectId(deviceId),
     });
+  }
+
+  async getSessionByDeviceId(deviceId: string): Promise<any | null> {
+    const result = await SessionModel.findOne({
+      deviceId: new Types.ObjectId(deviceId),
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
   }
 }
