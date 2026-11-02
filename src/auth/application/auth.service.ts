@@ -213,7 +213,7 @@ export class AuthService {
   }
 
   async resetPassword(email: string): Promise<void> {
-    const user = await this.userQueryRepository.findByFieldInDb({ email });
+    const user = await this.userCommandRepository.findByEmail(email);
 
     if (!user) return;
 

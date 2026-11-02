@@ -24,4 +24,14 @@ export class UserCommandRepository {
 
     return result;
   }
+
+  async findByEmail(email: UserDb["email"]): Promise<UserDb | null> {
+    const result = await UserModel.findOne({ email });
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  }
 }
