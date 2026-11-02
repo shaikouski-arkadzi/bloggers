@@ -32,6 +32,18 @@ export class AuthCommandRepository {
     return result;
   }
 
+  async getUserByRecoveryCode(
+    code: string,
+  ): Promise<(UserDb & { _id: Types.ObjectId }) | null> {
+    const result = await UserModel.findOne({ recoveryCode: code });
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  }
+
   async save(session: Session): Promise<string> {
     const sessionDB = mapSessionToSessionDB(session);
 

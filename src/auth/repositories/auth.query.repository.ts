@@ -1,22 +1,11 @@
 import { Types } from "mongoose";
 import { injectable } from "inversify";
 import { mapSessionsDBToSession, mapUserDbToAuth } from "../utils";
-import { IAuthCode, Session } from "../types";
-import { UserModel } from "../../users/db/user.model";
+import { Session } from "../types";
 import { SessionModel } from "../db/session.model";
 
 @injectable()
 export class AuthQueryRepository {
-  async getUserByRecoveryCode(code: string): Promise<IAuthCode | null> {
-    const result = await UserModel.findOne({ recoveryCode: code });
-
-    if (!result) {
-      return null;
-    }
-
-    return mapUserDbToAuth(result);
-  }
-
   async getSessionByIATAndDeviceId(
     iat: number,
     deviceId: string,

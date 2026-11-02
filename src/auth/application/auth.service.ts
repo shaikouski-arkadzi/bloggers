@@ -233,15 +233,13 @@ export class AuthService {
   }
 
   async setNewPassword(newPasswordDto: NewPasswordRecoveryDto): Promise<void> {
-    const user = await this.authQueryRepository.getUserByRecoveryCode(
+    const user = await this.authCommandRepository.getUserByRecoveryCode(
       newPasswordDto.recoveryCode,
     );
 
     if (!user) throw new NotFoundException();
 
-    const userDb = await this.userQueryRepository.findByFieldInDb({
-      _id: new Types.ObjectId(user.id),
-    });
+    const userDb = await this.userCommandRepository.findById(user._id);
 
     if (!userDb) throw new NotFoundException();
 
