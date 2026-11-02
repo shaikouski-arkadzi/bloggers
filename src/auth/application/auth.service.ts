@@ -120,13 +120,12 @@ export class AuthService {
   }
 
   async confirmUser(code: string): Promise<void> {
-    const user = await this.authQueryRepository.getUserByConfirmaionCode(code);
+    const user =
+      await this.authCommandRepository.getUserByConfirmaionCode(code);
 
     if (!user) throw new NotFoundException();
 
-    const userDb = await this.userQueryRepository.findByFieldInDb({
-      _id: new Types.ObjectId(user.id),
-    });
+    const userDb = await this.userCommandRepository.findById(user._id);
 
     if (!userDb) throw new NotFoundException();
 

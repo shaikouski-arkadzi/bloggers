@@ -7,16 +7,6 @@ import { SessionModel } from "../db/session.model";
 
 @injectable()
 export class AuthQueryRepository {
-  async getUserByConfirmaionCode(code: string): Promise<IAuthCode | null> {
-    const result = await UserModel.findOne({ confirmaionCode: code });
-
-    if (!result) {
-      return null;
-    }
-
-    return mapUserDbToAuth(result);
-  }
-
   async getUserByRecoveryCode(code: string): Promise<IAuthCode | null> {
     const result = await UserModel.findOne({ recoveryCode: code });
 

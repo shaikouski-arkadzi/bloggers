@@ -20,6 +20,18 @@ export class AuthCommandRepository {
     return result;
   }
 
+  async getUserByConfirmaionCode(
+    code: string,
+  ): Promise<(UserDb & { _id: Types.ObjectId }) | null> {
+    const result = await UserModel.findOne({ confirmaionCode: code });
+
+    if (!result) {
+      return null;
+    }
+
+    return result;
+  }
+
   async save(session: Session): Promise<string> {
     const sessionDB = mapSessionToSessionDB(session);
 
