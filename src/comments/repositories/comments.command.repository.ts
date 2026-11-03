@@ -1,15 +1,14 @@
-import { ObjectId } from "mongodb";
 import { injectable } from "inversify";
 import { Types } from "mongoose";
 import { LikeModel } from "../db/like.model";
 import { CommentModel } from "../db/comment.model";
-import { Comment, CommentDb, CommentInputModel, TLikeStatus } from "../types";
+import { Comment, TLikeStatus } from "../types";
 import {
+  booleanToLikeStatus,
   likeStatusToBoolean,
   mapCommentToCommentDB,
   mapLikeModelToLikeDB,
 } from "../utils";
-import { NotFoundException } from "../../common/exceptions";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -53,7 +52,7 @@ export class CommentsCommandRepository {
   async findLikeByUserAndComment(
     userId: string,
     commentId: string,
-  ): Promise<any | null> {
+  ): Promise<TLikeStatus | null> {
     const result = await LikeModel.findOne({
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
@@ -63,7 +62,7 @@ export class CommentsCommandRepository {
       return null;
     }
 
-    return result;
+    return booleanToLikeStatus(result.like);
   }
 
   async createLike(
