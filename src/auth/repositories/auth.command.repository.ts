@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { injectable } from "inversify";
 import { SessionModel } from "../db/session.model";
 import { UserModel } from "../../users/db/user.model";
-import { Session } from "../types";
+import { Session, SessionsDB } from "../types";
 import { UserDb } from "../../users/types";
 import { mapSessionToSessionDB } from "../utils";
 
@@ -76,12 +76,24 @@ export class AuthCommandRepository {
     });
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<any | null> {
+  async getSessionByDeviceId(deviceId: string): Promise<SessionsDB | null> {
     const result = await SessionModel.findOne({
       deviceId: new Types.ObjectId(deviceId),
     });
 
     if (!result) {
+      return null;
+    }
+
+    return result;
+  }
+
+  async getSessionsByUserId(userId: string): Promise<SessionsDB[] | null> {
+    const result = await SessionModel.find({
+      userId: new Types.ObjectId(userId),
+    });
+
+    if (!result.length) {
       return null;
     }
 

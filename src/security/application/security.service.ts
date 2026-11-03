@@ -20,11 +20,12 @@ export class SecurityService {
 
   async deleteDevice(userId: string, deviceId: string): Promise<void> {
     const sessionToDelete =
-      await this.authQueryRepository.getSessionByDeviceId(deviceId);
+      await this.authCommandRepository.getSessionByDeviceId(deviceId);
 
     if (!sessionToDelete) throw new NotFoundException();
 
-    if (sessionToDelete.userId !== userId) throw new PermissionException();
+    if (sessionToDelete.userId.toString() !== userId)
+      throw new PermissionException();
 
     await this.authCommandRepository.deleteSessionByDeviceId(deviceId);
   }
@@ -34,17 +35,19 @@ export class SecurityService {
     deviceId: string,
   ): Promise<void> {
     const userSessions =
-      await this.authQueryRepository.getSessionsByUserId(userId);
+      await this.authCommandRepository.getSessionsByUserId(userId);
 
     if (!userSessions) throw new NotFoundException();
 
     const sessionsForDelete = userSessions.filter(
-      (session) => session.deviceId !== deviceId,
+      (session) => session.deviceId.toString() !== deviceId,
     );
 
     await Promise.all(
       sessionsForDelete.map((session) =>
-        this.authCommandRepository.deleteSessionByDeviceId(session.deviceId),
+        this.authCommandRepository.deleteSessionByDeviceId(
+          session.deviceId.toString(),
+        ),
       ),
     );
   }

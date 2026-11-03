@@ -204,6 +204,8 @@ export class AuthService {
           decodedToken.deviceId,
         );
 
+      if (!currentSession) throw new NotFoundException();
+
       currentSession.iat = decodedToken.iat;
 
       await this.authCommandRepository.update(currentSession);
