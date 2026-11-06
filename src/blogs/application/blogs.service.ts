@@ -1,10 +1,10 @@
 import { injectable, inject } from "inversify";
 import { BlogModel } from "../db/blog.model";
-import { createBlogDb } from "../utils";
 import { Blog, BlogInputDto, BlogsQuery } from "../types";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogsCommandRepository, BlogsQueryRepository } from "../repositories";
+import { BlogEntity } from "../domain/Blog.entity";
 
 @injectable()
 export class BlogsService {
@@ -27,9 +27,9 @@ export class BlogsService {
   }
 
   async create(blog: BlogInputDto): Promise<string> {
-    const newBlog = new BlogModel(createBlogDb(blog));
+    const blogData = BlogModel.createBlog(blog);
 
-    const newBlogId = await this.blogsCommandRepository.save(newBlog);
+    const newBlogId = await this.blogsCommandRepository.save(blogData);
 
     return newBlogId;
   }
