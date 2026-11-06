@@ -1,33 +1,13 @@
-import { BlogDb, BlogInputDto } from "../types";
+import { BlogDocument, BlogModel } from "../db/blog.model";
+import { BlogInputDto } from "../types";
 
 export class BlogEntity {
-  name: string;
-  description: string;
-  websiteUrl: string;
-  isMembership: boolean;
-  createdAt: string;
+  static createBlog(blogInput: BlogInputDto): BlogDocument {
+    const blog = new BlogModel(blogInput);
 
-  private constructor(
-    name: string,
-    description: string,
-    websiteUrl: string,
-    isMembership: boolean,
-    createdAt: string,
-  ) {
-    this.name = name;
-    this.description = description;
-    this.websiteUrl = websiteUrl;
-    this.isMembership = false;
-    this.createdAt = createdAt;
-  }
+    blog.isMembership = false;
+    blog.createdAt = new Date().toISOString();
 
-  static createBlog(blog: BlogInputDto): BlogDb {
-    return {
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      isMembership: false,
-      createdAt: new Date().toISOString(),
-    };
+    return blog;
   }
 }
