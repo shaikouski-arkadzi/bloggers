@@ -1,27 +1,14 @@
-import { Schema, model } from "mongoose";
+import { HydratedDocument, Model, model } from "mongoose";
 import { BlogDb } from "../types";
+import { BlogEntity } from "../domain/Blog.entity";
+import { blogSchema } from "./blog.schema";
 
-const blogSchema = new Schema<BlogDb>({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  websiteUrl: {
-    type: String,
-    required: true,
-  },
-  isMembership: {
-    type: Boolean,
-    required: true,
-  },
-  createdAt: {
-    type: String,
-    required: true,
-  },
-});
+type BlogStatics = typeof BlogEntity;
 
-export const BlogModel = model<BlogDb>("Blog", blogSchema);
+export type TBlogModel = Model<BlogDb> & BlogStatics;
+
+export type BlogDocument = HydratedDocument<BlogDb>;
+
+blogSchema.loadClass(BlogEntity);
+
+export const BlogModel = model<BlogDb, TBlogModel>("Blog", blogSchema);
