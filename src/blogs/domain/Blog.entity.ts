@@ -16,4 +16,10 @@ export class BlogEntity {
 
     return blog;
   }
+
+  updateBlog(input: BlogInputDto): void {
+    this.name = input.name;
+    this.description = input.description;
+    this.websiteUrl = input.websiteUrl;
+  }
 }
