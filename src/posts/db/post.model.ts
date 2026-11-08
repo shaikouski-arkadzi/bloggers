@@ -1,31 +1,14 @@
-import { Schema, model } from "mongoose";
+import { HydratedDocument, Model, model } from "mongoose";
 import { PostDb } from "../types";
+import { postSchema } from "./post.schema";
+import { PostEntity } from "../domain/Post.entity";
 
-const postSchema = new Schema<PostDb>({
-  title: {
-    type: String,
-    required: true,
-  },
-  shortDescription: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  blogId: {
-    type: String,
-    required: true,
-  },
-  blogName: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: String,
-    required: true,
-  },
-});
+type PostStatics = typeof PostEntity;
 
-export const PostModel = model<PostDb>("Post", postSchema);
+export type TPostModel = Model<PostDb> & PostStatics;
+
+export type PostDocument = HydratedDocument<PostDb>;
+
+postSchema.loadClass(PostEntity);
+
+export const PostModel = model<PostDb, TPostModel>("Post", postSchema);
