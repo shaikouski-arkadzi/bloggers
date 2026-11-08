@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { PaginatorData } from "../../common/types";
 import { Post, PostInputDto, PostsQuery } from "../types";
-import { createPostDb } from "../utils";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
 import { BlogsService } from "../../blogs/application/blogs.service";
@@ -40,7 +39,7 @@ export class PostsService {
 
     if (!blog) throw new BlogForPostNotExistException();
 
-    const newPost = new PostModel(createPostDb(post, blog));
+    const newPost = PostModel.createPost(post, blog);
 
     const createdPostId = await this.postsCommandRepository.save(newPost);
 
