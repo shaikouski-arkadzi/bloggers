@@ -79,9 +79,7 @@ export class BlogsService {
       throw new NotFoundException();
     }
 
-    existingBlog.name = blog.name;
-    existingBlog.description = blog.description;
-    existingBlog.websiteUrl = blog.websiteUrl;
+    existingBlog.updateBlog(blog);
 
     await this.blogsCommandRepository.save(existingBlog);
   }
