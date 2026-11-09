@@ -89,9 +89,7 @@ export class PostsService {
 
     if (!existingPost) throw new NotFoundException();
 
-    existingPost.title = post.title;
-    existingPost.shortDescription = post.shortDescription;
-    existingPost.content = post.content;
+    existingPost.updatePost(post);
 
     await this.postsCommandRepository.save(existingPost);
   }
