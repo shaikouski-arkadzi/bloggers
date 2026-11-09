@@ -134,7 +134,7 @@ export class AuthController {
     const user = req.body;
 
     try {
-      await this.userService.create(user, true);
+      await this.userService.register(user);
 
       return res.sendStatus(204);
     } catch (error) {
