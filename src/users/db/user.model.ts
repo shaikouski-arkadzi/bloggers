@@ -11,4 +11,4 @@ export type UserDocument = HydratedDocument<UserDb>;
 
 userSchema.loadClass(UserEntity);
 
-export const UserModel = model<UserDb>("User", userSchema);
+export const UserModel = model<UserDb, TUserModel>("User", userSchema);

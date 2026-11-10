@@ -44,16 +44,10 @@ export class UserService {
     const isLoginAvailable = await this.isLoginAvailable(login);
     if (!isLoginAvailable) throw new SavingException();
 
+    // CHECK
     const hashPassword = await bcryptService.generateHash(password);
 
-    let newUser: UserDb = {
-      login,
-      email,
-      password: hashPassword,
-      createdAt: new Date().toISOString(),
-    };
-
-    const userModel = new UserModel(newUser);
+    const userModel = UserModel.createUser(user, hashPassword);
 
     const createdUserId = await this.userCommandRepository.save(userModel);
 
