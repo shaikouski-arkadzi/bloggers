@@ -1,11 +1,11 @@
 import { Types } from "mongoose";
 import { injectable } from "inversify";
-import { UserModel } from "../db/user.model";
+import { UserDocument, UserModel } from "../db/user.model";
 import { UserDb } from "../types";
 
 @injectable()
 export class UserCommandRepository {
-  async save(user: any): Promise<string> {
+  async save(user: UserDocument): Promise<string> {
     const result = await user.save();
 
     return result._id.toString();
