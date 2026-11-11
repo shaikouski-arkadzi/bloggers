@@ -15,7 +15,7 @@ export class UserCommandRepository {
     await UserModel.findByIdAndDelete(id);
   }
 
-  async findById(id: Types.ObjectId | string): Promise<UserDb | null> {
+  async findById(id: Types.ObjectId | string): Promise<UserDocument | null> {
     const result = await UserModel.findById(id);
 
     if (!result) {
@@ -25,7 +25,7 @@ export class UserCommandRepository {
     return result;
   }
 
-  async findByEmail(email: UserDb["email"]): Promise<UserDb | null> {
+  async findByEmail(email: UserDb["email"]): Promise<UserDocument | null> {
     const result = await UserModel.findOne({ email });
 
     if (!result) {

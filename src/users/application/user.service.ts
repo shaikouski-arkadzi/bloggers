@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 import { inject, injectable } from "inversify";
-import { randomUUID } from "node:crypto";
-import { User, UserDb, UserInputDto, UsersQuery } from "../types";
+import { User, UserInputDto, UsersQuery } from "../types";
 import { SavingException } from "../exceptions";
 import { PaginatorData } from "../../common/types";
 import { NotFoundException } from "../../common/exceptions";

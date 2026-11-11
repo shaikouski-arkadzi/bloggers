@@ -8,7 +8,7 @@ import {
   UserQueryRepository,
 } from "../../users/repositories";
 import { UserService } from "../../users/application/user.service";
-import { AuthCommandRepository, AuthQueryRepository } from "../repositories";
+import { AuthCommandRepository } from "../repositories";
 import { NotFoundException } from "../../common/exceptions";
 import {
   LoginInputDto,
@@ -21,6 +21,7 @@ import { MultipleUsersDuringLoginException } from "../exceptions";
 import { nodemailerService } from "./nodemailer.service";
 import { recoveryPasswordTemplateMail, registerTemplateMail } from "../utils";
 import { jwtService, TokenType } from "./jwt.service";
+import { UserModel } from "../../users/db/user.model";
 
 @injectable()
 export class AuthService {
@@ -36,9 +37,6 @@ export class AuthService {
 
     @inject(AuthCommandRepository)
     private authCommandRepository: AuthCommandRepository,
-
-    @inject(AuthQueryRepository)
-    private authQueryRepository: AuthQueryRepository,
   ) {}
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserDbWithId[]> {
@@ -100,22 +98,16 @@ export class AuthService {
     if (!userCode) throw new NotFoundException();
     if (!userCode.confirmaionCode) throw new NotFoundException();
 
-    const userDb = await this.userCommandRepository.findById(userCode._id);
+    const userModel = await this.userCommandRepository.findById(userCode._id);
 
-    if (!userDb) throw new NotFoundException();
+    if (!userModel) throw new NotFoundException();
 
-    const newCode = randomUUID();
-    const newConfirmationCodeExpiration = new Date(
-      Date.now() + 24 * 60 * 60 * 1000,
-    ).toISOString();
+    userModel.updateConfirmaionCode();
 
-    userDb.confirmaionCode = newCode;
-    userDb.confirmationCodeExpiration = newConfirmationCodeExpiration;
-
-    await this.userCommandRepository.save(userDb);
+    await this.userCommandRepository.save(userModel);
 
     nodemailerService
-      .sendEmail(email, newCode, registerTemplateMail)
+      .sendEmail(email, userModel.confirmaionCode!, registerTemplateMail)
       .catch((e) => console.log(e));
   }
 

@@ -3,11 +3,15 @@ import { UserDb } from "../types";
 import { userSchema } from "./user.schema";
 import { UserEntity } from "../domain/User.entity";
 
+export interface UserMethods {
+  updateConfirmaionCode(): void;
+}
+
 type UserStatics = typeof UserEntity;
 
-export type TUserModel = Model<UserDb> & UserStatics;
+export type TUserModel = Model<UserDb, {}, UserMethods> & UserStatics;
 
-export type UserDocument = HydratedDocument<UserDb>;
+export type UserDocument = HydratedDocument<UserDb, UserMethods>;
 
 userSchema.loadClass(UserEntity);
 
