@@ -65,23 +65,11 @@ export class UserService {
 
     const hashPassword = await bcryptService.generateHash(password);
 
-    let newUser: UserDb = {
-      login,
-      email,
-      password: hashPassword,
-      createdAt: new Date().toISOString(),
-      confirmaionCode: randomUUID(),
-      confirmationCodeExpiration: new Date(
-        Date.now() + 24 * 60 * 60 * 1000,
-      ).toISOString(), // tomorrow
-      isConfirmed: false,
-    };
+    const userModel = UserModel.registerUser(user, hashPassword);
 
     nodemailerService
-      .sendEmail(email, newUser.confirmaionCode!, registerTemplateMail)
+      .sendEmail(email, userModel.confirmaionCode!, registerTemplateMail)
       .catch((e) => console.log(e));
-
-    const userModel = new UserModel(newUser);
 
     const createdUserId = await this.userCommandRepository.save(userModel);
 
