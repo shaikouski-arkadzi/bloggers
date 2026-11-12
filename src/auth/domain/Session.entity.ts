@@ -3,6 +3,8 @@ import { SessionDocument, SessionModel } from "../db/session.model";
 import { Session } from "../types";
 
 export class SessionEntity {
+  private constructor(public iat: number) {}
+
   static createSession(sessionInput: Session): SessionDocument {
     const session = new SessionModel(sessionInput);
 
@@ -10,5 +12,9 @@ export class SessionEntity {
     session.userId = new Types.ObjectId(session.userId);
 
     return session;
+  }
+
+  updateIAT(newIAT: number): void {
+    this.iat = newIAT;
   }
 }
