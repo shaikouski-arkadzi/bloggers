@@ -50,7 +50,11 @@ export class AuthService {
     return findedUsers;
   }
 
-  async login(credentials: LoginInputDto): Promise<UserDbWithId> {
+  async login(
+    credentials: LoginInputDto,
+    ip: string,
+    deviceName: string,
+  ): Promise<Tokens> {
     const findedUsers: UserDbWithId[] = [];
     const users = await this.findByLoginOrEmail(credentials.loginOrEmail);
 
@@ -75,7 +79,54 @@ export class AuthService {
 
     if (findedUsers.length === 0) throw new NotFoundException();
 
-    return findedUsers[0];
+    const userId = findedUsers[0].id;
+
+    const deviceId = new ObjectId().toString();
+
+    const accessToken = await jwtService.createToken(
+      { uuid: userId },
+      TokenType.Access,
+    );
+
+    const refreshToken = await jwtService.createToken(
+      {
+        uuid: userId,
+        deviceId,
+        deviceName,
+        ip,
+      },
+      TokenType.Refresh,
+    );
+
+    const decodedToken = await jwtService.verifyToken(
+      refreshToken,
+      TokenType.Refresh,
+    );
+
+    if (
+      !decodedToken ||
+      !decodedToken.deviceId ||
+      !decodedToken.deviceName ||
+      !decodedToken.ip ||
+      !decodedToken.uuid ||
+      decodedToken.iat == null
+    ) {
+      throw new Error();
+    }
+
+    const session = {
+      deviceId: decodedToken.deviceId,
+      deviceName: decodedToken.deviceName,
+      ip: decodedToken.ip,
+      iat: decodedToken.iat,
+      userId: decodedToken.uuid,
+    };
+
+    const sessionDoc = SessionModel.createSession(session);
+
+    await this.authCommandRepository.save(sessionDoc);
+
+    return { accessToken, refreshToken };
   }
 
   async userInfo(userId: string): Promise<MeViewModel> {

@@ -44,10 +44,8 @@ export class AuthController {
 
       const credentials = req.body;
 
-      const findedUser = await this.authService.login(credentials);
-
-      const { accessToken, refreshToken } = await this.authService.createTokens(
-        findedUser.id,
+      const { accessToken, refreshToken } = await this.authService.login(
+        credentials,
         ip,
         deviceName,
       );
