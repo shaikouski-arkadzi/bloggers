@@ -4,8 +4,9 @@ import { UserInputDto } from "../types";
 
 export class UserEntity {
   private constructor(
-    public confirmaionCode: string,
-    public confirmationCodeExpiration: string,
+    public isConfirmed: boolean,
+    public confirmaionCode?: string,
+    public confirmationCodeExpiration?: string,
   ) {}
 
   static createUser(
@@ -42,5 +43,14 @@ export class UserEntity {
     this.confirmationCodeExpiration = new Date(
       Date.now() + 24 * 60 * 60 * 1000,
     ).toISOString();
+  }
+
+  confirmUser(): void {
+    this.isConfirmed = true;
+  }
+
+  deleteConfirmaionCode(): void {
+    this.confirmaionCode = undefined;
+    this.confirmationCodeExpiration = undefined;
   }
 }

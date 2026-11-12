@@ -5,6 +5,8 @@ import { UserEntity } from "../domain/User.entity";
 
 export interface UserMethods {
   updateConfirmaionCode(): void;
+  confirmUser(): void;
+  deleteConfirmaionCode(): void;
 }
 
 type UserStatics = typeof UserEntity;
