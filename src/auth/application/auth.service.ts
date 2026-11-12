@@ -117,15 +117,14 @@ export class AuthService {
 
     if (!user) throw new NotFoundException();
 
-    const userDb = await this.userCommandRepository.findById(user._id);
+    const userModel = await this.userCommandRepository.findById(user._id);
 
-    if (!userDb) throw new NotFoundException();
+    if (!userModel) throw new NotFoundException();
 
-    userDb.isConfirmed = true;
-    userDb.confirmaionCode = undefined;
-    userDb.confirmationCodeExpiration = undefined;
+    userModel.confirmUser();
+    userModel.deleteConfirmaionCode();
 
-    await this.userCommandRepository.save(userDb);
+    await this.userCommandRepository.save(userModel);
   }
 
   async updateTokens(): Promise<void> {}
