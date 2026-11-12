@@ -11,4 +11,7 @@ export type SessionDocument = HydratedDocument<SessionsDB>;
 
 sessionSchema.loadClass(SessionEntity);
 
-export const SessionModel = model<SessionsDB>("Session", sessionSchema);
+export const SessionModel = model<SessionsDB, TBlogModel>(
+  "Session",
+  sessionSchema,
+);

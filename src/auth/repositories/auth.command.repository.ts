@@ -45,9 +45,7 @@ export class AuthCommandRepository {
   }
 
   async save(session: Session): Promise<string> {
-    const sessionDB = mapSessionToSessionDB(session);
-
-    const sessionModel = new SessionModel(sessionDB);
+    const sessionModel = SessionModel.createSession(session);
 
     const savedSession = await sessionModel.save();
 
