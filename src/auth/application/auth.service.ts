@@ -265,9 +265,8 @@ export class AuthService {
       newPasswordDto.newPassword,
     );
 
-    userDb.password = hashPassword;
-    userDb.recoveryCode = undefined;
-    userDb.recoveryCodeExpiration = undefined;
+    userDb.updatePassword(hashPassword);
+    userDb.deleteRecoveryCode();
 
     await this.userCommandRepository.save(userDb);
   }

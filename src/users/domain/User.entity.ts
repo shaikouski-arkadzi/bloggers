@@ -5,6 +5,7 @@ import { UserInputDto } from "../types";
 export class UserEntity {
   private constructor(
     public isConfirmed: boolean,
+    public password: string,
     public confirmaionCode?: string,
     public confirmationCodeExpiration?: string,
     public recoveryCode?: string,
@@ -61,5 +62,14 @@ export class UserEntity {
     this.recoveryCodeExpiration = new Date(
       Date.now() + 24 * 60 * 60 * 1000,
     ).toISOString();
+  }
+
+  updatePassword(newPassword: string): void {
+    this.password = newPassword;
+  }
+
+  deleteRecoveryCode(): void {
+    this.recoveryCode = undefined;
+    this.recoveryCodeExpiration = undefined;
   }
 }

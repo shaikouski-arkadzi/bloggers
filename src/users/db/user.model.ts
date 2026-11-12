@@ -8,6 +8,8 @@ export interface UserMethods {
   confirmUser(): void;
   deleteConfirmaionCode(): void;
   updateRecoveryCode(): void;
+  updatePassword(newPassword: string): void;
+  deleteRecoveryCode(): void;
 }
 
 type UserStatics = typeof UserEntity;
