@@ -102,7 +102,7 @@ export class AuthController {
 
       if (!ip || !userId || !deviceId) throw new Error();
 
-      const { accessToken, refreshToken } = await this.authService.createTokens(
+      const { accessToken, refreshToken } = await this.authService.updateTokens(
         userId,
         ip,
         deviceName,

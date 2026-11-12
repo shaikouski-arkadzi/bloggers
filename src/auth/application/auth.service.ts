@@ -178,25 +178,12 @@ export class AuthService {
     await this.userCommandRepository.save(userModel);
   }
 
-  async updateTokens(): Promise<void> {}
-
-  async logout(iat: string, deviceId: string): Promise<void> {
-    await this.authCommandRepository.deleteSessionByIATAndDeviceId(
-      iat,
-      deviceId,
-    );
-  }
-
-  async createTokens(
+  async updateTokens(
     userId: string,
     ip: string,
     deviceName: string,
-    deviceId?: string,
+    deviceId: string,
   ): Promise<Tokens> {
-    const mode: "create" | "update" = deviceId ? "update" : "create";
-
-    if (mode === "create") deviceId = new ObjectId().toString();
-
     const accessToken = await jwtService.createToken(
       { uuid: userId },
       TokenType.Access,
@@ -228,36 +215,25 @@ export class AuthService {
       throw new Error();
     }
 
-    if (mode === "create") {
-      const session = {
-        deviceId: decodedToken.deviceId,
-        deviceName: decodedToken.deviceName,
-        ip: decodedToken.ip,
-        iat: decodedToken.iat,
-        userId: decodedToken.uuid,
-      };
+    const currentSession =
+      await this.authCommandRepository.getSessionByDeviceId(
+        decodedToken.deviceId,
+      );
 
-      const sessionDoc = SessionModel.createSession(session);
+    if (!currentSession) throw new NotFoundException();
 
-      await this.authCommandRepository.save(sessionDoc);
-    }
+    currentSession.updateIAT(decodedToken.iat);
 
-    if (mode === "update") {
-      //TODO: check
-
-      const currentSession =
-        await this.authCommandRepository.getSessionByDeviceId(
-          decodedToken.deviceId,
-        );
-
-      if (!currentSession) throw new NotFoundException();
-
-      currentSession.updateIAT(decodedToken.iat);
-
-      await this.authCommandRepository.save(currentSession);
-    }
+    await this.authCommandRepository.save(currentSession);
 
     return { accessToken, refreshToken };
+  }
+
+  async logout(iat: string, deviceId: string): Promise<void> {
+    await this.authCommandRepository.deleteSessionByIATAndDeviceId(
+      iat,
+      deviceId,
+    );
   }
 
   async resetPassword(email: string): Promise<void> {
