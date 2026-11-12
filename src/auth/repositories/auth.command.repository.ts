@@ -1,10 +1,9 @@
 import { Types } from "mongoose";
 import { injectable } from "inversify";
-import { SessionModel } from "../db/session.model";
+import { SessionDocument, SessionModel } from "../db/session.model";
 import { UserModel } from "../../users/db/user.model";
-import { Session, SessionsDB } from "../types";
+import { SessionsDB } from "../types";
 import { UserDb } from "../../users/types";
-import { mapSessionToSessionDB } from "../utils";
 
 @injectable()
 export class AuthCommandRepository {
@@ -44,15 +43,7 @@ export class AuthCommandRepository {
     return result;
   }
 
-  async save(session: Session): Promise<string> {
-    const sessionModel = SessionModel.createSession(session);
-
-    const savedSession = await sessionModel.save();
-
-    return savedSession._id.toString();
-  }
-
-  async update(session: any): Promise<string> {
+  async save(session: SessionDocument): Promise<string> {
     const savedSession = await session.save();
 
     return savedSession._id.toString();
@@ -74,7 +65,9 @@ export class AuthCommandRepository {
     });
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<SessionsDB | null> {
+  async getSessionByDeviceId(
+    deviceId: string,
+  ): Promise<SessionDocument | null> {
     const result = await SessionModel.findOne({
       deviceId: new Types.ObjectId(deviceId),
     });
