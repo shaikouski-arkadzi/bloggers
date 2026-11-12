@@ -7,6 +7,7 @@ export interface UserMethods {
   updateConfirmaionCode(): void;
   confirmUser(): void;
   deleteConfirmaionCode(): void;
+  updateRecoveryCode(): void;
 }
 
 type UserStatics = typeof UserEntity;

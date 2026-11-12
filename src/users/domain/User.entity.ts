@@ -7,6 +7,8 @@ export class UserEntity {
     public isConfirmed: boolean,
     public confirmaionCode?: string,
     public confirmationCodeExpiration?: string,
+    public recoveryCode?: string,
+    public recoveryCodeExpiration?: string,
   ) {}
 
   static createUser(
@@ -52,5 +54,12 @@ export class UserEntity {
   deleteConfirmaionCode(): void {
     this.confirmaionCode = undefined;
     this.confirmationCodeExpiration = undefined;
+  }
+
+  updateRecoveryCode(): void {
+    this.recoveryCode = randomUUID();
+    this.recoveryCodeExpiration = new Date(
+      Date.now() + 24 * 60 * 60 * 1000,
+    ).toISOString();
   }
 }

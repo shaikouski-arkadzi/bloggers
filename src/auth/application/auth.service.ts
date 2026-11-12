@@ -241,18 +241,12 @@ export class AuthService {
 
     if (!user) return;
 
-    const recoveryCode = randomUUID();
-    const recoveryCodeExpiration = new Date(
-      Date.now() + 24 * 60 * 60 * 1000,
-    ).toISOString();
-
-    user.recoveryCode = recoveryCode;
-    user.recoveryCodeExpiration = recoveryCodeExpiration;
+    user.updateRecoveryCode();
 
     await this.userCommandRepository.save(user);
 
     nodemailerService
-      .sendEmail(email, recoveryCode, recoveryPasswordTemplateMail)
+      .sendEmail(email, user.recoveryCode!, recoveryPasswordTemplateMail)
       .catch((e) => console.log(e));
   }
 
