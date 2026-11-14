@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { Types } from "mongoose";
 import { LikeModel } from "../db/like.model";
-import { CommentModel } from "../db/comment.model";
+import { CommentDocument, CommentModel } from "../db/comment.model";
 import { Comment, TLikeStatus } from "../types";
 import {
   booleanToLikeStatus,
@@ -25,11 +25,11 @@ export class CommentsCommandRepository {
     return result._id;
   }
 
-  async update(comment: any): Promise<void> {
+  async update(comment: CommentDocument): Promise<void> {
     await comment.save();
   }
 
-  async save(comment: any): Promise<Types.ObjectId> {
+  async save(comment: CommentDocument): Promise<Types.ObjectId> {
     const result = await comment.save();
 
     return result._id;
