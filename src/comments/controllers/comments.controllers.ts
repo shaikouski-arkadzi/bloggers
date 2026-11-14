@@ -33,7 +33,7 @@ export class CommentsController {
   ) => {
     try {
       const postId = req.params.id;
-      const { content } = req.body;
+      const { content: commentContent } = req.body;
       const { userId } = req.auth;
 
       if (!userId) throw new UnauthorizedException();
@@ -41,7 +41,7 @@ export class CommentsController {
       const newCommentId = await this.commentsService.create(
         userId,
         postId,
-        content,
+        commentContent,
       );
 
       const newComment = await this.commentsQueryRepository.findByField({

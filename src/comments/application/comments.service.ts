@@ -8,7 +8,6 @@ import {
 import { PaginatorData } from "../../common/types";
 import { PostsService } from "../../posts/application/posts.service";
 import { UserService } from "../../users/application/user.service";
-import { INITIAL_LIKES_INFO } from "../constants";
 import {
   CommentsCommandRepository,
   CommentsQueryRepository,
@@ -148,7 +147,7 @@ export class CommentsService {
   async create(
     userId: string,
     postId: string,
-    content: string,
+    commentContent: string,
   ): Promise<Types.ObjectId> {
     const userObjectId = new Types.ObjectId(userId);
 
@@ -158,17 +157,11 @@ export class CommentsService {
 
     await this.postsService.findById(postId);
 
-    const payload: Omit<Comment, "id"> = {
-      content,
-      commentatorInfo: {
-        userId,
-        userLogin: user.login,
-      },
-      createdAt: new Date().toISOString(),
-      likesInfo: INITIAL_LIKES_INFO,
-    };
-
-    const commentModel = CommentModel.createComment(payload, postId);
+    const commentModel = CommentModel.createComment(
+      commentContent,
+      user,
+      postId,
+    );
 
     const commentId = await this.commentsCommandRepository.save(commentModel);
 

@@ -2,7 +2,7 @@ import { injectable } from "inversify";
 import { Types } from "mongoose";
 import { LikeModel } from "../db/like.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
-import { Comment, TLikeStatus } from "../types";
+import { TLikeStatus } from "../types";
 import {
   booleanToLikeStatus,
   likeStatusToBoolean,

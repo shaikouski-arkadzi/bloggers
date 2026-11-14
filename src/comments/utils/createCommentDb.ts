@@ -1,19 +1,19 @@
 import { Types } from "mongoose";
-import { Comment, CommentDb } from "../types";
+import { CommentDb } from "../types";
+import { User } from "../../users/types";
+import { INITIAL_LIKES_INFO } from "../constants";
 
 export const createCommentDb = (
-  comment: Omit<Comment, "id">,
+  commentContent: string,
+  user: User,
   postId: string,
 ): CommentDb => ({
-  content: comment.content,
+  content: commentContent,
   commentatorInfo: {
-    userId: new Types.ObjectId(comment.commentatorInfo.userId),
-    userLogin: comment.commentatorInfo.userLogin,
+    userId: new Types.ObjectId(user.id),
+    userLogin: user.login,
   },
-  createdAt: comment.createdAt,
+  createdAt: new Date().toISOString(),
   postId: new Types.ObjectId(postId),
-  likesInfo: {
-    likesCount: comment.likesInfo.likesCount,
-    dislikesCount: comment.likesInfo.dislikesCount,
-  },
+  likesInfo: INITIAL_LIKES_INFO,
 });
