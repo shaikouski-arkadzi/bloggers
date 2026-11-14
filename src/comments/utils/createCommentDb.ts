@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { Comment, CommentDb } from "../types";
 
-export const mapCommentToCommentDB = (
+export const createCommentDb = (
   comment: Omit<Comment, "id">,
   postId: string,
 ): CommentDb => ({

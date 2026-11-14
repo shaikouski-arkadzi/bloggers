@@ -6,7 +6,6 @@ import { Comment, TLikeStatus } from "../types";
 import {
   booleanToLikeStatus,
   likeStatusToBoolean,
-  mapCommentToCommentDB,
   mapLikeModelToLikeDB,
 } from "../utils";
 
@@ -16,9 +15,7 @@ export class CommentsCommandRepository {
     comment: Omit<Comment, "id">,
     postId: string,
   ): Promise<Types.ObjectId> {
-    const commentDB = mapCommentToCommentDB(comment, postId);
-
-    const commentModel = new CommentModel(commentDB);
+    const commentModel = CommentModel.createComment(comment, postId);
 
     const result = await commentModel.save();
 

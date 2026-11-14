@@ -1,5 +1,5 @@
 export { mapCommentDbToComment } from "./mapCommentDbToComment";
-export { mapCommentToCommentDB } from "./mapCommentToCommentDB";
+export { createCommentDb } from "./createCommentDb";
 export { mapLikeModelToLikeDB } from "./mapLikeModelToLikeDB";
 export { likeStatusToBoolean } from "./likeStatusToBoolean";
 export { booleanToLikeStatus } from "./booleanToLikeStatus";
