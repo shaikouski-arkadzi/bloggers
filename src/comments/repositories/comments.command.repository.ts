@@ -11,17 +11,6 @@ import {
 
 @injectable()
 export class CommentsCommandRepository {
-  async create(
-    comment: Omit<Comment, "id">,
-    postId: string,
-  ): Promise<Types.ObjectId> {
-    const commentModel = CommentModel.createComment(comment, postId);
-
-    const result = await commentModel.save();
-
-    return result._id;
-  }
-
   async update(comment: CommentDocument): Promise<void> {
     await comment.save();
   }

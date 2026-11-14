@@ -8,8 +8,7 @@ import {
 import { PaginatorData } from "../../common/types";
 import { PostsService } from "../../posts/application/posts.service";
 import { UserService } from "../../users/application/user.service";
-
-import { INITIAL_LIKES_INFO, LikeStatus } from "../constants";
+import { INITIAL_LIKES_INFO } from "../constants";
 import {
   CommentsCommandRepository,
   CommentsQueryRepository,
@@ -22,6 +21,7 @@ import {
 } from "../types";
 import { jwtService, TokenType } from "../../auth/application/jwt.service";
 import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
+import { CommentModel } from "../db/comment.model";
 
 @injectable()
 export class CommentsService {
@@ -168,10 +168,9 @@ export class CommentsService {
       likesInfo: INITIAL_LIKES_INFO,
     };
 
-    const commentId = await this.commentsCommandRepository.create(
-      payload,
-      postId,
-    );
+    const commentModel = CommentModel.createComment(payload, postId);
+
+    const commentId = await this.commentsCommandRepository.save(commentModel);
 
     return commentId;
   }
