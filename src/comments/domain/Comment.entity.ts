@@ -1,9 +1,10 @@
 import { User } from "../../users/types";
 import { CommentDocument, CommentModel } from "../db/comment.model";
-import { Comment } from "../types";
 import { createCommentDb } from "../utils";
 
 export class CommentEntity {
+  private constructor(public content: string) {}
+
   static createComment(
     commentContent: string,
     user: User,
@@ -14,5 +15,9 @@ export class CommentEntity {
     const commentModel = new CommentModel(commentObject);
 
     return commentModel;
+  }
+
+  updateCommentContent(newContent: string): void {
+    this.content = newContent;
   }
 }

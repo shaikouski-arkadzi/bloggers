@@ -3,11 +3,16 @@ import { CommentDb } from "../types";
 import { commentSchema } from "./comment.schema";
 import { CommentEntity } from "../domain/Comment.entity";
 
-type UserStatics = typeof CommentEntity;
+export interface CommentMethods {
+  updateCommentContent(newContent: string): void;
+}
 
-export type TCommentModel = Model<CommentDb> & UserStatics;
+type CommentStatics = typeof CommentEntity;
 
-export type CommentDocument = HydratedDocument<CommentDb>;
+export type TCommentModel = Model<CommentDb, {}, CommentMethods> &
+  CommentStatics;
+
+export type CommentDocument = HydratedDocument<CommentDb, CommentMethods>;
 
 commentSchema.loadClass(CommentEntity);
 

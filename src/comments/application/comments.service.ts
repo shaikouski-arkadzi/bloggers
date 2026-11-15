@@ -183,7 +183,7 @@ export class CommentsService {
       throw new PermissionException();
     }
 
-    comment.content = commentInput.content;
+    comment.updateCommentContent(commentInput.content);
 
     await this.commentsCommandRepository.update(comment);
   }

@@ -25,7 +25,7 @@ export class CommentsCommandRepository {
     await CommentModel.findByIdAndDelete(id);
   }
 
-  async findById(id: string): Promise<any | null> {
+  async findById(id: string): Promise<CommentDocument | null> {
     const result = await CommentModel.findById(id);
 
     if (!result) {
