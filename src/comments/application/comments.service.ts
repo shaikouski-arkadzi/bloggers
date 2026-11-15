@@ -7,7 +7,6 @@ import {
 } from "../../common/exceptions";
 import { PaginatorData } from "../../common/types";
 import { PostsService } from "../../posts/application/posts.service";
-import { UserService } from "../../users/application/user.service";
 import {
   CommentsCommandRepository,
   CommentsQueryRepository,
@@ -21,6 +20,7 @@ import {
 import { jwtService, TokenType } from "../../auth/application/jwt.service";
 import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
 import { CommentModel } from "../db/comment.model";
+import { UserCommandRepository } from "../../users/repositories";
 
 @injectable()
 export class CommentsService {
@@ -34,8 +34,8 @@ export class CommentsService {
     @inject(PostsService)
     private postsService: PostsService,
 
-    @inject(UserService)
-    private userService: UserService,
+    @inject(UserCommandRepository)
+    private userCommandRepository: UserCommandRepository,
   ) {}
 
   async getCommentById(id: string, auth?: string): Promise<Comment | null> {
@@ -149,9 +149,7 @@ export class CommentsService {
     postId: string,
     commentContent: string,
   ): Promise<Types.ObjectId> {
-    const userObjectId = new Types.ObjectId(userId);
-
-    const user = await this.userService.getUserById(userObjectId);
+    const user = await this.userCommandRepository.findById(userId);
 
     if (!user) throw new UnauthorizedException();
 
@@ -173,9 +171,7 @@ export class CommentsService {
     commentId: string,
     commentInput: CommentInputModel,
   ): Promise<void> {
-    const userObjectId = new Types.ObjectId(userId);
-
-    const user = await this.userService.getUserById(userObjectId);
+    const user = await this.userCommandRepository.findById(userId);
 
     if (!user) throw new UnauthorizedException();
 
@@ -193,9 +189,7 @@ export class CommentsService {
   }
 
   async delete(userId: string, commentId: string): Promise<void> {
-    const userObjectId = new Types.ObjectId(userId);
-
-    const user = await this.userService.getUserById(userObjectId);
+    const user = await this.userCommandRepository.findById(userId);
 
     if (!user) throw new UnauthorizedException();
 
