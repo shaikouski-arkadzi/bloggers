@@ -166,7 +166,8 @@ export class CommentsService {
       postId,
     );
 
-    const commentId = await this.commentsCommandRepository.save(commentModel);
+    const commentId =
+      await this.commentsCommandRepository.saveComment(commentModel);
 
     return commentId;
   }
@@ -229,7 +230,7 @@ export class CommentsService {
     if (!likeModel && (likeStatus === "Like" || likeStatus === "Dislike")) {
       likeModel = LikeModel.createLikeStatus(userId, commentId, likeStatus);
 
-      await this.commentsCommandRepository.createLike(likeModel);
+      await this.commentsCommandRepository.saveLike(likeModel);
 
       if (likeStatus === "Like") {
         comment.likesInfo.likesCount += 1;
@@ -282,6 +283,6 @@ export class CommentsService {
         }
       }
     }
-    await this.commentsCommandRepository.save(comment);
+    await this.commentsCommandRepository.saveComment(comment);
   }
 }

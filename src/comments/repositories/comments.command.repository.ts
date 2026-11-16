@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { LikeDocument, LikeModel } from "../db/like.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
 import { TLikeStatus } from "../types";
-import { booleanToLikeStatus, likeStatusToBoolean } from "../utils";
+import { likeStatusToBoolean } from "../utils";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -11,7 +11,7 @@ export class CommentsCommandRepository {
     await comment.save();
   }
 
-  async save(comment: CommentDocument): Promise<Types.ObjectId> {
+  async saveComment(comment: CommentDocument): Promise<Types.ObjectId> {
     const result = await comment.save();
 
     return result._id;
@@ -47,7 +47,7 @@ export class CommentsCommandRepository {
     return result;
   }
 
-  async createLike(likeModel: LikeDocument): Promise<Types.ObjectId> {
+  async saveLike(likeModel: LikeDocument): Promise<Types.ObjectId> {
     const result = await likeModel.save();
 
     return result._id;
