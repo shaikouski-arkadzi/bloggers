@@ -3,11 +3,7 @@ import { Types } from "mongoose";
 import { LikeDocument, LikeModel } from "../db/like.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
 import { TLikeStatus } from "../types";
-import {
-  booleanToLikeStatus,
-  likeStatusToBoolean,
-  createLikeDB,
-} from "../utils";
+import { booleanToLikeStatus, likeStatusToBoolean } from "../utils";
 
 @injectable()
 export class CommentsCommandRepository {
@@ -35,10 +31,10 @@ export class CommentsCommandRepository {
     return result;
   }
 
-  async findLikeByUserAndComment(
+  async findLikeStatusByUserAndComment(
     userId: string,
     commentId: string,
-  ): Promise<TLikeStatus | null> {
+  ): Promise<LikeDocument | null> {
     const result = await LikeModel.findOne({
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
@@ -48,7 +44,7 @@ export class CommentsCommandRepository {
       return null;
     }
 
-    return booleanToLikeStatus(result.like);
+    return result;
   }
 
   async createLike(likeModel: LikeDocument): Promise<Types.ObjectId> {

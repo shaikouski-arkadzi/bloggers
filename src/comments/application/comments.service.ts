@@ -18,7 +18,11 @@ import {
   TLikeStatus,
 } from "../types";
 import { jwtService, TokenType } from "../../auth/application/jwt.service";
-import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
+import {
+  booleanToLikeStatus,
+  mapCommentDbToComment,
+  mapCommentWithMyStatus,
+} from "../utils";
 import { CommentModel } from "../db/comment.model";
 import { UserCommandRepository } from "../../users/repositories";
 import { LikeModel } from "../db/like.model";
@@ -216,18 +220,14 @@ export class CommentsService {
 
     if (!comment) throw new NotFoundException();
 
-    const previousLike =
-      await this.commentsCommandRepository.findLikeByUserAndComment(
+    let likeModel =
+      await this.commentsCommandRepository.findLikeStatusByUserAndComment(
         userId,
         commentId,
       );
 
-    if (!previousLike && (likeStatus === "Like" || likeStatus === "Dislike")) {
-      const likeModel = LikeModel.createLikeStatus(
-        userId,
-        commentId,
-        likeStatus,
-      );
+    if (!likeModel && (likeStatus === "Like" || likeStatus === "Dislike")) {
+      likeModel = LikeModel.createLikeStatus(userId, commentId, likeStatus);
 
       await this.commentsCommandRepository.createLike(likeModel);
 
@@ -239,6 +239,13 @@ export class CommentsService {
         comment.likesInfo.dislikesCount += 1;
       }
     }
+
+    if (!likeModel) {
+      console.error("likeModel error");
+      throw new Error();
+    }
+
+    const previousLike = booleanToLikeStatus(likeModel.like);
 
     if (previousLike && likeStatus !== previousLike) {
       if (likeStatus === "Like" || likeStatus === "Dislike") {
