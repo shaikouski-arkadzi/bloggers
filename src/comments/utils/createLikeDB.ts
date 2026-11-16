@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { LikeDb, LikeModel } from "../types";
 import { likeStatusToBoolean } from "./likeStatusToBoolean";
 
-export const mapLikeModelToLikeDB = ({
+export const createLikeDB = ({
   userId,
   commentId,
   like,

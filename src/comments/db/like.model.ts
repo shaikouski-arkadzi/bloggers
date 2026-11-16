@@ -7,7 +7,7 @@ type LikeStatics = typeof LikeEntity;
 
 export type TLikeModel = Model<LikeDb> & LikeStatics;
 
-export type CommentDocument = HydratedDocument<LikeDb>;
+export type LikeDocument = HydratedDocument<LikeDb>;
 
 likeSchema.loadClass(LikeEntity);
 

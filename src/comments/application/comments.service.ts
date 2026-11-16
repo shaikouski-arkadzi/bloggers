@@ -21,6 +21,7 @@ import { jwtService, TokenType } from "../../auth/application/jwt.service";
 import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
 import { CommentModel } from "../db/comment.model";
 import { UserCommandRepository } from "../../users/repositories";
+import { LikeModel } from "../db/like.model";
 
 @injectable()
 export class CommentsService {
@@ -222,11 +223,13 @@ export class CommentsService {
       );
 
     if (!previousLike && (likeStatus === "Like" || likeStatus === "Dislike")) {
-      await this.commentsCommandRepository.createLike(
+      const likeModel = LikeModel.createLikeStatus(
         userId,
         commentId,
         likeStatus,
       );
+
+      await this.commentsCommandRepository.createLike(likeModel);
 
       if (likeStatus === "Like") {
         comment.likesInfo.likesCount += 1;

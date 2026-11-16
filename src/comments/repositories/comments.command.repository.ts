@@ -1,12 +1,12 @@
 import { injectable } from "inversify";
 import { Types } from "mongoose";
-import { LikeModel } from "../db/like.model";
+import { LikeDocument, LikeModel } from "../db/like.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
 import { TLikeStatus } from "../types";
 import {
   booleanToLikeStatus,
   likeStatusToBoolean,
-  mapLikeModelToLikeDB,
+  createLikeDB,
 } from "../utils";
 
 @injectable()
@@ -51,19 +51,7 @@ export class CommentsCommandRepository {
     return booleanToLikeStatus(result.like);
   }
 
-  async createLike(
-    userId: string,
-    commentId: string,
-    likeStatus: TLikeStatus,
-  ): Promise<Types.ObjectId> {
-    const likeDB = mapLikeModelToLikeDB({
-      userId,
-      commentId,
-      like: likeStatus,
-    });
-
-    const likeModel = new LikeModel(likeDB);
-
+  async createLike(likeModel: LikeDocument): Promise<Types.ObjectId> {
     const result = await likeModel.save();
 
     return result._id;
