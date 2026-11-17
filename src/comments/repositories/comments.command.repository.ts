@@ -53,22 +53,6 @@ export class CommentsCommandRepository {
     return result._id;
   }
 
-  async updateLikeStatus(
-    userId: string,
-    commentId: string,
-    likeStatus: TLikeStatus,
-  ): Promise<void> {
-    await LikeModel.updateOne(
-      {
-        userId: new Types.ObjectId(userId),
-        commentId: new Types.ObjectId(commentId),
-      },
-      {
-        $set: { like: likeStatusToBoolean(likeStatus) },
-      },
-    );
-  }
-
   async deleteLikeStatus(userId: string, commentId: string): Promise<void> {
     await LikeModel.deleteOne({
       userId: new Types.ObjectId(userId),

@@ -1,8 +1,10 @@
 import { LikeDocument, LikeModel } from "../db/like.model";
 import { TLikeStatus } from "../types";
-import { createLikeDB } from "../utils";
+import { createLikeDB, likeStatusToBoolean } from "../utils";
 
 export class LikeEntity {
+  private constructor(public like: boolean) {}
+
   static createLikeStatus(
     userId: string,
     commentId: string,
@@ -13,5 +15,9 @@ export class LikeEntity {
     const likeModel = new LikeModel(likeDb);
 
     return likeModel;
+  }
+
+  updateLikeStatus(newLikeStatus: TLikeStatus): void {
+    this.like = likeStatusToBoolean(newLikeStatus);
   }
 }

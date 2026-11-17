@@ -1,13 +1,17 @@
 import { HydratedDocument, Model, model } from "mongoose";
-import { LikeDb } from "../types";
+import { LikeDb, TLikeStatus } from "../types";
 import { likeSchema } from "./like.schema";
 import { LikeEntity } from "../domain/Like.entity";
 
+export interface LikeMethods {
+  updateLikeStatus(newLikeStatus: TLikeStatus): void;
+}
+
 type LikeStatics = typeof LikeEntity;
 
-export type TLikeModel = Model<LikeDb> & LikeStatics;
+export type TLikeModel = Model<LikeDb, {}, LikeMethods> & LikeStatics;
 
-export type LikeDocument = HydratedDocument<LikeDb>;
+export type LikeDocument = HydratedDocument<LikeDb, LikeMethods>;
 
 likeSchema.loadClass(LikeEntity);
 

@@ -250,11 +250,9 @@ export class CommentsService {
 
     if (previousLike && likeStatus !== previousLike) {
       if (likeStatus === "Like" || likeStatus === "Dislike") {
-        await this.commentsCommandRepository.updateLikeStatus(
-          userId,
-          commentId,
-          likeStatus,
-        );
+        likeModel.updateLikeStatus(likeStatus);
+
+        await this.commentsCommandRepository.saveLike(likeModel);
       }
 
       if (likeStatus === "None") {
