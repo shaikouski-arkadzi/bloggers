@@ -5,6 +5,10 @@ import { CommentEntity } from "../domain/Comment.entity";
 
 export interface CommentMethods {
   updateCommentContent(newContent: string): void;
+  increaseLikeCount(): void;
+  decreaseLikeCount(): void;
+  increaseDislikeCount(): void;
+  decreaseDislikeCount(): void;
 }
 
 type CommentStatics = typeof CommentEntity;

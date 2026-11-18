@@ -1,9 +1,13 @@
 import { User } from "../../users/types";
 import { CommentDocument, CommentModel } from "../db/comment.model";
+import { LikesInfoDB } from "../types";
 import { createCommentDb } from "../utils";
 
 export class CommentEntity {
-  private constructor(public content: string) {}
+  private constructor(
+    public content: string,
+    public likesInfo: LikesInfoDB,
+  ) {}
 
   static createComment(
     commentContent: string,
@@ -19,5 +23,21 @@ export class CommentEntity {
 
   updateCommentContent(newContent: string): void {
     this.content = newContent;
+  }
+
+  increaseLikeCount(): void {
+    this.likesInfo.likesCount += 1;
+  }
+
+  decreaseLikeCount(): void {
+    this.likesInfo.likesCount -= 1;
+  }
+
+  increaseDislikeCount(): void {
+    this.likesInfo.dislikesCount += 1;
+  }
+
+  decreaseDislikeCount(): void {
+    this.likesInfo.dislikesCount -= 1;
   }
 }

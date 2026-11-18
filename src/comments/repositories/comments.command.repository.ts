@@ -2,8 +2,6 @@ import { injectable } from "inversify";
 import { Types } from "mongoose";
 import { LikeDocument, LikeModel } from "../db/like.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
-import { TLikeStatus } from "../types";
-import { likeStatusToBoolean } from "../utils";
 
 @injectable()
 export class CommentsCommandRepository {

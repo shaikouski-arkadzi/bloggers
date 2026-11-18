@@ -233,11 +233,11 @@ export class CommentsService {
       await this.commentsCommandRepository.saveLike(likeModel);
 
       if (likeStatus === "Like") {
-        comment.likesInfo.likesCount += 1;
+        comment.increaseLikeCount();
       }
 
       if (likeStatus === "Dislike") {
-        comment.likesInfo.dislikesCount += 1;
+        comment.increaseDislikeCount();
       }
     }
 
@@ -263,21 +263,21 @@ export class CommentsService {
       }
 
       if (likeStatus === "Like" && previousLike === "Dislike") {
-        comment.likesInfo.dislikesCount -= 1;
-        comment.likesInfo.likesCount += 1;
+        comment.decreaseDislikeCount();
+        comment.increaseLikeCount();
       }
 
       if (likeStatus === "Dislike" && previousLike === "Like") {
-        comment.likesInfo.likesCount -= 1;
-        comment.likesInfo.dislikesCount += 1;
+        comment.decreaseLikeCount();
+        comment.increaseDislikeCount();
       }
 
       if (likeStatus === "None") {
         if (previousLike === "Like") {
-          comment.likesInfo.likesCount -= 1;
+          comment.decreaseLikeCount();
         }
         if (previousLike === "Dislike") {
-          comment.likesInfo.dislikesCount -= 1;
+          comment.decreaseDislikeCount();
         }
       }
     }
