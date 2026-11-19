@@ -7,7 +7,7 @@ import {
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
 import { SortBy, SortDirection } from "../../common/types";
-import { LikeModel } from "../db/like.model";
+import { LikeCommentModel } from "../db/likeComment.model";
 import { CommentModel } from "../db/comment.model";
 import { Comment, CommentDb, TLikeStatus } from "../types";
 import { booleanToLikeStatus } from "../utils";
@@ -66,7 +66,7 @@ export class CommentsQueryRepository {
       ]),
     );
 
-    const result = await LikeModel.countDocuments(filter);
+    const result = await LikeCommentModel.countDocuments(filter);
 
     return result;
   }
@@ -75,7 +75,7 @@ export class CommentsQueryRepository {
     userId: string,
     commentId: string,
   ): Promise<TLikeStatus | null> {
-    const result = await LikeModel.findOne({
+    const result = await LikeCommentModel.findOne({
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
     });

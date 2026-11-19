@@ -25,7 +25,7 @@ import {
 } from "../utils";
 import { CommentModel } from "../db/comment.model";
 import { UserCommandRepository } from "../../users/repositories";
-import { LikeModel } from "../db/like.model";
+import { LikeCommentModel } from "../db/likeComment.model";
 
 @injectable()
 export class CommentsService {
@@ -228,7 +228,11 @@ export class CommentsService {
       );
 
     if (!likeModel && (likeStatus === "Like" || likeStatus === "Dislike")) {
-      likeModel = LikeModel.createLikeStatus(userId, commentId, likeStatus);
+      likeModel = LikeCommentModel.createLikeStatus(
+        userId,
+        commentId,
+        likeStatus,
+      );
 
       await this.commentsCommandRepository.saveLike(likeModel);
 

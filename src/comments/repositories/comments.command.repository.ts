@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Types } from "mongoose";
-import { LikeDocument, LikeModel } from "../db/like.model";
+import { LikeCommentDocument, LikeCommentModel } from "../db/likeComment.model";
 import { CommentDocument, CommentModel } from "../db/comment.model";
 
 @injectable()
@@ -32,8 +32,8 @@ export class CommentsCommandRepository {
   async findLikeStatusByUserAndComment(
     userId: string,
     commentId: string,
-  ): Promise<LikeDocument | null> {
-    const result = await LikeModel.findOne({
+  ): Promise<LikeCommentDocument | null> {
+    const result = await LikeCommentModel.findOne({
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
     });
@@ -45,14 +45,14 @@ export class CommentsCommandRepository {
     return result;
   }
 
-  async saveLike(likeModel: LikeDocument): Promise<Types.ObjectId> {
+  async saveLike(likeModel: LikeCommentDocument): Promise<Types.ObjectId> {
     const result = await likeModel.save();
 
     return result._id;
   }
 
   async deleteLikeStatus(userId: string, commentId: string): Promise<void> {
-    await LikeModel.deleteOne({
+    await LikeCommentModel.deleteOne({
       userId: new Types.ObjectId(userId),
       commentId: new Types.ObjectId(commentId),
     });
