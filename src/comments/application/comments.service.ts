@@ -5,24 +5,16 @@ import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import { PaginatorData } from "../../common/types";
+import { PaginatorData, TLikeStatus } from "../../common/types";
+import { booleanToLikeStatus } from "../../common/utils/booleanToLikeStatus";
 import { PostsService } from "../../posts/application/posts.service";
 import {
   CommentsCommandRepository,
   CommentsQueryRepository,
 } from "../repositories";
-import {
-  Comment,
-  CommentInputModel,
-  CommentsQuery,
-  TLikeStatus,
-} from "../types";
+import { Comment, CommentInputModel, CommentsQuery } from "../types";
 import { jwtService, TokenType } from "../../auth/application/jwt.service";
-import {
-  booleanToLikeStatus,
-  mapCommentDbToComment,
-  mapCommentWithMyStatus,
-} from "../utils";
+import { mapCommentDbToComment, mapCommentWithMyStatus } from "../utils";
 import { CommentModel } from "../db/comment.model";
 import { UserCommandRepository } from "../../users/repositories";
 import { LikeCommentModel } from "../db/likeComment.model";

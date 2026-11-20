@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { matchedData } from "express-validator";
-import { APIErrorResult, PaginatorData } from "../../common/types";
+import {
+  APIErrorResult,
+  LikeInputModel,
+  PaginatorData,
+} from "../../common/types";
 import {
   NotFoundException,
   PermissionException,
 } from "../../common/exceptions";
-import {
-  Comment,
-  CommentInputModel,
-  CommentsQuery,
-  LikeInputModel,
-} from "../types";
+import { Comment, CommentInputModel, CommentsQuery } from "../types";
 import { UnauthorizedException } from "../../auth/exceptions";
 import { CommentsService } from "../application/comments.service";
 import { CommentsQueryRepository } from "../repositories";

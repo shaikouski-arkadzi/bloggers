@@ -1,6 +1,4 @@
 export { mapCommentDbToComment } from "./mapCommentDbToComment";
 export { createCommentDb } from "./createCommentDb";
-export { createLikeDB } from "./createLikeDB";
-export { likeStatusToBoolean } from "./likeStatusToBoolean";
-export { booleanToLikeStatus } from "./booleanToLikeStatus";
+export { createCommentLikeDB } from "./createCommentLikeDB";
 export { mapCommentWithMyStatus } from "./mapCommentWithMyStatus";

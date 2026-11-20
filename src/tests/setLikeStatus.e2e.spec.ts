@@ -3,8 +3,8 @@ import express from "express";
 import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { setupApp } from "../setup-app";
 import { db } from "../db";
-import { INITIAL_LIKES_INFO } from "../comments/constants";
-import { Comment, LikeInputModel } from "../comments/types";
+import { LikeInputModel } from "../common/types";
+import { Comment } from "../comments/types";
 
 const app = express();
 

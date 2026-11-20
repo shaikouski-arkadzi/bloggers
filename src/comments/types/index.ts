@@ -1,6 +1,11 @@
 import { Types } from "mongoose";
-import { SortBy, SortDirection } from "../../common/types";
-import { LikeStatus } from "../constants";
+import {
+  LikesInfoDB,
+  LikesInfoViewModel,
+  SortBy,
+  SortDirection,
+  TLikeStatus,
+} from "../../common/types";
 
 export interface CommentInputModel {
   content: string;
@@ -44,30 +49,13 @@ export interface CommentsQuery {
   sortDirection?: SortDirection;
 }
 
-export interface LikesInfoViewModel {
-  likesCount: number;
-  dislikesCount: number;
-  myStatus: TLikeStatus;
-}
-
-export interface LikesInfoDB {
-  likesCount: number;
-  dislikesCount: number;
-}
-
-export type TLikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];
-
-export interface LikeInputModel {
-  likeStatus: TLikeStatus;
-}
-
-export interface LikeDb {
+export interface LikeCommentDb {
   userId: Types.ObjectId;
   commentId: Types.ObjectId;
   like: boolean;
 }
 
-export interface LikeModel {
+export interface LikeCommentModel {
   userId: string;
   commentId: string;
   like: TLikeStatus;

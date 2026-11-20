@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Comment, CommentDb } from "../types";
-import { INITIAL_LIKES_INFO } from "../constants";
+import { INITIAL_LIKES_INFO } from "../../common/constants";
 
 export const mapCommentDbToComment = (
   commentDb: CommentDb & { _id: Types.ObjectId },

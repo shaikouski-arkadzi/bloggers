@@ -6,11 +6,11 @@ import {
   SORT_DIRECTION_DAFAULT,
   SORT_FIELD_DAFAULT,
 } from "../../common/constants";
-import { SortBy, SortDirection } from "../../common/types";
+import { SortBy, SortDirection, TLikeStatus } from "../../common/types";
+import { booleanToLikeStatus } from "../../common/utils/booleanToLikeStatus";
 import { LikeCommentModel } from "../db/likeComment.model";
 import { CommentModel } from "../db/comment.model";
-import { Comment, CommentDb, TLikeStatus } from "../types";
-import { booleanToLikeStatus } from "../utils";
+import { Comment, CommentDb } from "../types";
 
 interface CommentsQueryParams {
   page?: number;

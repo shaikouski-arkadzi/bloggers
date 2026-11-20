@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
-import { Comment, CommentDb, TLikeStatus } from "../types";
+import { Comment, CommentDb } from "../types";
+import { TLikeStatus } from "../../common/types";
 
 export const mapCommentWithMyStatus = (
   comment: CommentDb & { _id: Types.ObjectId },

@@ -1,7 +1,7 @@
 import { Schema } from "mongoose";
-import { LikeDb } from "../types";
+import { LikeCommentDb } from "../types";
 
-export const likeCommentSchema = new Schema<LikeDb>({
+export const likeCommentSchema = new Schema<LikeCommentDb>({
   userId: {
     type: Schema.Types.ObjectId,
     required: true,

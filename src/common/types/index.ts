@@ -1,3 +1,5 @@
+import { LikeStatus } from "../constants";
+
 export interface APIErrorResult {
   errorsMessages: FieldError[];
 }
@@ -23,4 +25,21 @@ export interface PaginatorData<T> {
   pageSize: number;
   totalCount: number;
   items: T[];
+}
+
+export interface LikesInfoViewModel {
+  likesCount: number;
+  dislikesCount: number;
+  myStatus: TLikeStatus;
+}
+
+export interface LikesInfoDB {
+  likesCount: number;
+  dislikesCount: number;
+}
+
+export type TLikeStatus = (typeof LikeStatus)[keyof typeof LikeStatus];
+
+export interface LikeInputModel {
+  likeStatus: TLikeStatus;
 }

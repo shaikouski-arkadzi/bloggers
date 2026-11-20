@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { CommentDb } from "../types";
 import { User } from "../../users/types";
-import { INITIAL_LIKES_INFO } from "../constants";
+import { INITIAL_LIKES_INFO } from "../../common/constants";
 
 export const createCommentDb = (
   commentContent: string,

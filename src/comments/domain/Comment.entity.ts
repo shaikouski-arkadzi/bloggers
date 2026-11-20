@@ -1,6 +1,6 @@
 import { User } from "../../users/types";
 import { CommentDocument, CommentModel } from "../db/comment.model";
-import { LikesInfoDB } from "../types";
+import { LikesInfoDB } from "../../common/types";
 import { createCommentDb } from "../utils";
 
 export class CommentEntity {
