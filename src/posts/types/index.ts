@@ -1,4 +1,5 @@
-import { SortBy, SortDirection } from "../../common/types";
+import { Types } from "mongoose";
+import { SortBy, SortDirection, TLikeStatus } from "../../common/types";
 
 export interface PostInputDto {
   title: string;
@@ -27,4 +28,16 @@ export interface PostsQuery {
 
 export interface UpdatedPost extends PostInputDto {
   blogName: string;
+}
+
+export interface LikePostDb {
+  userId: Types.ObjectId;
+  postId: Types.ObjectId;
+  like: boolean;
+}
+
+export interface LikeCommentModel {
+  userId: string;
+  postId: string;
+  like: TLikeStatus;
 }
