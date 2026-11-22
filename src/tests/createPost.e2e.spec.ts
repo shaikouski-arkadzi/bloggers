@@ -6,6 +6,7 @@ import { ADMIN_LOGIN, ADMIN_PASSWORD } from "../settings/config";
 import { db } from "../db";
 import { setupApp } from "../setup-app";
 import { postsQueryRepository } from "../posts/composition-root";
+import { INITIAL_LIKES_INFO } from "../common/constants";
 
 let ADMIN_LOGIN_PASSWORD: string;
 let ADMIN_TOKEN: string;
@@ -67,6 +68,7 @@ describe("POST /posts", () => {
       createdAt: expect.stringMatching(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
       ),
+      extendedLikesInfo: INITIAL_LIKES_INFO,
     });
 
     const allPosts = await postsQueryRepository.find();

@@ -26,4 +26,18 @@ export const postSchema = new Schema<PostDb>({
     type: String,
     required: true,
   },
+  extendedLikesInfo: {
+    likesCount: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+    dislikesCount: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+    },
+  },
 });

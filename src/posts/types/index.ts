@@ -1,5 +1,10 @@
 import { Types } from "mongoose";
-import { SortBy, SortDirection, TLikeStatus } from "../../common/types";
+import {
+  LikesInfoViewModel,
+  SortBy,
+  SortDirection,
+  TLikeStatus,
+} from "../../common/types";
 
 export interface PostInputDto {
   title: string;
@@ -11,12 +16,14 @@ export interface PostInputDto {
 export interface PostDb extends PostInputDto {
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: LikesInfoViewModel;
 }
 
 export interface Post extends PostInputDto {
   id: string;
   blogName: string;
   createdAt: string;
+  extendedLikesInfo: LikesInfoViewModel;
 }
 
 export interface PostsQuery {

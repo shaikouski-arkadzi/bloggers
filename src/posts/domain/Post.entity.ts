@@ -1,4 +1,5 @@
 import { BlogDb } from "../../blogs/types";
+import { INITIAL_LIKES_INFO } from "../../common/constants";
 import { PostDocument, PostModel } from "../db/post.model";
 import { PostInputDto } from "../types";
 
@@ -14,7 +15,7 @@ export class PostEntity {
 
     post.blogName = blog.name;
     post.createdAt = new Date().toISOString();
-
+    post.extendedLikesInfo = INITIAL_LIKES_INFO;
     return post;
   }
 

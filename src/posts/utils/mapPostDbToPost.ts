@@ -11,4 +11,9 @@ export const mapPostDbToPost = (
   blogId: postDb.blogId,
   blogName: postDb.blogName,
   createdAt: postDb.createdAt,
+  extendedLikesInfo: {
+    likesCount: postDb.extendedLikesInfo.likesCount,
+    dislikesCount: postDb.extendedLikesInfo.dislikesCount,
+    myStatus: postDb.extendedLikesInfo.myStatus,
+  },
 });
