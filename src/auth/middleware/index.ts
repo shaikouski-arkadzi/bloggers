@@ -5,3 +5,4 @@ export {
   reqRateLimitMiddleware,
   resetReqRateLimit,
 } from "./req-rate-limit.middleware";
+export { getUserIdFromJWTMiddleware } from "./get-userId-from-jwt.middleware";

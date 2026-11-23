@@ -121,11 +121,10 @@ export class CommentsController {
 
   getComment = async (req: Request<{ id: string }>, res: Response<Comment>) => {
     try {
-      const auth = req.headers.authorization;
-
+      const userId = req.auth?.userId ?? null;
       const { id } = req.params;
 
-      const result = await this.commentsService.getCommentById(id, auth);
+      const result = await this.commentsService.getCommentById(id, userId);
 
       if (!result) throw new NotFoundException();
 

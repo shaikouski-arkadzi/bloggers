@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { COMMENTS_ROUTES } from "../constants";
 import { commentsController } from "../composition-root";
-import { jwtValidationMiddleware } from "../../auth/middleware";
+import {
+  getUserIdFromJWTMiddleware,
+  jwtValidationMiddleware,
+} from "../../auth/middleware";
 import { contentValidation, likeStatusInputValidation } from "../validation";
 import { resultValidationMiddleware } from "../../common/validation";
 
@@ -10,7 +13,7 @@ const router = Router();
 const { getComment, updateComment, deleteComment, setLikeStatus } =
   commentsController;
 
-router.get(COMMENTS_ROUTES.BY_ID, getComment);
+router.get(COMMENTS_ROUTES.BY_ID, getUserIdFromJWTMiddleware, getComment);
 router.put(
   COMMENTS_ROUTES.BY_ID,
   jwtValidationMiddleware,

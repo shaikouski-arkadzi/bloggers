@@ -35,21 +35,10 @@ export class CommentsService {
     private userCommandRepository: UserCommandRepository,
   ) {}
 
-  async getCommentById(id: string, auth?: string): Promise<Comment | null> {
-    let userId: string | undefined;
-
-    if (auth) {
-      const [authType, token] = auth.split(" ");
-
-      if (authType === "Bearer" && token) {
-        const verified = await jwtService.verifyToken(token, TokenType.Access);
-
-        if (verified) {
-          userId = verified.uuid;
-        }
-      }
-    }
-
+  async getCommentById(
+    id: string,
+    userId?: string | null,
+  ): Promise<Comment | null> {
     const commentDb = await this.commentsQueryRepository.findByField({
       _id: new Types.ObjectId(id),
     });
