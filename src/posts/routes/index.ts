@@ -8,6 +8,7 @@ import {
 } from "../../common/validation";
 import { postInputDtoValidation } from "../validation";
 import {
+  getUserIdFromJWTMiddleware,
   jwtValidationMiddleware,
   superAdminGuardMiddleware,
 } from "../../auth/middleware";
@@ -41,6 +42,7 @@ router.get(
   POSTS_ROUTES.BY_ID,
   idValidation,
   resultValidationMiddleware,
+  getUserIdFromJWTMiddleware,
   getPost,
 );
 router.put(

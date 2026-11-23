@@ -1,8 +1,7 @@
-import { ObjectId } from "mongodb";
+import { Types } from "mongoose";
 import { injectable } from "inversify";
-import { db } from "../../db";
 import { Post } from "../types";
-import { SortDirection, SortBy } from "../../common/types";
+import { SortDirection, SortBy, TLikeStatus } from "../../common/types";
 import {
   PAGE_DAFAULT,
   PAGE_SIZE_DAFAULT,
@@ -11,6 +10,8 @@ import {
 } from "../../common/constants";
 import { mapPostDbToPost } from "../utils";
 import { PostModel } from "../db/post.model";
+import { LikePostModel } from "../db/likePost.model";
+import { booleanToLikeStatus } from "../../common/utils/booleanToLikeStatus";
 
 interface PostsQueryParams {
   page?: number;
@@ -79,5 +80,21 @@ export class PostsQueryRepository {
     const result = await PostModel.countDocuments(filter);
 
     return result;
+  }
+
+  async findLikeByUserAndPost(
+    userId: string,
+    postId: string,
+  ): Promise<TLikeStatus | null> {
+    const result = await LikePostModel.findOne({
+      userId: new Types.ObjectId(userId),
+      postId: new Types.ObjectId(postId),
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return booleanToLikeStatus(result.like);
   }
 }
