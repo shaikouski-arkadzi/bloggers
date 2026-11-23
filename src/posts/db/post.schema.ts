@@ -1,5 +1,6 @@
 import { Schema } from "mongoose";
 import { PostDb } from "../types";
+import { LikeStatus } from "../../common/constants";
 
 export const postSchema = new Schema<PostDb>({
   title: {
@@ -38,6 +39,12 @@ export const postSchema = new Schema<PostDb>({
       required: true,
       default: 0,
       min: 0,
+    },
+    myStatus: {
+      type: String,
+      required: true,
+      default: LikeStatus.NONE,
+      enum: Object.values(LikeStatus),
     },
   },
 });
