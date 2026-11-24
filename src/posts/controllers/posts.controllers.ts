@@ -7,6 +7,8 @@ import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
 import { PostsService } from "../application/posts.service";
 import { PostsQueryRepository } from "../repositories";
+import { LikeStatus } from "../../common/constants";
+import { mapPostWithMyStatus } from "../utils";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
@@ -126,9 +128,17 @@ export class PostsController {
     res: Response<Post | null>,
   ) => {
     try {
+      const userId = req.auth?.userId;
       const { id } = req.params;
 
-      const post = await this.postsService.findById(id);
+      let post = await this.postsService.findById(id);
+
+      if (userId) {
+        const likeStatus =
+          await this.postsQueryRepository.findLikeByUserAndPost(userId, id);
+
+        post = mapPostWithMyStatus(post, likeStatus ?? LikeStatus.NONE);
+      }
 
       return res.status(200).json(post);
     } catch (error) {
