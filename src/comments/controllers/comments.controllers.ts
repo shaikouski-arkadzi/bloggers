@@ -143,8 +143,7 @@ export class CommentsController {
     res: Response<PaginatorData<Comment>>,
   ) => {
     try {
-      const auth = req.headers.authorization;
-
+      const userId = req.auth?.userId ?? null;
       const id = req.params.id;
 
       const commentsQueries = matchedData<CommentsQuery>(req);
@@ -152,7 +151,7 @@ export class CommentsController {
       const result = await this.commentsService.findManyByPost(
         id,
         commentsQueries,
-        auth,
+        userId,
       );
 
       return res.status(200).json(result);

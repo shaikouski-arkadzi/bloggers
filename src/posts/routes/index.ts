@@ -66,6 +66,7 @@ router.get(
   paginationValidation,
   sortingValidation(COMMENT_FIELDS),
   resultValidationMiddleware,
+  getUserIdFromJWTMiddleware,
   getPostComments,
 );
 
