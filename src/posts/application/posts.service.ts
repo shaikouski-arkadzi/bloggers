@@ -7,6 +7,7 @@ import { BlogsService } from "../../blogs/application/blogs.service";
 import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
 import { BlogsCommandRepository } from "../../blogs/repositories";
 import { PostModel } from "../db/post.model";
+import { mapPostDbToPost, mapPostWithMyStatus } from "../utils";
 
 @injectable()
 export class PostsService {
@@ -46,7 +47,11 @@ export class PostsService {
     return createdPostId.toString();
   }
 
-  async findMany(queries: PostsQuery): Promise<PaginatorData<Post>> {
+  async findMany(
+    queries: PostsQuery,
+    userId: string | null,
+  ): Promise<PaginatorData<Post>> {
+    // CHECK
     const page = Number(queries.pageNumber);
     const pageSize = Number(queries.pageSize);
     const sortBy = queries.sortBy;
@@ -62,6 +67,25 @@ export class PostsService {
       sortBy,
       sortDirection,
     });
+
+    const items: Post[] = [];
+
+    for (const post of result) {
+      if (!userId) {
+        items.push(post);
+        continue;
+      }
+
+      const userPostStatus =
+        await this.postsQueryRepository.findLikeByUserAndPost(userId, post.id);
+
+      if (!userPostStatus) {
+        items.push(post);
+        continue;
+      }
+
+      items.push(mapPostWithMyStatus(post, userPostStatus));
+    }
 
     return {
       pagesCount,

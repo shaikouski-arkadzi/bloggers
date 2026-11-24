@@ -154,10 +154,12 @@ export class PostsController {
     req: Request<{}, {}, {}, PostsQuery>,
     res: Response<PaginatorData<Post>>,
   ) => {
+    const userId = req.auth?.userId ?? null;
+
     try {
       const postsQueries = matchedData<PostsQuery>(req);
 
-      const result = await this.postsService.findMany(postsQueries);
+      const result = await this.postsService.findMany(postsQueries, userId);
 
       return res.status(200).json(result);
     } catch (error) {

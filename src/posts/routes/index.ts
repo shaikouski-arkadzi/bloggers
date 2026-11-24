@@ -36,6 +36,7 @@ router.get(
   paginationValidation,
   sortingValidation(POST_FIELDS),
   resultValidationMiddleware,
+  getUserIdFromJWTMiddleware,
   getPosts,
 );
 router.get(
