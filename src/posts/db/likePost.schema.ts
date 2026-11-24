@@ -14,4 +14,8 @@ export const likePostSchema = new Schema<LikePostDb>({
     type: Boolean,
     required: true,
   },
+  createdAt: {
+    type: String,
+    required: true,
+  },
 });

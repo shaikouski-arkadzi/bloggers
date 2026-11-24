@@ -41,6 +41,7 @@ export interface LikePostDb {
   userId: Types.ObjectId;
   postId: Types.ObjectId;
   like: boolean;
+  createdAt: string;
 }
 
 export interface LikeCommentModel {

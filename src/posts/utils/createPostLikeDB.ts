@@ -10,4 +10,5 @@ export const createPostLikeDB = ({
   userId: new Types.ObjectId(userId),
   postId: new Types.ObjectId(postId),
   like: likeStatusToBoolean(like),
+  createdAt: new Date().toISOString(),
 });
