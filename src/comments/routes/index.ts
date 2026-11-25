@@ -5,8 +5,11 @@ import {
   getUserIdFromJWTMiddleware,
   jwtValidationMiddleware,
 } from "../../auth/middleware";
-import { contentValidation, likeStatusInputValidation } from "../validation";
-import { resultValidationMiddleware } from "../../common/validation";
+import { contentValidation } from "../validation";
+import {
+  likeStatusInputValidation,
+  resultValidationMiddleware,
+} from "../../common/validation";
 
 const router = Router();
 
