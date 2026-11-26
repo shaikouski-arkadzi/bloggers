@@ -2,6 +2,7 @@ import { Router } from "express";
 import { POST_FIELDS, POSTS_ROUTES } from "../constants";
 import {
   idValidation,
+  likeStatusInputValidation,
   paginationValidation,
   resultValidationMiddleware,
   sortingValidation,
@@ -19,7 +20,7 @@ import { postsController } from "../composition-root";
 
 const router = Router();
 
-const { createPost, deletePost, getPost, getPosts, updatePost } =
+const { createPost, deletePost, getPost, getPosts, updatePost, setLikeStatus } =
   postsController;
 
 const { createPostComment, getPostComments } = commentsController;
@@ -77,6 +78,14 @@ router.post(
   contentValidation,
   resultValidationMiddleware,
   createPostComment,
+);
+
+router.put(
+  POSTS_ROUTES.BY_ID_LIKE_STATUS,
+  jwtValidationMiddleware,
+  likeStatusInputValidation,
+  resultValidationMiddleware,
+  setLikeStatus,
 );
 
 export default router;

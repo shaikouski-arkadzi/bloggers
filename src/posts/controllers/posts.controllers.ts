@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { matchedData } from "express-validator";
-import { APIErrorResult, PaginatorData } from "../../common/types";
+import {
+  APIErrorResult,
+  LikeInputModel,
+  PaginatorData,
+} from "../../common/types";
 import { Post, PostInputDto, PostsQuery } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException, SavingException } from "../exceptions";
@@ -9,6 +13,7 @@ import { PostsService } from "../application/posts.service";
 import { PostsQueryRepository } from "../repositories";
 import { LikeStatus } from "../../common/constants";
 import { mapPostWithMyStatus } from "../utils";
+import { UnauthorizedException } from "../../auth/exceptions";
 
 type RequestBody = Omit<PostInputDto, "blogId">;
 
@@ -192,6 +197,32 @@ export class PostsController {
             },
           ],
         });
+      }
+
+      return res.sendStatus(500);
+    }
+  };
+
+  setLikeStatus = async (
+    req: Request<{ id: string }, {}, LikeInputModel>,
+    res: Response<PaginatorData<Comment>>,
+  ) => {
+    try {
+      const { likeStatus } = req.body;
+      const postId = req.params.id;
+      const userId = req.auth.userId;
+
+      if (!userId) throw new UnauthorizedException();
+
+      await this.postsService.setLike(userId, postId, likeStatus);
+
+      return res.sendStatus(204);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        return res.sendStatus(401);
+      }
+      if (error instanceof NotFoundException) {
+        return res.sendStatus(404);
       }
 
       return res.sendStatus(500);

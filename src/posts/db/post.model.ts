@@ -5,6 +5,10 @@ import { PostEntity } from "../domain/Post.entity";
 
 export interface PostMethods {
   updatePost(input: PostInputDto): void;
+  increaseLikeCount(): void;
+  decreaseLikeCount(): void;
+  increaseDislikeCount(): void;
+  decreaseDislikeCount(): void;
 }
 
 type PostStatics = typeof PostEntity;

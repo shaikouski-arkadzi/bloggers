@@ -1,6 +1,6 @@
 import { TLikeStatus } from "../../common/types";
 import { likeStatusToBoolean } from "../../common/utils/likeStatusToBoolean";
-import { LikePostModel } from "../db/likePost.model";
+import { LikePostDocument, LikePostModel } from "../db/likePost.model";
 import { createPostLikeDB } from "../utils";
 
 export class LikePostEntity {
@@ -10,7 +10,7 @@ export class LikePostEntity {
     userId: string,
     postId: string,
     like: TLikeStatus,
-  ): any {
+  ): LikePostDocument {
     const likeDb = createPostLikeDB({ userId, postId, like });
 
     const likeModel = new LikePostModel(likeDb);

@@ -6,6 +6,7 @@ export const POSTS_ROUTES = {
   ROOT: "",
   BY_ID: "/:id",
   POST_COMMENTS: "/:id/comments",
+  BY_ID_LIKE_STATUS: "/:id/like-status",
 } as const;
 
 export const POST_FIELDS: (keyof Post)[] = [

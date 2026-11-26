@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { PaginatorData } from "../../common/types";
+import { PaginatorData, TLikeStatus } from "../../common/types";
 import { Post, PostInputDto, PostsQuery } from "../types";
 import { NotFoundException } from "../../common/exceptions";
 import { BlogForPostNotExistException } from "../exceptions";
@@ -8,6 +8,8 @@ import { PostsCommandRepository, PostsQueryRepository } from "../repositories";
 import { BlogsCommandRepository } from "../../blogs/repositories";
 import { PostModel } from "../db/post.model";
 import { mapPostDbToPost, mapPostWithMyStatus } from "../utils";
+import { LikePostModel } from "../db/likePost.model";
+import { booleanToLikeStatus } from "../../common/utils/booleanToLikeStatus";
 
 @injectable()
 export class PostsService {
@@ -149,5 +151,76 @@ export class PostsService {
       totalCount: allPostsCount,
       items: result,
     };
+  }
+
+  async setLike(
+    userId: string,
+    postId: string,
+    likeStatus: TLikeStatus,
+  ): Promise<void> {
+    //TODO: check
+
+    const post = await this.postsCommandRepository.findById(postId);
+
+    if (!post) throw new NotFoundException();
+
+    let likeModel =
+      await this.postsCommandRepository.findLikeStatusByUserAndPost(
+        userId,
+        postId,
+      );
+
+    if (!likeModel && (likeStatus === "Like" || likeStatus === "Dislike")) {
+      likeModel = LikePostModel.createLikeStatus(userId, postId, likeStatus);
+
+      await this.postsCommandRepository.saveLike(likeModel);
+
+      if (likeStatus === "Like") {
+        post.increaseLikeCount();
+      }
+
+      if (likeStatus === "Dislike") {
+        post.increaseDislikeCount();
+      }
+    }
+
+    if (!likeModel) {
+      console.error("likeModel error");
+      throw new Error();
+    }
+
+    const previousLike = booleanToLikeStatus(likeModel.like);
+
+    if (previousLike && likeStatus !== previousLike) {
+      if (likeStatus === "Like" || likeStatus === "Dislike") {
+        likeModel.updateLikeStatus(likeStatus);
+
+        await this.postsCommandRepository.saveLike(likeModel);
+      }
+
+      if (likeStatus === "None") {
+        await this.postsCommandRepository.deleteLikeStatus(userId, postId);
+      }
+
+      if (likeStatus === "Like" && previousLike === "Dislike") {
+        post.decreaseDislikeCount();
+        post.increaseLikeCount();
+      }
+
+      if (likeStatus === "Dislike" && previousLike === "Like") {
+        post.decreaseLikeCount();
+        post.increaseDislikeCount();
+      }
+
+      if (likeStatus === "None") {
+        if (previousLike === "Like") {
+          post.decreaseLikeCount();
+        }
+        if (previousLike === "Dislike") {
+          post.decreaseDislikeCount();
+        }
+      }
+    }
+    await this.postsCommandRepository.save(post);
   }
 }
