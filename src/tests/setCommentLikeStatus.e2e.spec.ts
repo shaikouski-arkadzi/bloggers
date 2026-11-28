@@ -10,7 +10,7 @@ const app = express();
 
 setupApp(app);
 
-describe("GET /comments/:id", () => {
+describe("PUT /comments/:id/like-status", () => {
   let createdCommentId: string;
 
   let accessToken: string;
